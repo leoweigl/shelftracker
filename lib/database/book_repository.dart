@@ -10,6 +10,10 @@ class BookRepository {
   Stream<List<BookEntry>> watchAll() {
     return _db.select(_db.books).watch();
   }
+
+  Stream<BookEntry> watchById(int id) {
+    return (_db.select(_db.books)..where((b) => b.id.equals(id))).watchSingle();
+  }
   
   Future<List<BookEntry>> getAll() {
     return _db.select(_db.books).get();

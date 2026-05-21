@@ -4,6 +4,7 @@ import '../main.dart';
 import '../models/book.dart';
 import '../widgets/star_rating.dart';
 import 'search_screen.dart';
+import 'book_detail_screen.dart';
 
 class BookListScreen extends StatefulWidget {
   const BookListScreen({super.key});
@@ -81,6 +82,14 @@ class _BookListScreenState extends State<BookListScreen> {
                         : StarRating(rating: book.userRating!),
                   ],
                 ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => BookDetailScreen(bookId: book.id),
+                    )
+                  );
+                },
                 trailing: IconButton(
                   icon: const Icon(Icons.delete_outline),
                   onPressed: () => bookRepository.delete(book.id),
