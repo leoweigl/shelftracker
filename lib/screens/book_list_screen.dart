@@ -5,6 +5,7 @@ import '../models/book.dart';
 import '../widgets/star_rating.dart';
 import 'search_screen.dart';
 import 'book_detail_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class BookListScreen extends StatefulWidget {
   const BookListScreen({super.key});
@@ -31,10 +32,7 @@ class _BookListScreenState extends State<BookListScreen> {
       appBar: AppBar(
         title: const Text('Bücherregal'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _openSearch,
-          ),
+          IconButton(icon: const Icon(Icons.add), onPressed: _openSearch),
         ],
       ),
       body: StreamBuilder<List<BookEntry>>(
@@ -61,12 +59,23 @@ class _BookListScreenState extends State<BookListScreen> {
               final book = books[index];
               return ListTile(
                 leading: book.coverUrl != null
-                    ? Image.network(
-                  book.coverUrl!,
-                  width: 40,
-                  errorBuilder: (_, __, ___) =>
-                  const Icon(Icons.menu_book_rounded),
-                )
+                    ? CachedNetworkImage(
+                        imageUrl: book.coverUrl!,
+                        width: 40,
+                        placeholder: (_, __) => const SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: Center(
+                            child: SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) =>
+                            const Icon(Icons.menu_book_rounded),
+                      )
                     : const Icon(Icons.menu_book_rounded),
                 title: Text(book.title),
                 subtitle: Column(
@@ -74,7 +83,7 @@ class _BookListScreenState extends State<BookListScreen> {
                   children: [
                     Text(
                       '${book.author}'
-                          '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
+                      '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
                     ),
                     const SizedBox(height: 4),
                     book.userRating == null
@@ -87,7 +96,7 @@ class _BookListScreenState extends State<BookListScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => BookDetailScreen(bookId: book.id),
-                    )
+                    ),
                   );
                 },
                 trailing: IconButton(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../services/book_api_service.dart';
+import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -17,10 +19,28 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _isLoading = false;
   String? _errorMessage;
 
+  Timer? _debounce;
+
   @override
   void dispose() {
+    _debounce?.cancel();
     _controller.dispose();
     super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    _debounce?.cancel();
+
+    if (query.trim().isEmpty) {
+      setState(() {
+        _results = [];
+        _errorMessage = null;
+        _isLoading = false;
+      });
+      return;
+    }
+
+    _debounce = Timer(const Duration(milliseconds: 400), _search);
   }
 
   Future<void> _search() async {
@@ -66,6 +86,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   onPressed: _search,
                 ),
               ),
+              onChanged: _onSearchChanged,
               onSubmitted: (_) => _search(),
             ),
           ),
@@ -89,10 +110,21 @@ class _SearchScreenState extends State<SearchScreen> {
                 final book = _results[index];
                 return ListTile(
                   leading: book.coverUrl != null
-                    ? Image.network(
-                        book.coverUrl!,
+                    ? CachedNetworkImage(
+                        imageUrl: book.coverUrl!,
                         width: 40,
-                        errorBuilder: (_, __, ___) =>
+                        placeholder: (_, __) => const SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: Center(
+                            child: SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) =>
                             const Icon(Icons.book),
                       )
                     : const Icon(Icons.book),
