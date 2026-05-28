@@ -8,6 +8,7 @@ import 'search_screen.dart';
 import 'book_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'scanner_screen.dart';
+import '../models/book_sort.dart';
 
 class BookListScreen extends StatefulWidget {
   const BookListScreen({super.key});
@@ -17,6 +18,8 @@ class BookListScreen extends StatefulWidget {
 }
 
 class _BookListScreenState extends State<BookListScreen> {
+  BookSort _sort = BookSort.title;
+  bool _ascending = true;
 
   Future<void> _openSearch() async {
     final selectedBook = await Navigator.push<Book>(
@@ -50,9 +53,9 @@ class _BookListScreenState extends State<BookListScreen> {
       if (!mounted) return;
 
       if (book == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Keine Treffer für ISBN $isbn')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Keine Treffer für ISBN $isbn')));
         return;
       }
 
@@ -64,15 +67,15 @@ class _BookListScreenState extends State<BookListScreen> {
           SnackBar(content: Text('"${book.title}" ist schon im Regal')),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${book.title}" hinzugefügt')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('"${book.title}" hinzugefügt')));
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fehler: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Fehler: $e')));
     }
   }
 
@@ -82,12 +85,29 @@ class _BookListScreenState extends State<BookListScreen> {
       appBar: AppBar(
         title: const Text('Bücherregal'),
         actions: [
-          IconButton(icon: const Icon(Icons.qr_code_scanner), onPressed: _openScanner),
+          PopupMenuButton<BookSort>(
+            icon: const Icon(Icons.sort),
+            tooltip: 'Sortieren nach',
+            initialValue: _sort,
+            onSelected: (value) => setState(() => _sort = value),
+            itemBuilder: (_) => BookSort.values
+                .map((s) => PopupMenuItem(value: s, child: Text(s.label)))
+                .toList(),
+          ),
+          IconButton(
+            icon: Icon(_ascending ? Icons.arrow_upward : Icons.arrow_downward),
+            tooltip: _ascending ? 'Aufsteigen' : 'Absteigend',
+            onPressed: () => setState(() => _ascending = !_ascending),
+          ),
+          IconButton(
+            icon: const Icon(Icons.qr_code_scanner),
+            onPressed: _openScanner,
+          ),
           IconButton(icon: const Icon(Icons.add), onPressed: _openSearch),
         ],
       ),
       body: StreamBuilder<List<BookEntry>>(
-        stream: bookRepository.watchAll(),
+        stream: bookRepository.watchAll(sort: _sort, ascending: _ascending),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

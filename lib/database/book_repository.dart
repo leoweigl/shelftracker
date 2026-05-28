@@ -1,14 +1,70 @@
 import 'package:drift/drift.dart';
 import '../models/book.dart';
 import 'app_database.dart';
+import '../models/book_sort.dart';
 
 class BookRepository {
   final AppDatabase _db;
 
   BookRepository(this._db);
 
-  Stream<List<BookEntry>> watchAll() {
-    return _db.select(_db.books).watch();
+  Stream<List<BookEntry>> watchAll({
+    BookSort sort = BookSort.title,
+    bool ascending = true,
+  }) {
+    final query = _db.select(_db.books);
+
+    switch (sort) {
+      case BookSort.title:
+        query.orderBy([
+          (b) => OrderingTerm(
+            expression: b.title,
+            mode: ascending ? OrderingMode.asc : OrderingMode.desc,
+          ),
+        ]);
+        break;
+
+      case BookSort.author:
+        query.orderBy([
+          (b) => OrderingTerm(
+            expression: b.author,
+            mode: ascending ? OrderingMode.asc : OrderingMode.desc,
+          ),
+        ]);
+        break;
+
+      case BookSort.rating:
+        query.orderBy([
+          (b) => OrderingTerm(
+            expression: b.userRating,
+            mode: ascending ? OrderingMode.asc : OrderingMode.desc,
+            nulls: NullsOrder.last,
+          ),
+          (b) => OrderingTerm.asc(b.title),
+        ]);
+        break;
+
+      case BookSort.keep:
+        query.orderBy([
+          (b) => OrderingTerm(
+            expression: b.keepBook,
+            mode: ascending ? OrderingMode.asc : OrderingMode.desc,
+          ),
+          (b) => OrderingTerm.asc(b.title),
+        ]);
+        break;
+
+      case BookSort.addedAt:
+        query.orderBy([
+          (b) => OrderingTerm(
+            expression: b.addedAt,
+            mode: ascending ? OrderingMode.asc : OrderingMode.desc,
+          ),
+        ]);
+        break;
+    }
+
+    return query.watch();
   }
 
   Stream<BookEntry> watchById(int id) {
