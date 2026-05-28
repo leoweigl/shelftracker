@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelftracker/services/book_api_service.dart';
 import '../database/app_database.dart';
 import '../main.dart';
 import '../models/book.dart';
@@ -6,6 +7,7 @@ import '../widgets/star_rating.dart';
 import 'search_screen.dart';
 import 'book_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'scanner_screen.dart';
 
 class BookListScreen extends StatefulWidget {
   const BookListScreen({super.key});
@@ -15,6 +17,7 @@ class BookListScreen extends StatefulWidget {
 }
 
 class _BookListScreenState extends State<BookListScreen> {
+
   Future<void> _openSearch() async {
     final selectedBook = await Navigator.push<Book>(
       context,
@@ -26,12 +29,47 @@ class _BookListScreenState extends State<BookListScreen> {
     }
   }
 
+  Future<void> _openScanner() async {
+    final isbn = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const ScannerScreen()),
+    );
+
+    if (isbn == null || !mounted) return;
+
+    try {
+      final book = await BookApiService().searchByIsbn(isbn);
+
+      if (!mounted) return;
+
+      if (book == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Keine Treffer für ISBN $isbn')),
+        );
+        return;
+      }
+
+      await bookRepository.insertFromBook(book);
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('"${book.title}" hinzugefügt')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Fehler: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bücherregal'),
         actions: [
+          IconButton(icon: const Icon(Icons.qr_code_scanner), onPressed: _openScanner),
           IconButton(icon: const Icon(Icons.add), onPressed: _openSearch),
         ],
       ),
