@@ -14,21 +14,33 @@ class BookRepository {
   Stream<BookEntry> watchById(int id) {
     return (_db.select(_db.books)..where((b) => b.id.equals(id))).watchSingle();
   }
-  
+
   Future<List<BookEntry>> getAll() {
     return _db.select(_db.books).get();
   }
-  
-  Future<int> insertFromBook(Book book) {
-    return _db.into(_db.books).insert(
-      BooksCompanion(
-        title: Value(book.title),
-        author: Value(book.author),
-        publicationYear: Value(book.publicationYear),
-        coverUrl: Value(book.coverUrl),
-        userRating: Value(book.userRating),
-      ),
-    );
+
+  Future<int?> insertFromBook(Book book) async {
+    final existing =
+        await (_db.select(_db.books)..where(
+              (b) => b.title.equals(book.title) & b.author.equals(book.author),
+            ))
+            .get();
+
+    if (existing.isNotEmpty) {
+      return null;
+    }
+
+    return _db
+        .into(_db.books)
+        .insert(
+          BooksCompanion(
+            title: Value(book.title),
+            author: Value(book.author),
+            publicationYear: Value(book.publicationYear),
+            coverUrl: Value(book.coverUrl),
+            userRating: Value(book.userRating),
+          ),
+        );
   }
 
   Future<void> updateRating(int id, double? rating) {

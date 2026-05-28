@@ -24,8 +24,15 @@ class _BookListScreenState extends State<BookListScreen> {
       MaterialPageRoute(builder: (_) => const SearchScreen()),
     );
 
-    if (selectedBook != null) {
-      await bookRepository.insertFromBook(selectedBook);
+    if (selectedBook == null || !mounted) return;
+
+    final id = await bookRepository.insertFromBook(selectedBook);
+
+    if (!mounted) return;
+    if (id == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('"${selectedBook.title}" ist schon im Regal')),
+      );
     }
   }
 
@@ -49,12 +56,18 @@ class _BookListScreenState extends State<BookListScreen> {
         return;
       }
 
-      await bookRepository.insertFromBook(book);
+      final id = await bookRepository.insertFromBook(book);
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('"${book.title}" hinzugefügt')),
-      );
+      if (id == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('"${book.title}" ist schon im Regal')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('"${book.title}" hinzugefügt')),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
