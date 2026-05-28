@@ -3,6 +3,8 @@ import '../database/app_database.dart';
 import '../main.dart';
 import '../widgets/star_rating.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
+import '../utils/dialogs.dart';
 
 class BookDetailScreen extends StatelessWidget {
   final int bookId;
@@ -23,7 +25,27 @@ class BookDetailScreen extends StatelessWidget {
         final book = snapshot.data!;
 
         return Scaffold(
-          appBar: AppBar(title: Text(book.title)),
+          appBar: AppBar(
+            title: Text(book.title),
+            actions: [
+              IconButton(
+                  onPressed: () async {
+                    final confirmed = await confirmDialog(
+                      context,
+                      title: 'Buch löschen?',
+                      message: '"${book.title}" wird engültig aus deinem Regal entfernt.',
+                      confirmLabel: 'Löschen',
+                      isDestructive: true,
+                    );
+                    if (!confirmed || !context.mounted) return;
+                    await bookRepository.delete(book.id);
+                    if (context.mounted) Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.delete_outline),
+                  tooltip: 'Buch löschen',
+              ),
+            ],
+          ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -61,9 +83,14 @@ class BookDetailScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                Text(
-                  'Bewertung',
-                  style: Theme.of(context).textTheme.titleSmall,
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Bewertung',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 StarRating(
@@ -77,12 +104,32 @@ class BookDetailScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 SwitchListTile(
-                  title: const Text('Behalten'),
+                  title: const Text('Status'),
                   subtitle: Text(book.keepBook ? 'Behalten' : 'Verkaufen'),
+                  secondary: Icon(
+                    book.keepBook
+                        ? Icons.bookmarks
+                        : Icons.monetization_on_outlined,
+                  ),
                   value: book.keepBook,
                   onChanged: (newValue) {
                     bookRepository.setKeep(book.id, newValue);
                   },
+                ),
+
+                const SizedBox(height: 24),
+
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Hinzugefügt am ${DateFormat('dd.MM.yyyy').format(book.addedAt)}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

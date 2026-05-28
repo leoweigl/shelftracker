@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'database/app_database.dart';
 import 'database/book_repository.dart';
 import 'screens/book_list_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 late final AppDatabase database;
 late final BookRepository bookRepository;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   database = AppDatabase();
   bookRepository = BookRepository(database);
 
+  await initializeDateFormatting('de_DE');
   runApp(const ShelfTrackerApp());
 }
 

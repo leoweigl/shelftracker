@@ -9,6 +9,7 @@ import 'book_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'scanner_screen.dart';
 import '../models/book_sort.dart';
+import '../utils/dialogs.dart';
 
 class BookListScreen extends StatefulWidget {
   const BookListScreen({super.key});
@@ -172,7 +173,17 @@ class _BookListScreenState extends State<BookListScreen> {
                 },
                 trailing: IconButton(
                   icon: const Icon(Icons.delete_outline),
-                  onPressed: () => bookRepository.delete(book.id),
+                  onPressed: () async {
+                    final confirmed = await confirmDialog(
+                      context,
+                      title: 'Buch löschen?',
+                      message: '"${book.title}" wird endgültig aus deinem Regal entfernt.',
+                      confirmLabel: 'Löschen',
+                      isDestructive: true,
+                    );
+                    if (!confirmed) return;
+                    await bookRepository.delete(book.id);
+                  },
                 ),
               );
             },

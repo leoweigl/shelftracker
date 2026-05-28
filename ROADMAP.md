@@ -33,18 +33,20 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
   - [x] ISBN-Barcode-Scanner (`mobile_scanner`, EAN-13/EAN-8, `ScannerScreen`, `searchByIsbn()` im `BookApiService`)
   - [x] Duplikat-Prüfung: `insertFromBook` prüft auf gleichen Titel + Autor, fügt nichts ein bei Duplikat ("ist schon im Regal")
 
+- [x] **Stage 7 — Sortierung & Detail-Politur**
+  - [x] Sortierfunktionen: Titel, Autor, Bewertung, Behalten, Hinzugefügt
+  - [x] Richtungs-Toggle (auf-/absteigend) per IconButton
+  - [x] Sortier-Auswahl via PopupMenuButton in der AppBar
+  - [x] DB-seitige Sortierung über Drifts `orderBy` (effizient, mit null-handling und Tiebreakern)
+  - [x] Datum-Anzeige im Detail-Screen formatiert (`dd.MM.yyyy` via `intl`)
+  - [x] Datum dezent gestylt und auf Höhe der SwitchListTile eingerückt
+  - [x] Switch-Subtitle aufgeräumt (kein doppeltes "Behalten")
+  - [x] Lösch-Bestätigung mit wiederverwendbarem `confirmDialog` in `utils/dialogs.dart`
+  - [x] Confirm-Dialog in BookListScreen und BookDetailScreen verwendet
+
 ---
 
-## Geplant — Stage 7 (Ideen)
-
-- [ ] **Sortierfunktionen** für die Bücherliste
-  - [ ] nach Titel
-  - [ ] nach Autor
-  - [ ] nach Bewertung
-  - [ ] nach Behalten / Verkaufen
-  - Überlegung: Sortier-Auswahl z. B. über ein Dropdown/PopupMenu in der AppBar;
-    Umsetzung über `orderBy` in einer neuen Repository-Methode oder Sortierung der
-    Liste im `StreamBuilder`.
+## Geplant — Stage 8 (Ideen)
 
 - [ ] **Google Books API** als zusätzliche/alternative Datenquelle
   - Bessere Abdeckung für deutsche Titel als Open Library (vor allem bei ISBN-Lookup).
@@ -60,4 +62,6 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
 - [ ] Suchfeld / Filter innerhalb der eigenen Bücherliste
 - [ ] "Gelesen"-Statistik (Anzahl gelesen, Durchschnittsbewertung etc.)
 - [ ] Export der Liste (z. B. als CSV oder JSON)
-- [ ] CLAUDE.md auf aktuellen Stand bringen (Scanner + Duplikat-Prüfung fehlen dort noch)
+- [ ] Cover-Schatten / Card-Wrapper im Detail-Screen für mehr Tiefe
+- [ ] Sortier-Einstellung über App-Neustarts persistieren (`shared_preferences`)
+- [ ] CLAUDE.md auf aktuellen Stand bringen (Scanner, Duplikat-Prüfung, Sortierung fehlen dort noch)
