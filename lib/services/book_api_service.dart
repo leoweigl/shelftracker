@@ -10,12 +10,12 @@ class BookApiService {
     if (query.trim().isEmpty) return [];
 
     try {
-      final results = await _openLibrary.search(query);
+      final results = await _googleBooks.search(query);
       if (results.isNotEmpty) return results;
     } catch (_) {}
 
     try {
-      return await _googleBooks.search(query);
+      return await _openLibrary.search(query);
     } catch (_) {
       return [];
     }
@@ -23,12 +23,12 @@ class BookApiService {
 
   Future<Book?> searchByIsbn(String isbn) async {
     try {
-      final book = await _openLibrary.searchByIsbn(isbn);
+      final book = await _googleBooks.searchByIsbn(isbn);
       if (book != null) return book;
     } catch (_) {}
 
     try {
-      final book = await _googleBooks.searchByIsbn(isbn);
+      final book = await _openLibrary.searchByIsbn(isbn);
       return book;
     } catch (_) {
       return null;

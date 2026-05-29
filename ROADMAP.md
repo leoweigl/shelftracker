@@ -44,15 +44,20 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
   - [x] Lösch-Bestätigung mit wiederverwendbarem `confirmDialog` in `utils/dialogs.dart`
   - [x] Confirm-Dialog in BookListScreen und BookDetailScreen verwendet
 
+- [x] **Stage 8 — Google Books als Fallback-API**
+  - [x] Service-Aufteilung: `OpenLibraryService` + `GoogleBooksService` als eigene Klassen
+  - [x] `BookApiService` als Orchestrator (Open Library zuerst, Fallback auf Google Books bei leerem Ergebnis oder Fehler)
+  - [x] `Book.fromGoogleBooks` Factory mit http→https Cover-URL-Fix und uneinheitlicher `publishedDate`-Behandlung
+  - [x] Mindestlänge 3 Zeichen im SearchScreen (weniger API-Last)
+  - [x] Google-Books-Fehler (z. B. 429) werden gefangen statt zu crashen
+  - [x] Google Books API-Key via `--dart-define=GOOGLE_BOOKS_API_KEY` (nicht im Source Code, IntelliJ-Run-Configuration)
+  - [x] API-Einschränkung in Google Cloud Console: nur Books API erlaubt
+
 ---
 
-## Geplant — Stage 8 (Ideen)
+## Geplant — Stage 9 (Ideen)
 
-- [ ] **Google Books API** als zusätzliche/alternative Datenquelle
-  - Bessere Abdeckung für deutsche Titel als Open Library (vor allem bei ISBN-Lookup).
-  - Mögliche Strategie: erst Open Library, bei keinem Treffer Google Books als Fallback.
-  - Endpoint: `https://www.googleapis.com/books/v1/volumes?q=...`
-  - Eigene Parser-Logik nötig (anderes JSON-Format als Open Library).
+(noch offen — z. B. eine der "Weitere Ideen"-Punkte unten als nächstes ziehen)
 
 ---
 
@@ -64,4 +69,6 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
 - [ ] Export der Liste (z. B. als CSV oder JSON)
 - [ ] Cover-Schatten / Card-Wrapper im Detail-Screen für mehr Tiefe
 - [ ] Sortier-Einstellung über App-Neustarts persistieren (`shared_preferences`)
-- [ ] CLAUDE.md auf aktuellen Stand bringen (Scanner, Duplikat-Prüfung, Sortierung fehlen dort noch)
+- [ ] CLAUDE.md auf aktuellen Stand bringen (Scanner, Duplikat-Prüfung, Sortierung, Google Books fehlen dort noch)
+- [ ] Bei breiterer Verteilung (mehr als ~10 Nutzer): Backend-Proxy für Google Books API-Key (z. B. Cloudflare Workers)
+- [ ] API-Key auf Android-Apps mit SHA-1-Fingerprint einschränken
