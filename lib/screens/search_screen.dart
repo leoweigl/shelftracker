@@ -31,7 +31,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void _onSearchChanged(String query) {
     _debounce?.cancel();
 
-    if (query.trim().isEmpty) {
+    if (query.trim().length < 3) {
       setState(() {
         _results = [];
         _errorMessage = null;
@@ -40,7 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    _debounce = Timer(const Duration(milliseconds: 400), _search);
+    _debounce = Timer(const Duration(milliseconds: 600), _search);
   }
 
   Future<void> _search() async {

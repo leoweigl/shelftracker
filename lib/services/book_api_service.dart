@@ -1,52 +1,37 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../models/book.dart';
+import 'open_library_service.dart';
+import 'google_books_service.dart';
 
 class BookApiService {
-  static const String _baseUrl = 'https://openlibrary.org';
+  final OpenLibraryService _openLibrary = OpenLibraryService();
+  final GoogleBooksService _googleBooks = GoogleBooksService();
 
   Future<List<Book>> search(String query) async {
-    if (query.trim().isEmpty) {
+    if (query.trim().isEmpty) return [];
+
+    try {
+      final results = await _openLibrary.search(query);
+      if (results.isNotEmpty) return results;
+    } catch (_) {}
+
+    try {
+      return await _googleBooks.search(query);
+    } catch (_) {
       return [];
     }
-
-    final url = Uri.parse(
-      '$_baseUrl/search.json?q=${Uri.encodeQueryComponent(query)}&limit=20',
-    );
-
-    final response = await http.get(url);
-
-    if (response.statusCode != 200) {
-      throw Exception('API-Fehler: ${response.statusCode}');
-    }
-
-    final data = jsonDecode(response.body) as Map<String, dynamic>;
-    final docs = data['docs'] as List;
-
-    return docs
-        .map((doc) => Book.fromOpenLibrary(doc as Map<String, dynamic>))
-        .toList();
   }
-  
+
   Future<Book?> searchByIsbn(String isbn) async {
-    final cleanIsbn = isbn.replaceAll(RegExp(r'[^0-9X]'), '');
-    if (cleanIsbn.isEmpty) return null;
+    try {
+      final book = await _openLibrary.searchByIsbn(isbn);
+      if (book != null) return book;
+    } catch (_) {}
 
-    final url = Uri.parse(
-      '$_baseUrl/search.json?q=isbn:$cleanIsbn&limit=1',
-    );
-
-    final response = await http.get(url);
-
-    if (response.statusCode != 200) {
-      throw Exception('API-Fehler: ${response.statusCode}');
+    try {
+      final book = await _googleBooks.searchByIsbn(isbn);
+      return book;
+    } catch (_) {
+      return null;
     }
-
-    final data = jsonDecode(response.body) as Map<String, dynamic>;
-    final docs = data['docs'] as List;
-    
-    if (docs.isEmpty) return null;
-    
-    return Book.fromOpenLibrary(docs.first as Map<String, dynamic>);
   }
 }
