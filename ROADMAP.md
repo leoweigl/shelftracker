@@ -44,9 +44,9 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
   - [x] Lösch-Bestätigung mit wiederverwendbarem `confirmDialog` in `utils/dialogs.dart`
   - [x] Confirm-Dialog in BookListScreen und BookDetailScreen verwendet
 
-- [x] **Stage 8 — Google Books als Fallback-API**
+- [x] **Stage 8 — Google Books als zusätzliche API**
   - [x] Service-Aufteilung: `OpenLibraryService` + `GoogleBooksService` als eigene Klassen
-  - [x] `BookApiService` als Orchestrator (Open Library zuerst, Fallback auf Google Books bei leerem Ergebnis oder Fehler)
+  - [x] `BookApiService` als Orchestrator (Google Books zuerst, Fallback auf Open Library bei leerem Ergebnis oder Fehler)
   - [x] `Book.fromGoogleBooks` Factory mit http→https Cover-URL-Fix und uneinheitlicher `publishedDate`-Behandlung
   - [x] Mindestlänge 3 Zeichen im SearchScreen (weniger API-Last)
   - [x] Google-Books-Fehler (z. B. 429) werden gefangen statt zu crashen
@@ -57,7 +57,15 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
 
 ## Geplant — Stage 9 (Ideen)
 
-(noch offen — z. B. eine der "Weitere Ideen"-Punkte unten als nächstes ziehen)
+- [ ] **DNB (Deutsche Nationalbibliothek) API als dritte Quelle**
+  - Pflichtexemplar-Datenbank: jedes in Deutschland erschienene Buch ist erfasst → vollständigste Quelle für deutsche Titel
+  - Endpoint: SRU/SRW-Schnittstelle, z. B. `https://services.dnb.de/sru/dnb?...`
+  - Aufwand: XML statt JSON parsen, eigene Such-Syntax (CQL), weniger/keine Cover-Bilder
+  - Idee: `DnbService` als dritter Service neben Open Library und Google Books;
+    der `BookApiService`-Orchestrator entscheidet je nach Heuristik (z. B. erstmal weiter Google Books,
+    DNB als Fallback bei deutschen ISBNs oder bei leerem Ergebnis)
+  - Cover-Lücken könnten über bestehende Quellen (Google Books / Open Library)
+    nachgeladen werden, falls man Lust auf ein Hybrid-Setup hat
 
 ---
 

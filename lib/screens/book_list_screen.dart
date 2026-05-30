@@ -158,9 +158,21 @@ class _BookListScreenState extends State<BookListScreen> {
                       '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
                     ),
                     const SizedBox(height: 4),
-                    book.userRating == null
-                        ? const Text('noch nicht bewertet')
-                        : StarRating(rating: book.userRating!),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        book.userRating == null
+                            ? const Text('noch nicht bewertet')
+                            : StarRating(rating: book.userRating!),
+                        const SizedBox(width: 64),
+                        Icon(
+                          book.keepBook ?
+                          Icons.bookmarks :
+                          Icons.monetization_on_outlined,
+                          size: 16,
+                        ),
+                      ],
+                    ),
                   ],
                 ),
                 onTap: () {
