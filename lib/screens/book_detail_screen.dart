@@ -29,20 +29,21 @@ class BookDetailScreen extends StatelessWidget {
             title: Text(book.title),
             actions: [
               IconButton(
-                  onPressed: () async {
-                    final confirmed = await confirmDialog(
-                      context,
-                      title: 'Buch löschen?',
-                      message: '"${book.title}" wird engültig aus deinem Regal entfernt.',
-                      confirmLabel: 'Löschen',
-                      isDestructive: true,
-                    );
-                    if (!confirmed || !context.mounted) return;
-                    await bookRepository.delete(book.id);
-                    if (context.mounted) Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.delete_outline),
-                  tooltip: 'Buch löschen',
+                onPressed: () async {
+                  final confirmed = await confirmDialog(
+                    context,
+                    title: 'Buch löschen?',
+                    message:
+                        '"${book.title}" wird engültig aus deinem Regal entfernt.',
+                    confirmLabel: 'Löschen',
+                    isDestructive: true,
+                  );
+                  if (!confirmed || !context.mounted) return;
+                  await bookRepository.delete(book.id);
+                  if (context.mounted) Navigator.pop(context);
+                },
+                icon: const Icon(Icons.delete_outline),
+                tooltip: 'Buch löschen',
               ),
             ],
           ),
@@ -107,9 +108,7 @@ class BookDetailScreen extends StatelessWidget {
                   title: const Text('Status'),
                   subtitle: Text(book.keepBook ? 'Behalten' : 'Verkaufen'),
                   secondary: Icon(
-                    book.keepBook
-                        ? Icons.bookmarks
-                        : Icons.monetization_on_outlined,
+                    book.keepBook ? Icons.shelves : Icons.sell_outlined,
                   ),
                   value: book.keepBook,
                   onChanged: (newValue) {

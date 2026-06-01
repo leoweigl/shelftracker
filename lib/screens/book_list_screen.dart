@@ -125,8 +125,15 @@ class _BookListScreenState extends State<BookListScreen> {
             );
           }
 
-          return ListView.builder(
+          // return ListView.builder(
+          return ListView.separated(
             itemCount: books.length,
+            separatorBuilder: (context, index) => Divider(
+              height: 8,
+              indent: 72,
+              endIndent: 16,
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
             itemBuilder: (context, index) {
               final book = books[index];
               return ListTile(
@@ -164,13 +171,43 @@ class _BookListScreenState extends State<BookListScreen> {
                         book.userRating == null
                             ? const Text('noch nicht bewertet')
                             : StarRating(rating: book.userRating!),
-                        const SizedBox(width: 64),
-                        Icon(
-                          book.keepBook ?
-                          Icons.bookmarks :
-                          Icons.monetization_on_outlined,
-                          size: 16,
-                        ),
+                        const Spacer(),
+                        if (!book.keepBook)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.tertiaryContainer,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.sell_outlined,
+                                  size: 12,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onTertiaryContainer,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Verkaufen',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onTertiaryContainer,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                       ],
                     ),
                   ],
@@ -189,7 +226,8 @@ class _BookListScreenState extends State<BookListScreen> {
                     final confirmed = await confirmDialog(
                       context,
                       title: 'Buch löschen?',
-                      message: '"${book.title}" wird endgültig aus deinem Regal entfernt.',
+                      message:
+                          '"${book.title}" wird endgültig aus deinem Regal entfernt.',
                       confirmLabel: 'Löschen',
                       isDestructive: true,
                     );
