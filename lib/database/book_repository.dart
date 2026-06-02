@@ -86,7 +86,7 @@ class BookRepository {
       return null;
     }
 
-    return _db
+    final bookId = await _db
         .into(_db.books)
         .insert(
           BooksCompanion(
@@ -97,6 +97,12 @@ class BookRepository {
             userRating: Value(book.userRating),
           ),
         );
+
+    for (final categoryName in book.categories) {
+      final categoryId = await getOrCreateCategory(categoryName);
+      await addCategoryToBook(bookId, categoryId);
+    }
+    return bookId;
   }
 
   Future<void> updateRating(int id, double? rating) {
@@ -119,5 +125,62 @@ class BookRepository {
 
   Future<int> delete(int id) {
     return (_db.delete(_db.books)..where((b) => b.id.equals(id))).go();
+  }
+
+  Future<int> getOrCreateCategory(String name) async {
+    final trimmed = name.trim();
+
+    final existing =
+        await (_db.select(_db.categories)
+              ..where((c) => c.name.lower().equals(trimmed.toLowerCase())))
+            .getSingleOrNull();
+
+    if (existing != null) return existing.id;
+
+    return _db
+        .into(_db.categories)
+        .insert(CategoriesCompanion(name: Value(trimmed)));
+  }
+
+  Stream<List<CategoryEntry>> watchCategories() {
+    return (_db.select(
+      _db.categories,
+    )..orderBy([(c) => OrderingTerm.asc(c.name)])).watch();
+  }
+
+  Future<void> addCategoryToBook(int bookId, int categoryId) async {
+    await _db
+        .into(_db.bookCategories)
+        .insert(
+          BookCategoriesCompanion(
+            bookId: Value(bookId),
+            categoryId: Value(categoryId),
+          ),
+          mode: InsertMode.insertOrIgnore,
+        );
+  }
+
+  Future<void> removeCategoryFromBook(int bookId, int categoryId) async {
+    await (_db.delete(_db.bookCategories)..where(
+          (bc) => bc.bookId.equals(bookId) & bc.categoryId.equals(categoryId),
+        ))
+        .go();
+  }
+
+  Stream<List<CategoryEntry>> watchCategoriesForBook(int bookId) {
+    final query = _db.select(_db.categories).join([
+      innerJoin(
+        _db.bookCategories,
+        _db.bookCategories.categoryId.equalsExp(_db.categories.id),
+      ),
+    ])..where(_db.bookCategories.bookId.equals(bookId));
+
+    return query.watch().map(
+      (rows) => rows.map((row) => row.readTable(_db.categories)).toList(),
+    );
+  }
+
+  Future<void> deleteCategory(int id) async {
+    await (_db.delete(_db.categories)..where((c) => c.id.equals(id))).go();
   }
 }

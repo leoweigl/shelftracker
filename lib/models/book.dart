@@ -4,6 +4,7 @@ class Book {
   final int? publicationYear;
   final String? coverUrl;
   final double? userRating;
+  final List<String> categories;
 
   Book({
     required this.title,
@@ -11,6 +12,7 @@ class Book {
     this.publicationYear,
     this.coverUrl,
     this.userRating,
+    this.categories = const [],
   });
 
   factory Book.fromOpenLibrary(Map<String, dynamic> json) {
@@ -24,11 +26,21 @@ class Book {
         ? authors.first.toString()
         : 'Unbekannt';
 
+    final rawSubjects = json['subject'] as List?;
+    final categories = <String>{};
+    if (rawSubjects != null) {
+      for (final s in rawSubjects.take(5)) {
+        final trimmed = s.toString().trim();
+        if (trimmed.isNotEmpty) categories.add(trimmed);
+      }
+    }
+
     return Book(
       title: json['title']?.toString() ?? 'Ohne Titel',
       author: firstAuthor,
       publicationYear: json['first_publish_year'] as int?,
       coverUrl: coverUrl,
+      categories: categories.toList(),
     );
   }
 
@@ -56,11 +68,23 @@ class Book {
       year = int.tryParse(publishedDate.substring(0, 4));
     }
 
+    final rawCategories = volumeInfo['categories'] as List?;
+    final categories = <String>{};
+    if (rawCategories != null) {
+      for (final raw in rawCategories) {
+        for (final part in raw.toString().split('/')) {
+          final trimmed = part.trim();
+          if (trimmed.isNotEmpty) categories.add(trimmed);
+        }
+      }
+    }
+
     return Book(
       title: volumeInfo['title']?.toString() ?? 'Ohne Titel',
       author: firstAuthor,
       publicationYear: year,
       coverUrl: coverUrl,
+      categories: categories.toList(),
     );
   }
 

@@ -53,19 +53,62 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
   - [x] Google Books API-Key via `--dart-define=GOOGLE_BOOKS_API_KEY` (nicht im Source Code, IntelliJ-Run-Configuration)
   - [x] API-Einschränkung in Google Cloud Console: nur Books API erlaubt
 
+- [x] **Theme & Status-Anzeige (Zwischenpolitur)**
+  - [x] Seed-Color auf `Colors.blueGrey` (ruhigeres, "Bibliotheks"-Theme)
+  - [x] Material 3 generiert die komplette Palette automatisch (manuelle Tertiary-Overrides entfernt)
+  - [x] "Verkaufen"-Pill (tertiaryContainer) in der Liste, nur sichtbar wenn nicht behalten
+  - [x] Behalten/Verkaufen-Icons im Detail-Screen
+  - [ ] (optional, zurückgestellt) Trennlinien / Cover-Schatten in der Liste
+
 ---
 
-## Geplant — Stage 9 (Ideen)
+## In Arbeit — Stage 9: Kategorien / Tags
+
+Bücher mehreren Kategorien zuordnen können (n:m, wie Tags). Eigene Kategorien
+erstellbar. Genre-Vorschläge aus der API, aber manuell änderbar.
+
+- [ ] **Etappe 1 — Datenmodell**
+  - Neue Tabellen `Categories` (id, name unique) und `BookCategories` (Verknüpfungstabelle, n:m)
+  - Foreign Keys mit `onDelete: cascade` (löscht Zuordnungen automatisch mit dem Buch)
+  - DB-Migration: `schemaVersion` 1 → 2, `MigrationStrategy` mit `onUpgrade` (bestehende Bücher bleiben erhalten)
+  - `dart run build_runner build --delete-conflicting-outputs`
+- [ ] **Etappe 2 — Repository-Methoden**
+  - Kategorie anlegen, Buch ↔ Kategorie zuweisen/entfernen, Kategorien eines Buchs abfragen
+- [ ] **Etappe 3 — API-Genres als Vorschlag**
+  - `categories` (Google Books) bzw. `subject` (Open Library) beim Hinzufügen übernehmen, manuell änderbar
+- [ ] **Etappe 4 — UI zum Zuweisen**
+  - Im Detail-Screen Kategorien hinzufügen / entfernen
+- [ ] **Etappe 5 — UI zum Filtern / Navigieren**
+  - Nach Kategorie filtern; eigener Kategorien-Screen (Ordner-Ansicht)
+
+---
+
+## Geplant — Stage 10 (Ideen)
 
 - [ ] **DNB (Deutsche Nationalbibliothek) API als dritte Quelle**
   - Pflichtexemplar-Datenbank: jedes in Deutschland erschienene Buch ist erfasst → vollständigste Quelle für deutsche Titel
   - Endpoint: SRU/SRW-Schnittstelle, z. B. `https://services.dnb.de/sru/dnb?...`
   - Aufwand: XML statt JSON parsen, eigene Such-Syntax (CQL), weniger/keine Cover-Bilder
   - Idee: `DnbService` als dritter Service neben Open Library und Google Books;
-    der `BookApiService`-Orchestrator entscheidet je nach Heuristik (z. B. erstmal weiter Google Books,
-    DNB als Fallback bei deutschen ISBNs oder bei leerem Ergebnis)
-  - Cover-Lücken könnten über bestehende Quellen (Google Books / Open Library)
-    nachgeladen werden, falls man Lust auf ein Hybrid-Setup hat
+    der `BookApiService`-Orchestrator entscheidet je nach Heuristik
+  - Cover-Lücken könnten über bestehende Quellen (Google Books / Open Library) nachgeladen werden
+
+---
+
+## Geplant — Dashboard / Startbildschirm
+
+Beim Öffnen der App ein Dashboard mit Auswahl zwischen den Hauptfunktionen,
+statt direkt in die Bücherliste zu springen:
+
+- [ ] **Bücherregal** → bestehender BookListScreen
+- [ ] **Buch suchen** → SearchScreen
+- [ ] **ISBN-Scanner** → ScannerScreen
+- [ ] **Ordner / Kategorien anzeigen** → Übersicht aller Kategorien;
+  Antippen einer Kategorie öffnet einen ListScreen mit den Büchern dieser Kategorie
+  (baut auf Stage 9 auf)
+
+Hinweis: Setzt sinnvollerweise Stage 9 (Kategorien) voraus, zumindest für den
+Kategorien-Punkt. Die anderen drei Einstiegspunkte gehen auch vorher schon.
 
 ---
 
@@ -76,7 +119,8 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
 - [ ] "Gelesen"-Statistik (Anzahl gelesen, Durchschnittsbewertung etc.)
 - [ ] Export der Liste (z. B. als CSV oder JSON)
 - [ ] Cover-Schatten / Card-Wrapper im Detail-Screen für mehr Tiefe
+- [ ] Trennlinien zwischen Listeneinträgen (ListView.separated)
 - [ ] Sortier-Einstellung über App-Neustarts persistieren (`shared_preferences`)
-- [ ] CLAUDE.md auf aktuellen Stand bringen (Scanner, Duplikat-Prüfung, Sortierung, Google Books fehlen dort noch)
+- [ ] CLAUDE.md auf aktuellen Stand bringen (Scanner, Duplikat-Prüfung, Sortierung, Google Books, Kategorien fehlen dort noch)
 - [ ] Bei breiterer Verteilung (mehr als ~10 Nutzer): Backend-Proxy für Google Books API-Key (z. B. Cloudflare Workers)
 - [ ] API-Key auf Android-Apps mit SHA-1-Fingerprint einschränken

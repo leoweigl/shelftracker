@@ -11,7 +11,9 @@ class OpenLibraryService {
     }
 
     final url = Uri.parse(
-      '$_baseUrl/search.json?q=${Uri.encodeQueryComponent(query)}&limit=20',
+      '$_baseUrl/search.json?q=${Uri.encodeQueryComponent(query)}'
+      '&limit=20'
+      '&fields=key,title,author_name,first_publish_year,cover_i,subject',
     );
 
     final response = await http.get(url);
@@ -33,7 +35,9 @@ class OpenLibraryService {
     if (cleanIsbn.isEmpty) return null;
 
     final url = Uri.parse(
-      '$_baseUrl/search.json?q=isbn:$cleanIsbn&limit=1',
+      '$_baseUrl/search.json?q=isbn:$cleanIsbn'
+      '&limit=1'
+      '&fields=key,title,author_name,first_publish_year,cover_i,subject',
     );
 
     final response = await http.get(url);
