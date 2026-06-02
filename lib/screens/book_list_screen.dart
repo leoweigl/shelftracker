@@ -125,7 +125,6 @@ class _BookListScreenState extends State<BookListScreen> {
             );
           }
 
-          // return ListView.builder(
           return ListView.separated(
             itemCount: books.length,
             separatorBuilder: (context, index) => Divider(
@@ -160,11 +159,55 @@ class _BookListScreenState extends State<BookListScreen> {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '${book.author}'
-                      '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${book.author}'
+                              '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
+                        ),
+                        const Spacer(),
+                        if (book.isFavorite)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.secondaryContainer.withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(8),
+                              // border: Border.all(
+                              //   color: Theme.of(context).colorScheme.secondary,
+                              // ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.favorite,
+                                  size: 12,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSecondaryContainer,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Favorit',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSecondaryContainer,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
+
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -182,7 +225,7 @@ class _BookListScreenState extends State<BookListScreen> {
                               color: Theme.of(
                                 context,
                               ).colorScheme.tertiaryContainer,
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,

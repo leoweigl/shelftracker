@@ -13,6 +13,7 @@ class Books extends Table {
   RealColumn get userRating => real().nullable()();
   BoolColumn get isFinished => boolean().withDefault(const Constant(false))();
   BoolColumn get keepBook => boolean().withDefault(const Constant(true))();
+  BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   DateTimeColumn get addedAt => dateTime().withDefault(currentDateAndTime)();
 }
 
@@ -38,7 +39,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -49,6 +50,9 @@ class AppDatabase extends _$AppDatabase {
       if (from < 2) {
         await m.createTable(categories);
         await m.createTable(bookCategories);
+      }
+      if (from < 3) {
+        await m.addColumn(books, books.isFavorite);
       }
     },
   );

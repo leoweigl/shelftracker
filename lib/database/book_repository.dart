@@ -183,4 +183,10 @@ class BookRepository {
   Future<void> deleteCategory(int id) async {
     await (_db.delete(_db.categories)..where((c) => c.id.equals(id))).go();
   }
+
+  Future<void> setFavorite(int id, bool value) async {
+    await (_db.update(_db.books)..where((b) => b.id.equals(id))).write(
+      BooksCompanion(isFavorite: Value(value)),
+    );
+  }
 }

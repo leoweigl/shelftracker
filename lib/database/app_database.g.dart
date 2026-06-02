@@ -102,6 +102,21 @@ class $BooksTable extends Books with TableInfo<$BooksTable, BookEntry> {
     ),
     defaultValue: const Constant(true),
   );
+  static const VerificationMeta _isFavoriteMeta = const VerificationMeta(
+    'isFavorite',
+  );
+  @override
+  late final GeneratedColumn<bool> isFavorite = GeneratedColumn<bool>(
+    'is_favorite',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_favorite" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _addedAtMeta = const VerificationMeta(
     'addedAt',
   );
@@ -124,6 +139,7 @@ class $BooksTable extends Books with TableInfo<$BooksTable, BookEntry> {
     userRating,
     isFinished,
     keepBook,
+    isFavorite,
     addedAt,
   ];
   @override
@@ -190,6 +206,12 @@ class $BooksTable extends Books with TableInfo<$BooksTable, BookEntry> {
         keepBook.isAcceptableOrUnknown(data['keep_book']!, _keepBookMeta),
       );
     }
+    if (data.containsKey('is_favorite')) {
+      context.handle(
+        _isFavoriteMeta,
+        isFavorite.isAcceptableOrUnknown(data['is_favorite']!, _isFavoriteMeta),
+      );
+    }
     if (data.containsKey('added_at')) {
       context.handle(
         _addedAtMeta,
@@ -237,6 +259,10 @@ class $BooksTable extends Books with TableInfo<$BooksTable, BookEntry> {
         DriftSqlType.bool,
         data['${effectivePrefix}keep_book'],
       )!,
+      isFavorite: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_favorite'],
+      )!,
       addedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}added_at'],
@@ -259,6 +285,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
   final double? userRating;
   final bool isFinished;
   final bool keepBook;
+  final bool isFavorite;
   final DateTime addedAt;
   const BookEntry({
     required this.id,
@@ -269,6 +296,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
     this.userRating,
     required this.isFinished,
     required this.keepBook,
+    required this.isFavorite,
     required this.addedAt,
   });
   @override
@@ -288,6 +316,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
     }
     map['is_finished'] = Variable<bool>(isFinished);
     map['keep_book'] = Variable<bool>(keepBook);
+    map['is_favorite'] = Variable<bool>(isFavorite);
     map['added_at'] = Variable<DateTime>(addedAt);
     return map;
   }
@@ -308,6 +337,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
           : Value(userRating),
       isFinished: Value(isFinished),
       keepBook: Value(keepBook),
+      isFavorite: Value(isFavorite),
       addedAt: Value(addedAt),
     );
   }
@@ -326,6 +356,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
       userRating: serializer.fromJson<double?>(json['userRating']),
       isFinished: serializer.fromJson<bool>(json['isFinished']),
       keepBook: serializer.fromJson<bool>(json['keepBook']),
+      isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       addedAt: serializer.fromJson<DateTime>(json['addedAt']),
     );
   }
@@ -341,6 +372,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
       'userRating': serializer.toJson<double?>(userRating),
       'isFinished': serializer.toJson<bool>(isFinished),
       'keepBook': serializer.toJson<bool>(keepBook),
+      'isFavorite': serializer.toJson<bool>(isFavorite),
       'addedAt': serializer.toJson<DateTime>(addedAt),
     };
   }
@@ -354,6 +386,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
     Value<double?> userRating = const Value.absent(),
     bool? isFinished,
     bool? keepBook,
+    bool? isFavorite,
     DateTime? addedAt,
   }) => BookEntry(
     id: id ?? this.id,
@@ -366,6 +399,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
     userRating: userRating.present ? userRating.value : this.userRating,
     isFinished: isFinished ?? this.isFinished,
     keepBook: keepBook ?? this.keepBook,
+    isFavorite: isFavorite ?? this.isFavorite,
     addedAt: addedAt ?? this.addedAt,
   );
   BookEntry copyWithCompanion(BooksCompanion data) {
@@ -384,6 +418,9 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
           ? data.isFinished.value
           : this.isFinished,
       keepBook: data.keepBook.present ? data.keepBook.value : this.keepBook,
+      isFavorite: data.isFavorite.present
+          ? data.isFavorite.value
+          : this.isFavorite,
       addedAt: data.addedAt.present ? data.addedAt.value : this.addedAt,
     );
   }
@@ -399,6 +436,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
           ..write('userRating: $userRating, ')
           ..write('isFinished: $isFinished, ')
           ..write('keepBook: $keepBook, ')
+          ..write('isFavorite: $isFavorite, ')
           ..write('addedAt: $addedAt')
           ..write(')'))
         .toString();
@@ -414,6 +452,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
     userRating,
     isFinished,
     keepBook,
+    isFavorite,
     addedAt,
   );
   @override
@@ -428,6 +467,7 @@ class BookEntry extends DataClass implements Insertable<BookEntry> {
           other.userRating == this.userRating &&
           other.isFinished == this.isFinished &&
           other.keepBook == this.keepBook &&
+          other.isFavorite == this.isFavorite &&
           other.addedAt == this.addedAt);
 }
 
@@ -440,6 +480,7 @@ class BooksCompanion extends UpdateCompanion<BookEntry> {
   final Value<double?> userRating;
   final Value<bool> isFinished;
   final Value<bool> keepBook;
+  final Value<bool> isFavorite;
   final Value<DateTime> addedAt;
   const BooksCompanion({
     this.id = const Value.absent(),
@@ -450,6 +491,7 @@ class BooksCompanion extends UpdateCompanion<BookEntry> {
     this.userRating = const Value.absent(),
     this.isFinished = const Value.absent(),
     this.keepBook = const Value.absent(),
+    this.isFavorite = const Value.absent(),
     this.addedAt = const Value.absent(),
   });
   BooksCompanion.insert({
@@ -461,6 +503,7 @@ class BooksCompanion extends UpdateCompanion<BookEntry> {
     this.userRating = const Value.absent(),
     this.isFinished = const Value.absent(),
     this.keepBook = const Value.absent(),
+    this.isFavorite = const Value.absent(),
     this.addedAt = const Value.absent(),
   }) : title = Value(title),
        author = Value(author);
@@ -473,6 +516,7 @@ class BooksCompanion extends UpdateCompanion<BookEntry> {
     Expression<double>? userRating,
     Expression<bool>? isFinished,
     Expression<bool>? keepBook,
+    Expression<bool>? isFavorite,
     Expression<DateTime>? addedAt,
   }) {
     return RawValuesInsertable({
@@ -484,6 +528,7 @@ class BooksCompanion extends UpdateCompanion<BookEntry> {
       if (userRating != null) 'user_rating': userRating,
       if (isFinished != null) 'is_finished': isFinished,
       if (keepBook != null) 'keep_book': keepBook,
+      if (isFavorite != null) 'is_favorite': isFavorite,
       if (addedAt != null) 'added_at': addedAt,
     });
   }
@@ -497,6 +542,7 @@ class BooksCompanion extends UpdateCompanion<BookEntry> {
     Value<double?>? userRating,
     Value<bool>? isFinished,
     Value<bool>? keepBook,
+    Value<bool>? isFavorite,
     Value<DateTime>? addedAt,
   }) {
     return BooksCompanion(
@@ -508,6 +554,7 @@ class BooksCompanion extends UpdateCompanion<BookEntry> {
       userRating: userRating ?? this.userRating,
       isFinished: isFinished ?? this.isFinished,
       keepBook: keepBook ?? this.keepBook,
+      isFavorite: isFavorite ?? this.isFavorite,
       addedAt: addedAt ?? this.addedAt,
     );
   }
@@ -539,6 +586,9 @@ class BooksCompanion extends UpdateCompanion<BookEntry> {
     if (keepBook.present) {
       map['keep_book'] = Variable<bool>(keepBook.value);
     }
+    if (isFavorite.present) {
+      map['is_favorite'] = Variable<bool>(isFavorite.value);
+    }
     if (addedAt.present) {
       map['added_at'] = Variable<DateTime>(addedAt.value);
     }
@@ -556,6 +606,7 @@ class BooksCompanion extends UpdateCompanion<BookEntry> {
           ..write('userRating: $userRating, ')
           ..write('isFinished: $isFinished, ')
           ..write('keepBook: $keepBook, ')
+          ..write('isFavorite: $isFavorite, ')
           ..write('addedAt: $addedAt')
           ..write(')'))
         .toString();
@@ -1021,6 +1072,7 @@ typedef $$BooksTableCreateCompanionBuilder =
       Value<double?> userRating,
       Value<bool> isFinished,
       Value<bool> keepBook,
+      Value<bool> isFavorite,
       Value<DateTime> addedAt,
     });
 typedef $$BooksTableUpdateCompanionBuilder =
@@ -1033,6 +1085,7 @@ typedef $$BooksTableUpdateCompanionBuilder =
       Value<double?> userRating,
       Value<bool> isFinished,
       Value<bool> keepBook,
+      Value<bool> isFavorite,
       Value<DateTime> addedAt,
     });
 
@@ -1104,6 +1157,11 @@ class $$BooksTableFilterComposer extends Composer<_$AppDatabase, $BooksTable> {
 
   ColumnFilters<bool> get keepBook => $composableBuilder(
     column: $table.keepBook,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1187,6 +1245,11 @@ class $$BooksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get addedAt => $composableBuilder(
     column: $table.addedAt,
     builder: (column) => ColumnOrderings(column),
@@ -1231,6 +1294,11 @@ class $$BooksTableAnnotationComposer
 
   GeneratedColumn<bool> get keepBook =>
       $composableBuilder(column: $table.keepBook, builder: (column) => column);
+
+  GeneratedColumn<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get addedAt =>
       $composableBuilder(column: $table.addedAt, builder: (column) => column);
@@ -1297,6 +1365,7 @@ class $$BooksTableTableManager
                 Value<double?> userRating = const Value.absent(),
                 Value<bool> isFinished = const Value.absent(),
                 Value<bool> keepBook = const Value.absent(),
+                Value<bool> isFavorite = const Value.absent(),
                 Value<DateTime> addedAt = const Value.absent(),
               }) => BooksCompanion(
                 id: id,
@@ -1307,6 +1376,7 @@ class $$BooksTableTableManager
                 userRating: userRating,
                 isFinished: isFinished,
                 keepBook: keepBook,
+                isFavorite: isFavorite,
                 addedAt: addedAt,
               ),
           createCompanionCallback:
@@ -1319,6 +1389,7 @@ class $$BooksTableTableManager
                 Value<double?> userRating = const Value.absent(),
                 Value<bool> isFinished = const Value.absent(),
                 Value<bool> keepBook = const Value.absent(),
+                Value<bool> isFavorite = const Value.absent(),
                 Value<DateTime> addedAt = const Value.absent(),
               }) => BooksCompanion.insert(
                 id: id,
@@ -1329,6 +1400,7 @@ class $$BooksTableTableManager
                 userRating: userRating,
                 isFinished: isFinished,
                 keepBook: keepBook,
+                isFavorite: isFavorite,
                 addedAt: addedAt,
               ),
           withReferenceMapper: (p0) => p0
