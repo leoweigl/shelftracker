@@ -1,7 +1,23 @@
+import 'dart:math';
+
 import 'package:drift/drift.dart';
 import '../models/book.dart';
 import 'app_database.dart';
 import '../models/book_sort.dart';
+
+class ReadingLogItem {
+  final ReadingLogEntry entry;
+  final double? userRating;
+  final bool isFavorite;
+  final bool inShelf;
+
+  ReadingLogItem({
+    required this.entry,
+    required this.userRating,
+    required this.isFavorite,
+    required this.inShelf,
+  });
+}
 
 class BookRepository {
   final AppDatabase _db;
@@ -12,7 +28,8 @@ class BookRepository {
     BookSort sort = BookSort.title,
     bool ascending = true,
   }) {
-    final query = _db.select(_db.books);
+    final query = _db.select(_db.books)
+      ..where((b) => b.isDeleted.equals(false));
 
     switch (sort) {
       case BookSort.title:
@@ -123,8 +140,10 @@ class BookRepository {
     );
   }
 
-  Future<int> delete(int id) {
-    return (_db.delete(_db.books)..where((b) => b.id.equals(id))).go();
+  Future<void> delete(int id) async {
+    await (_db.update(_db.books)..where((b) => b.id.equals(id))).write(
+      const BooksCompanion(isDeleted: Value(true)),
+    );
   }
 
   Future<int> getOrCreateCategory(String name) async {
@@ -188,5 +207,99 @@ class BookRepository {
     await (_db.update(_db.books)..where((b) => b.id.equals(id))).write(
       BooksCompanion(isFavorite: Value(value)),
     );
+  }
+
+  Future<int> getOrCreateBookId(Book book) async {
+    var existing =
+        await (_db.select(_db.books)..where(
+              (b) => b.title.equals(book.title) & b.author.equals(book.author),
+            ))
+            .getSingleOrNull();
+
+    if (existing != null) {
+      if (existing.isDeleted == true) {
+        await (_db.update(_db.books)..where((b) => b.id.equals(existing.id)))
+            .write(const BooksCompanion(isDeleted: Value(false)));
+      }
+      return existing.id;
+    }
+
+    final bookId = await _db
+        .into(_db.books)
+        .insert(
+          BooksCompanion(
+            title: Value(book.title),
+            author: Value(book.author),
+            publicationYear: Value(book.publicationYear),
+            coverUrl: Value(book.coverUrl),
+            userRating: Value(book.userRating),
+          ),
+        );
+    for (final categoryName in book.categories) {
+      final categoryId = await getOrCreateCategory(categoryName);
+      await addCategoryToBook(bookId, categoryId);
+    }
+
+    return bookId;
+  }
+
+  Future<void> logBookAsRead(Book book, {DateTime? readDate}) async {
+    final bookId = await getOrCreateBookId(book);
+
+    await _db
+        .into(_db.readingLog)
+        .insert(
+          ReadingLogCompanion(
+            title: Value(book.title),
+            author: Value(book.author),
+            coverUrl: Value(book.coverUrl),
+            bookId: Value(bookId),
+            readDate: Value(readDate ?? DateTime.now()),
+          ),
+        );
+  }
+
+  Stream<List<ReadingLogItem>> watchReadingLog() {
+    final query =
+        _db.select(_db.readingLog).join([
+          leftOuterJoin(
+            _db.books,
+            _db.books.id.equalsExp(_db.readingLog.bookId),
+          ),
+        ])..orderBy([
+          OrderingTerm(
+            expression: _db.readingLog.readDate,
+            mode: OrderingMode.desc,
+          ),
+        ]);
+
+    return query.watch().map((rows) {
+      return rows.map((row) {
+        final entry = row.readTable(_db.readingLog);
+        final book = row.readTableOrNull(_db.books);
+        return ReadingLogItem(
+          entry: entry,
+          userRating: book?.userRating,
+          isFavorite: book?.isFavorite ?? false,
+          inShelf: book != null && !book.isDeleted,
+        );
+      }).toList();
+    });
+  }
+
+  Stream<ReadingLogEntry> watchReadingLogById(int id) {
+    return (_db.select(
+      _db.readingLog,
+    )..where((e) => e.id.equals(id))).watchSingle();
+  }
+
+  Future<void> updateReadDate(int logId, DateTime newDate) async {
+    await (_db.update(_db.readingLog)..where((e) => e.id.equals(logId))).write(
+      ReadingLogCompanion(readDate: Value(newDate)),
+    );
+  }
+
+  Future<void> deleteLogEntry(int id) async {
+    await (_db.delete(_db.readingLog)..where((e) => e.id.equals(id))).go();
   }
 }

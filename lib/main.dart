@@ -3,6 +3,7 @@ import 'database/app_database.dart';
 import 'database/book_repository.dart';
 import 'screens/book_list_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'screens/dashboard_screen.dart';
 
 late final AppDatabase database;
 late final BookRepository bookRepository;
@@ -36,7 +37,7 @@ class ShelfTrackerApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      home: const BookListScreen(),
+      home: const DashboardScreen(),
     );
   }
 }

@@ -15,6 +15,7 @@ class Books extends Table {
   BoolColumn get keepBook => boolean().withDefault(const Constant(true))();
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   DateTimeColumn get addedAt => dateTime().withDefault(currentDateAndTime)();
+  BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
 }
 
 @DataClassName('CategoryEntry')
@@ -34,12 +35,26 @@ class BookCategories extends Table {
   Set<Column> get primaryKey => {bookId, categoryId};
 }
 
-@DriftDatabase(tables: [Books, Categories, BookCategories])
+@DataClassName('ReadingLogEntry')
+class ReadingLog extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get title => text()();
+  TextColumn get author => text()();
+  TextColumn get coverUrl => text().nullable()();
+
+  IntColumn get bookId =>
+      integer().nullable().references(Books, #id, onDelete: KeyAction.setNull)();
+
+  DateTimeColumn get readDate => dateTime()();
+}
+
+@DriftDatabase(tables: [Books, Categories, BookCategories, ReadingLog])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -53,6 +68,12 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 3) {
         await m.addColumn(books, books.isFavorite);
+      }
+      if (from < 4) {
+        await m.createTable(readingLog);
+      }
+      if (from < 5) {
+        await m.addColumn(books, books.isDeleted);
       }
     },
   );

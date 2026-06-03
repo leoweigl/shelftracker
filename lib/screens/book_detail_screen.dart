@@ -36,18 +36,24 @@ class BookDetailScreen extends StatelessWidget {
             title: Text(book.title),
             actions: [
               IconButton(
-                onPressed: () => bookRepository.setFavorite(book.id, !book.isFavorite),
-                icon: Icon(book.isFavorite ? Icons.favorite : Icons.favorite_border),
-                color: book.isFavorite ? Theme.of(context).colorScheme.primary : null,
-                tooltip: book.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen',
+                onPressed: () =>
+                    bookRepository.setFavorite(book.id, !book.isFavorite),
+                icon: Icon(
+                  book.isFavorite ? Icons.favorite : Icons.favorite_border,
+                ),
+                color: book.isFavorite
+                    ? Theme.of(context).colorScheme.primary
+                    : null,
+                tooltip: book.isFavorite
+                    ? 'Aus Favoriten entfernen'
+                    : 'Zu Favoriten hinzufügen',
               ),
               IconButton(
                 onPressed: () async {
                   final confirmed = await confirmDialog(
                     context,
                     title: 'Buch löschen?',
-                    message:
-                        '"${book.title}" wird engültig aus deinem Regal entfernt.',
+                    message: '"${book.title}" wird aus deinem Regal entfernt.',
                     confirmLabel: 'Löschen',
                     isDestructive: true,
                   );
