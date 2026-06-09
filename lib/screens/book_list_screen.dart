@@ -58,7 +58,7 @@ class _BookListScreenState extends State<BookListScreen> {
           if (books.isEmpty) {
             return const Center(
               child: Text(
-                'Noch keine Bücher.\nTippe oben rechts auf +',
+                'Noch keine Bücher.\nErfasse dein erstes gelesenes Buch oben rechts.',
                 textAlign: TextAlign.center,
               ),
             );
@@ -99,7 +99,6 @@ class _BookListScreenState extends State<BookListScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           '${book.author}'
@@ -118,9 +117,6 @@ class _BookListScreenState extends State<BookListScreen> {
                                   .secondaryContainer
                                   .withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(8),
-                              // border: Border.all(
-                              //   color: Theme.of(context).colorScheme.secondary,
-                              // ),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -151,7 +147,6 @@ class _BookListScreenState extends State<BookListScreen> {
 
                     const SizedBox(height: 6),
                     Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         book.userRating == null
                             ? const Text('noch nicht bewertet')

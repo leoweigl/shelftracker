@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:drift/drift.dart';
 import '../models/book.dart';
 import 'app_database.dart';
@@ -88,49 +86,9 @@ class BookRepository {
     return (_db.select(_db.books)..where((b) => b.id.equals(id))).watchSingle();
   }
 
-  Future<List<BookEntry>> getAll() {
-    return _db.select(_db.books).get();
-  }
-
-  Future<int?> insertFromBook(Book book) async {
-    final existing =
-        await (_db.select(_db.books)..where(
-              (b) => b.title.equals(book.title) & b.author.equals(book.author),
-            ))
-            .get();
-
-    if (existing.isNotEmpty) {
-      return null;
-    }
-
-    final bookId = await _db
-        .into(_db.books)
-        .insert(
-          BooksCompanion(
-            title: Value(book.title),
-            author: Value(book.author),
-            publicationYear: Value(book.publicationYear),
-            coverUrl: Value(book.coverUrl),
-            userRating: Value(book.userRating),
-          ),
-        );
-
-    for (final categoryName in book.categories) {
-      final categoryId = await getOrCreateCategory(categoryName);
-      await addCategoryToBook(bookId, categoryId);
-    }
-    return bookId;
-  }
-
   Future<void> updateRating(int id, double? rating) {
     return (_db.update(_db.books)..where((b) => b.id.equals(id))).write(
       BooksCompanion(userRating: Value(rating)),
-    );
-  }
-
-  Future<void> setFinished(int id, bool isFinished) {
-    return (_db.update(_db.books)..where((b) => b.id.equals(id))).write(
-      BooksCompanion(isFinished: Value(isFinished)),
     );
   }
 
@@ -212,12 +170,12 @@ class BookRepository {
   Future<int> getOrCreateBookId(Book book) async {
     var existing =
         await (_db.select(_db.books)..where(
-              (b) => b.title.equals(book.title) & b.author.equals(book.author),
+              (b) => b.title.lower().equals(book.title.toLowerCase()) & b.author.lower().equals(book.author.toLowerCase()),
             ))
             .getSingleOrNull();
 
     if (existing != null) {
-      if (existing.isDeleted == true) {
+      if (existing.isDeleted) {
         await (_db.update(_db.books)..where((b) => b.id.equals(existing.id)))
             .write(const BooksCompanion(isDeleted: Value(false)));
       }
