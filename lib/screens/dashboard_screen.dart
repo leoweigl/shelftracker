@@ -63,7 +63,7 @@ class DashboardScreen extends StatelessWidget {
                 onTap: () => _comingSoon(context, 'Category overview'),
               ),
               _DashboardCard(
-                icon: Icons.checklist,
+                icon: Icons.favorite_border,
                 label: 'Wishlist',
                 onTap: () => Navigator.push(
                   context,

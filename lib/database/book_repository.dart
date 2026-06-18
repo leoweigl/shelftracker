@@ -142,7 +142,10 @@ class BookRepository {
     if (existing != null) {
       if (existing.isDeleted) {
         await (_db.update(_db.books)..where((b) => b.id.equals(existing.id)))
-            .write(const BooksCompanion(isDeleted: Value(false)));
+            .write(const BooksCompanion(
+              isDeleted: Value(false),
+              status: Value('wishlist'),
+            ));
       }
       return existing.id;
     }
@@ -153,6 +156,7 @@ class BookRepository {
         author: Value(book.author),
         publicationYear: Value(book.publicationYear),
         coverUrl: Value(book.coverUrl),
+        description: Value(book.description),
         status: Value(BookStatus.wishlist.name),
       ),
     );
@@ -254,6 +258,7 @@ class BookRepository {
             author: Value(book.author),
             publicationYear: Value(book.publicationYear),
             coverUrl: Value(book.coverUrl),
+            description: Value(book.description),
             userRating: Value(book.userRating),
             status: Value(BookStatus.owned.name),
           ),

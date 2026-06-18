@@ -5,6 +5,7 @@ class Book {
   final String? coverUrl;
   final double? userRating;
   final List<String> categories;
+  final String? description;
 
   Book({
     required this.title,
@@ -13,6 +14,7 @@ class Book {
     this.coverUrl,
     this.userRating,
     this.categories = const [],
+    this.description,
   });
 
   factory Book.fromOpenLibrary(Map<String, dynamic> json) {
@@ -79,12 +81,15 @@ class Book {
       }
     }
 
+    final description = volumeInfo['description']?.toString();
+
     return Book(
       title: volumeInfo['title']?.toString() ?? 'Ohne Titel',
       author: firstAuthor,
       publicationYear: year,
       coverUrl: coverUrl,
       categories: categories.toList(),
+      description: description,
     );
   }
 

@@ -172,6 +172,8 @@ Pro Band ist sichtbar, welchen Status er hat (wishlist / owned / gelesen / nicht
 ---
 
 ## Weitere Ideen (unsortiert, für später)
+- [ ] Klappentext im BookDetailScreen für Wunschlisten-Bücher (wishlist/preordered) anzeigen
+  — Daten kommen von Google Books API (`volumeInfo.description`), müssen gespeichert werden
 - [ ] Filter nach Status (behalten / verkaufen) in der Bücherliste
 - [ ] Suchfeld / Filter innerhalb der eigenen Bücherliste
 - [ ] Lese-Statistik (Anzahl gelesen, Durchschnittsbewertung etc.)

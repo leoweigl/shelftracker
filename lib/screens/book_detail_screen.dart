@@ -5,6 +5,7 @@ import '../widgets/star_rating.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../utils/dialogs.dart';
+import '../models/book_status.dart';
 
 class BookDetailScreen extends StatelessWidget {
   final int bookId;
@@ -30,24 +31,26 @@ class BookDetailScreen extends StatelessWidget {
         }
 
         final book = snapshot.data!;
+        final isOwned = BookStatus.fromDb(book.status) == BookStatus.owned;
 
         return Scaffold(
           appBar: AppBar(
             title: Text(book.title),
             actions: [
-              IconButton(
-                onPressed: () =>
-                    bookRepository.setFavorite(book.id, !book.isFavorite),
-                icon: Icon(
-                  book.isFavorite ? Icons.favorite : Icons.favorite_border,
+              if (isOwned)
+                IconButton(
+                  onPressed: () =>
+                      bookRepository.setFavorite(book.id, !book.isFavorite),
+                  icon: Icon(
+                    book.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  ),
+                  color: book.isFavorite
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                  tooltip: book.isFavorite
+                      ? 'Remove from favorites'
+                      : 'Add to favorites',
                 ),
-                color: book.isFavorite
-                    ? Theme.of(context).colorScheme.primary
-                    : null,
-                tooltip: book.isFavorite
-                    ? 'Remove from favorites'
-                    : 'Add to favorites',
-              ),
               IconButton(
                 onPressed: () async {
                   final confirmed = await confirmDialog(
@@ -111,81 +114,107 @@ class BookDetailScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Rating',
+                if (isOwned) ...[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Rating',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  StarRating(
+                    rating: book.userRating ?? 0,
+                    size: 36,
+                    onRatingChanged: (newRating) {
+                      bookRepository.updateRating(book.id, newRating);
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Status'),
+                    subtitle: Text(book.keepBook ? 'Keep' : 'For sale'),
+                    secondary: Icon(
+                      book.keepBook ? Icons.shelves : Icons.sell_outlined,
+                    ),
+                    value: book.keepBook,
+                    onChanged: (newValue) {
+                      bookRepository.setKeep(book.id, newValue);
+                    },
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  Text(
+                    'Categories',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                StarRating(
-                  rating: book.userRating ?? 0,
-                  size: 36,
-                  onRatingChanged: (newRating) {
-                    bookRepository.updateRating(book.id, newRating);
-                  },
-                ),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 8),
 
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Status'),
-                  subtitle: Text(book.keepBook ? 'Keep' : 'For sale'),
-                  secondary: Icon(
-                    book.keepBook ? Icons.shelves : Icons.sell_outlined,
+                    StreamBuilder(
+                      stream: bookRepository.watchCategoriesForBook(book.id),
+                      builder: (context, catSnapshot) {
+                        final categories = catSnapshot.data ?? [];
+                        return Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: [
+                            ...categories.map(
+                                  (cat) => Chip(
+                                label: Text(cat.name),
+                                onDeleted: () {
+                                  bookRepository.removeCategoryFromBook(
+                                    book.id,
+                                    cat.id,
+                                  );
+                                },
+                              ),
+                            ),
+                            ActionChip(
+                              avatar: const Icon(Icons.add, size: 18),
+                              label: const Text('Add'),
+                              onPressed: () =>
+                                  _showAddCategoryDialog(context, book.id),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  const SizedBox(height: 24),
+                ],
+
+
+
+                if (!isOwned && (book.description == null || book.description!.isEmpty)) ...[
+                  const Text(
+                    'No description available',
+                    style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic, height: 2),
                   ),
-                  value: book.keepBook,
-                  onChanged: (newValue) {
-                    bookRepository.setKeep(book.id, newValue);
-                  },
-                ),
+                  const SizedBox(height: 24),
+                ],
 
-                const SizedBox(height: 24),
-
-                Text(
-                  'Categories',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+                if (!isOwned && book.description != null && book.description!.isNotEmpty) ...[
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Description',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-
-                const SizedBox(height: 8),
-
-                StreamBuilder(
-                  stream: bookRepository.watchCategoriesForBook(book.id),
-                  builder: (context, catSnapshot) {
-                    final categories = catSnapshot.data ?? [];
-                    return Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: [
-                        ...categories.map(
-                          (cat) => Chip(
-                            label: Text(cat.name),
-                            onDeleted: () {
-                              bookRepository.removeCategoryFromBook(
-                                book.id,
-                                cat.id,
-                              );
-                            },
-                          ),
-                        ),
-                        ActionChip(
-                          avatar: const Icon(Icons.add, size: 18),
-                          label: const Text('Add'),
-                          onPressed: () =>
-                              _showAddCategoryDialog(context, book.id),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-
-                const SizedBox(height: 24),
+                  const SizedBox(height: 8),
+                  Text(
+                    book.description!,
+                    style: const TextStyle(fontSize: 14, height: 1.5),
+                  ),
+                  const SizedBox(height: 24),
+                ],
 
                 Text(
                   'Added on ${DateFormat('MM/dd/yyyy').format(book.addedAt)}',

@@ -5,6 +5,7 @@ import 'package:shelftracker/screens/log_detail_screen.dart';
 import '../main.dart';
 import '../database/book_repository.dart';
 import '../widgets/star_rating.dart';
+import '../utils/book_actions.dart';
 
 class ReadingLogScreen extends StatelessWidget {
   const ReadingLogScreen({super.key});
@@ -28,7 +29,16 @@ class ReadingLogScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reading Log')),
+      appBar: AppBar(
+        title: const Text('Reading Log'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bookmark_added_outlined),
+            tooltip: 'Log read book',
+            onPressed: () => showLogReadOptions(context),
+          ),
+        ],
+      ),
       body: StreamBuilder<List<ReadingLogItem>>(
         stream: bookRepository.watchReadingLog(),
         builder: (context, snapshot) {

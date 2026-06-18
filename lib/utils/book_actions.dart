@@ -88,14 +88,14 @@ void showLogReadOptions(BuildContext context) {
               logReadViaSearch(context);
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.checklist),
-            title: const Text('From wishlist'),
-            onTap: () {
-              Navigator.pop(dialogContext);
-              logReadFromWishlist(context);
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.checklist),
+          //   title: const Text('From wishlist'),
+          //   onTap: () {
+          //     Navigator.pop(dialogContext);
+          //     logReadFromWishlist(context);
+          //   },
+          // ),
         ],
       ),
       actions: [

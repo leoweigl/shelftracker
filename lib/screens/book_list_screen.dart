@@ -17,8 +17,8 @@ class BookListScreen extends StatefulWidget {
 }
 
 class _BookListScreenState extends State<BookListScreen> {
-  BookSort _sort = BookSort.title;
-  bool _ascending = true;
+  BookSort _sort = BookSort.addedAt;
+  bool _ascending = false;
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +39,6 @@ class _BookListScreenState extends State<BookListScreen> {
             icon: Icon(_ascending ? Icons.arrow_upward : Icons.arrow_downward),
             tooltip: _ascending ? 'Ascending' : 'Descending',
             onPressed: () => setState(() => _ascending = !_ascending),
-          ),
-          IconButton(
-            icon: const Icon(Icons.bookmark_added_outlined),
-            tooltip: 'Log read book',
-            onPressed: () => showLogReadOptions(context),
           ),
         ],
       ),

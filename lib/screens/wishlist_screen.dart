@@ -4,6 +4,7 @@ import '../database/app_database.dart';
 import '../main.dart';
 import '../models/book_status.dart';
 import 'book_detail_screen.dart';
+import '../utils/book_actions.dart';
 
 class WishlistScreen extends StatefulWidget {
   final bool pickMode;
@@ -22,6 +23,13 @@ class _WishlistScreenState extends State<WishlistScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.pickMode ? 'Select book' : 'Wishlist'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Log read book',
+            onPressed: () => addToWishlistViaSearch(context),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -146,9 +154,30 @@ class _WishlistTile extends StatelessWidget {
             )
           : const Icon(Icons.menu_book_rounded),
       title: Text(book.title),
-      subtitle: Text(
-        '${book.author}'
-        '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '${book.author}'
+            '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
+          ),
+          if (status == BookStatus.preordered) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                'Pre-ordered',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
       trailing: pickMode
           ? null
@@ -192,6 +221,24 @@ class _WishlistActions extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
           ),
         ),
+        if (status == BookStatus.wishlist)
+          const PopupMenuItem(
+            value: _WishlistAction.markAsPreordered,
+            child: ListTile(
+              leading: Icon(Icons.schedule),
+              title: Text('Mark as pre-ordered'),
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
+        if (status == BookStatus.preordered)
+          const PopupMenuItem(
+            value: _WishlistAction.removePreorder,
+            child: ListTile(
+              leading: Icon(Icons.undo),
+              title: Text('Remove pre-order'),
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
       ],
     );
   }
@@ -211,8 +258,22 @@ class _WishlistActions extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('"${book.title}" logged as read')),
         );
+
+      case _WishlistAction.markAsPreordered:
+        await bookRepository.setStatus(book.id, BookStatus.preordered);
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('"${book.title}" marked as pre-ordered')),
+        );
+
+      case _WishlistAction.removePreorder:
+        await bookRepository.setStatus(book.id, BookStatus.wishlist);
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Removed pre-order for "${book.title}"')),
+        );
     }
   }
 }
 
-enum _WishlistAction { moveToShelf, logAsRead }
+enum _WishlistAction { moveToShelf, logAsRead, markAsPreordered, removePreorder}
