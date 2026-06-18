@@ -19,7 +19,7 @@ class ReadingLogScreen extends StatelessWidget {
       initialDate: current,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      helpText: 'Lesedatum ändern',
+      helpText: 'Change read date',
     );
     if (picked == null) return;
     await bookRepository.updateReadDate(logId, picked);
@@ -28,7 +28,7 @@ class ReadingLogScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Leseprotokoll')),
+      appBar: AppBar(title: const Text('Reading Log')),
       body: StreamBuilder<List<ReadingLogItem>>(
         stream: bookRepository.watchReadingLog(),
         builder: (context, snapshot) {
@@ -36,7 +36,7 @@ class ReadingLogScreen extends StatelessWidget {
 
           if (items.isEmpty) {
             return const Center(
-              child: Text('Noch keine gelesenen Bücher erfasst.'),
+              child: Text('No read books logged yet.'),
             );
           }
 
@@ -88,7 +88,7 @@ class ReadingLogScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         item.userRating == null
-                            ? const Text('noch nicht bewertet')
+                            ? const Text('not yet rated')
                             : StarRating(rating: item.userRating!),
                         const Spacer(),
                         if (!item.inShelf) _notOwnedPill(context),
@@ -104,8 +104,8 @@ class ReadingLogScreen extends StatelessWidget {
                           const Icon(Icons.event, size: 14),
                           const SizedBox(width: 4),
                           Text(
-                            'Gelesen am '
-                            '${DateFormat('dd.MM.yyyy').format(entry.readDate)}',
+                            'Read on '
+                            '${DateFormat('MM/dd/yyyy').format(entry.readDate)}',
                           ),
                           const SizedBox(width: 4),
                           Icon(
@@ -151,7 +151,7 @@ class ReadingLogScreen extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            'Favorit',
+            'Favorite',
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
@@ -171,7 +171,7 @@ class ReadingLogScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        'nicht mehr im Besitz',
+        'not in shelf',
         style: Theme.of(context).textTheme.bodySmall,
       ),
     );

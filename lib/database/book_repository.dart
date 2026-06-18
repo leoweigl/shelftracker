@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import '../models/book.dart';
+import '../models/book_status.dart';
 import 'app_database.dart';
 import '../models/book_sort.dart';
 
@@ -25,9 +26,16 @@ class BookRepository {
   Stream<List<BookEntry>> watchAll({
     BookSort sort = BookSort.title,
     bool ascending = true,
+    BookStatus? status,
   }) {
     final query = _db.select(_db.books)
-      ..where((b) => b.isDeleted.equals(false));
+      ..where((b) {
+        final notDeleted = b.isDeleted.equals(false);
+        if (status != null) {
+          return notDeleted & b.status.equals(status.name);
+        }
+        return notDeleted;
+      });
 
     switch (sort) {
       case BookSort.title:
@@ -104,6 +112,54 @@ class BookRepository {
     );
   }
 
+  Future<void> setStatus(int id, BookStatus status) async {
+    await (_db.update(_db.books)..where((b) => b.id.equals(id))).write(
+      BooksCompanion(status: Value(status.name)),
+    );
+  }
+
+  Stream<List<BookEntry>> watchWishlist() {
+    return (_db.select(_db.books)
+          ..where(
+            (b) =>
+                b.isDeleted.equals(false) &
+                (b.status.equals(BookStatus.wishlist.name) |
+                    b.status.equals(BookStatus.preordered.name)),
+          )
+          ..orderBy([(b) => OrderingTerm.asc(b.title)]))
+        .watch();
+  }
+
+  Future<int> addToWishlist(Book book) async {
+    final existing = await (_db.select(_db.books)
+          ..where(
+            (b) =>
+                b.title.lower().equals(book.title.toLowerCase()) &
+                b.author.lower().equals(book.author.toLowerCase()),
+          ))
+        .getSingleOrNull();
+
+    if (existing != null) {
+      if (existing.isDeleted) {
+        await (_db.update(_db.books)..where((b) => b.id.equals(existing.id)))
+            .write(const BooksCompanion(isDeleted: Value(false)));
+      }
+      return existing.id;
+    }
+
+    return _db.into(_db.books).insert(
+      BooksCompanion(
+        title: Value(book.title),
+        author: Value(book.author),
+        publicationYear: Value(book.publicationYear),
+        coverUrl: Value(book.coverUrl),
+        status: Value(BookStatus.wishlist.name),
+      ),
+    );
+  }
+
+  Future<int> addToShelf(Book book) => getOrCreateBookId(book);
+
   Future<int> getOrCreateCategory(String name) async {
     final trimmed = name.trim();
 
@@ -175,9 +231,17 @@ class BookRepository {
             .getSingleOrNull();
 
     if (existing != null) {
-      if (existing.isDeleted) {
+      final needsUpdate = existing.isDeleted ||
+          existing.status == BookStatus.wishlist.name ||
+          existing.status == BookStatus.preordered.name;
+      if (needsUpdate) {
         await (_db.update(_db.books)..where((b) => b.id.equals(existing.id)))
-            .write(const BooksCompanion(isDeleted: Value(false)));
+            .write(
+          BooksCompanion(
+            isDeleted: const Value(false),
+            status: Value(BookStatus.owned.name),
+          ),
+        );
       }
       return existing.id;
     }
@@ -191,6 +255,7 @@ class BookRepository {
             publicationYear: Value(book.publicationYear),
             coverUrl: Value(book.coverUrl),
             userRating: Value(book.userRating),
+            status: Value(BookStatus.owned.name),
           ),
         );
     for (final categoryName in book.categories) {
@@ -199,6 +264,19 @@ class BookRepository {
     }
 
     return bookId;
+  }
+
+  Future<void> logBookAsReadFromEntry(BookEntry entry, {DateTime? readDate}) async {
+    await setStatus(entry.id, BookStatus.owned);
+    await _db.into(_db.readingLog).insert(
+      ReadingLogCompanion(
+        title: Value(entry.title),
+        author: Value(entry.author),
+        coverUrl: Value(entry.coverUrl),
+        bookId: Value(entry.id),
+        readDate: Value(readDate ?? DateTime.now()),
+      ),
+    );
   }
 
   Future<void> logBookAsRead(Book book, {DateTime? readDate}) async {

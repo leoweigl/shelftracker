@@ -16,6 +16,7 @@ class Books extends Table {
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   DateTimeColumn get addedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+  TextColumn get status => text().withDefault(const Constant('owned'))();
 }
 
 @DataClassName('CategoryEntry')
@@ -54,7 +55,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -74,6 +75,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 5) {
         await m.addColumn(books, books.isDeleted);
+      }
+      if (from < 6) {
+        await m.addColumn(books, books.status);
       }
     },
   );

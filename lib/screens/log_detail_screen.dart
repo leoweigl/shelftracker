@@ -21,7 +21,7 @@ class LogDetailScreen extends StatelessWidget {
       initialDate: current,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      helpText: 'Lesedatum ändern',
+      helpText: 'Change read date',
     );
     if (picked == null) return;
     await bookRepository.updateReadDate(logId, picked);
@@ -65,17 +65,17 @@ class LogDetailScreen extends StatelessWidget {
                         ? Theme.of(context).colorScheme.primary
                         : null,
                     tooltip: isFavorite
-                        ? 'Aus Favoriten entfernen'
-                        : 'Zu Favoriten hinzufügen',
+                        ? 'Remove from favorites'
+                        : 'Add to favorites',
                   ),
                   IconButton(
                     onPressed: () async {
                       final confirmed = await confirmDialog(
                         context,
-                        title: 'Eintrag löschen?',
+                        title: 'Delete entry?',
                         message:
-                            'Dieser Leseeintrag wird endgültig aus dem Protokoll entfernt.',
-                        confirmLabel: 'Entfernen',
+                            'This reading entry will be permanently removed from the log.',
+                        confirmLabel: 'Remove',
                         isDestructive: true,
                       );
                       if (!confirmed || !context.mounted) return;
@@ -83,7 +83,7 @@ class LogDetailScreen extends StatelessWidget {
                       if (context.mounted) Navigator.pop(context);
                     },
                     icon: const Icon(Icons.delete_outline),
-                    tooltip: 'Eintrag löschen',
+                    tooltip: 'Delete entry',
                   ),
                 ],
               ),
@@ -140,7 +140,7 @@ class LogDetailScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Bewertung',
+                          'Rating',
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.w600),
                         ),
@@ -169,8 +169,8 @@ class LogDetailScreen extends StatelessWidget {
                         const Icon(Icons.event, size: 14),
                         const SizedBox(width: 4),
                         Text(
-                          'Gelesen am '
-                          '${DateFormat('dd.MM.yyyy').format(entry.readDate)}',
+                          'Read on '
+                          '${DateFormat('MM/dd/yyyy').format(entry.readDate)}',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         IconButton(

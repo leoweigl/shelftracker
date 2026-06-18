@@ -5,7 +5,7 @@ Future<bool> confirmDialog(
     required String title,
     required String message,
     String confirmLabel = 'OK',
-    String cancelLabel = 'Abbrechen',
+    String cancelLabel = 'Cancel',
     bool isDestructive = false,
 }) async {
   final result = await showDialog<bool>(

@@ -1,7 +1,7 @@
 # ShelfTracker — Roadmap
 
 Persönliche Flutter-App zum Verwalten der eigenen Büchersammlung:
-Bücher suchen, bewerten, dokumentieren und entscheiden, ob behalten oder verkaufen.
+Bücher lesen, bewerten, dokumentieren und entscheiden, ob behalten oder verkaufen.
 
 Dieses Dokument hält den Entwicklungsstand fest und sammelt Ideen für kommende Stages.
 Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
@@ -11,113 +11,173 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
 ## Erledigt
 
 - [x] **Stage 1 — Statische Bücherliste**
-- [x] **Stage 2 — StarRating-Widget** (Half-Star-Unterstützung, "noch nicht bewertet")
-- [x] **Stage 3 — Open Library API** (`search.json`)
+
+- [x] **Stage 2 — StarRating-Widget**
+  Half-Star-Unterstützung (0.5-Schritte), GestureDetector mit Tap + Drag.
+
+- [x] **Stage 3 — Open Library API**
+  Bücher über `/search.json` suchen und hinzufügen.
+
 - [x] **Stage 4 — Lokale Persistenz (Drift / SQLite)**
   `BookRepository` als zentrale DB-Schicht, reaktive UI über `StreamBuilder` + `watchAll()`.
-- [x] **Stage 5 — Detail-Screen** (interaktives Rating, Keep/Sell, reaktiv über `watchById()`)
+
+- [x] **Stage 5 — Detail-Screen**
+  Interaktives Rating, Keep/Sell-Toggle, reaktiv über `watchById()`.
+  Layout: Hero-Bereich (Cover/Titel/Autor) zentriert, Sektionen darunter linksbündig.
 
 - [x] **Stage 6 — Politur**
-  - [x] Such-Debouncing (400 ms via `Timer`)
-  - [x] Cover-Caching (`cached_network_image`)
-  - [x] ISBN-Barcode-Scanner (`mobile_scanner`, EAN-13/EAN-8, `ScannerScreen`, `searchByIsbn()`)
-  - [x] Duplikat-Prüfung in `insertFromBook` (Titel + Autor, "ist schon im Regal")
+  - [x] Such-Debouncing (400 ms via `Timer`, Mindestlänge 3 Zeichen)
+  - [x] Cover-Caching (`cached_network_image` in Liste, Detail, Suche)
+  - [x] ISBN-Barcode-Scanner (`mobile_scanner`, EAN-13/EAN-8, `ScannerScreen`)
+  - [x] Duplikat-Prüfung via Titel + Autor
 
-- [x] **Stage 7 — Sortierung & Detail-Politur**
-  - [x] Sortierung: Titel, Autor, Bewertung, Behalten, Hinzugefügt (DB-seitig via `orderBy`)
+- [x] **Stage 7 — Sortierung**
+  - [x] 5 Kategorien: Titel, Autor, Bewertung, Behalten, Hinzugefügt (DB-seitig via `orderBy`)
   - [x] Richtungs-Toggle (auf-/absteigend)
+  - [x] `confirmDialog` in `utils/dialogs.dart` (wiederverwendbar)
   - [x] Datum-Formatierung (`dd.MM.yyyy` via `intl`)
-  - [x] Lösch-Bestätigung über wiederverwendbaren `confirmDialog` in `utils/dialogs.dart`
 
 - [x] **Stage 8 — Google Books als zusätzliche API**
   - [x] `OpenLibraryService` + `GoogleBooksService` als eigene Klassen
-  - [x] `BookApiService` als Orchestrator — **Google Books zuerst** (bessere deutsche Abdeckung), Open Library als Fallback
+  - [x] `BookApiService` als Orchestrator — Google Books zuerst, Open Library als Fallback
   - [x] `Book.fromGoogleBooks` (http→https Cover-Fix, `publishedDate`-Parsing)
-  - [x] Mindestlänge 3 Zeichen in der Suche
   - [x] Fehler (z. B. 429) werden gefangen statt Crash
-  - [x] Google Books API-Key via `--dart-define=GOOGLE_BOOKS_API_KEY` (nicht im Repo), API auf Books beschränkt
+  - [x] API-Key via `--dart-define=GOOGLE_BOOKS_API_KEY` (nicht im Repo)
 
 - [x] **Theme & Status-Anzeige**
-  - [x] Seed-Color `Colors.blueGrey` (ruhiges Theme), Material 3 generiert Palette automatisch
-  - [x] "Verkaufen"-Pill in der Liste (tertiaryContainer, nur wenn nicht behalten)
-  - [x] Trennlinien zwischen Listeneinträgen (`ListView.separated`, `indent: 72`, `outlineVariant`)
+  - [x] Seed-Color `Colors.blueGrey`, Material 3 generiert Palette automatisch
+  - [x] „Verkaufen"-Pill (tertiaryContainer), „Favorit"-Pill (secondaryContainer) in der Liste
+  - [x] Trennlinien (`ListView.separated`, `indent: 72`, `outlineVariant`)
 
-- [x] **Stage 9 (Etappen 1–4) — Kategorien / Tags**
-  - [x] Datenmodell: Tabellen `Categories` (name unique) + `BookCategories` (n:m-Verknüpfung), Foreign Keys mit `onDelete: cascade`
-  - [x] DB-Migration `schemaVersion` 1 → 2 (`MigrationStrategy` mit `onUpgrade`, bestehende Bücher bleiben erhalten)
-  - [x] Repository-Methoden: `getOrCreateCategory` (case-insensitiv), `watchCategories`, `addCategoryToBook`, `removeCategoryFromBook`, `watchCategoriesForBook` (JOIN), `deleteCategory`
-  - [x] API-Genres als Vorschlag: `categories` (Google Books, an "/" gesplittet) bzw. `subject` (Open Library, `.take(5)`) beim Hinzufügen übernommen; OL-`fields` um `subject` erweitert
-  - [x] Kategorie-Editor-Dialog (eigenes StatefulWidget): zugewiesene Kategorien als Chips, Suchfeld, alphabetische Auswahlliste, "neu anlegen" aus der Suche heraus
-  - [x] Kategorie-Chips im Detail-Screen
+- [x] **Stage 9 — Kategorien / Tags**
+  - [x] Tabellen `Categories` + `BookCategories` (n:m, `onDelete: cascade`), schemaVersion → 2
+  - [x] Repository: `getOrCreateCategory` (case-insensitiv), `watchCategories`, `addCategoryToBook`,
+    `removeCategoryFromBook`, `watchCategoriesForBook` (JOIN), `deleteCategory`
+  - [x] API-Genres als Vorschlag beim Erfassen (Google Books + Open Library)
+  - [x] `_CategoryEditorDialog`: zugewiesene Chips, Suchfeld, alphabetische Liste, „neu anlegen" inline
 
-- [x] **Favoriten / Lieblingsbücher**
-  - [x] `isFavorite`-Spalte in `Books`, DB-Migration `schemaVersion` 2 → 3 (`addColumn` mit Default)
-  - [x] Repository: `setFavorite(id, value)`
-  - [x] Herz-Icon im Detail-Screen (AppBar, `primary` mit Transparenz statt knallrot)
-  - [x] "Favorit"-Pill in der Liste (Outline-Stil)
+- [x] **Favoriten**
+  - [x] `isFavorite`-Spalte in `Books`, schemaVersion → 3
+  - [x] Herz-Icon in AppBar (BookDetailScreen + LogDetailScreen)
+  - [x] „Favorit"-Pill in Bücherliste und Leseprotokoll
 
-- [x] **Detail-Screen Layout vereinheitlicht**
-  - Hero-Bereich (Cover/Titel/Autor) zentriert, alle Sektionen darunter linksbündig
-  - Switch `contentPadding: EdgeInsets.zero` für bündige Ausrichtung
+- [x] **Stage 10 — Leseprotokoll + Dashboard + Soft Delete**
+
+  **Soft Delete:**
+  - [x] `isDeleted`-Spalte in `Books`, schemaVersion → 5
+  - [x] `delete()` setzt `isDeleted = true` statt hartem Löschen
+  - [x] `watchAll()` filtert `isDeleted = false`
+  - [x] `getOrCreateBookId()` reaktiviert soft-gelöschte Bücher (case-insensitive Suche via `.lower()`)
+
+  **Leseprotokoll:**
+  - [x] `ReadingLog`-Tabelle: Snapshot-Felder + nullable `bookId` (`onDelete: setNull`) + `readDate`,
+    schemaVersion → 4
+  - [x] `ReadingLogItem` mit LEFT JOIN auf `Books` für `userRating`, `isFavorite`, `inShelf`
+  - [x] Repository: `logBookAsRead()`, `watchReadingLog()`, `watchReadingLogById()`,
+    `updateReadDate()`, `deleteLogEntry()`
+  - [x] `ReadingLogScreen`: Cover, Bewertung, Favorit-Pill, „nicht mehr im Besitz"-Pill,
+    Lesedatum (antippbar)
+  - [x] `LogDetailScreen`: verschachtelte StreamBuilder (`ReadingLogEntry` + `BookEntry?`),
+    Bewertung nur wenn `book != null`
+
+  **Dashboard (erster Stand):**
+  - [x] `DashboardScreen` als Startbildschirm, zwei Sektionen: „Leseprotokoll" / „Buchverwaltung"
+  - [x] 2×2-Kacheln mit `_CardGrid`, `_SectionHeader`, `_DashboardCard`
+  - [x] „Gelesenes Buch erfassen" öffnet Dialog mit Scan / Suche-Auswahl
+  - [x] `book_actions.dart`: `logReadViaSearch`, `logReadViaScanner`, `showLogReadOptions`
+  - [x] Repository-Cleanup: `insertFromBook`, `setFinished`, `getAll` entfernt
+
+- [x] **Stage 11 — Wunschliste + Buch-Status + Dashboard-Umbau**
+  - [x] `BookStatus`-Enum (`wishlist`, `preordered`, `owned`) in `lib/models/book_status.dart`
+  - [x] `status`-Spalte in `Books`, schemaVersion → 6, Migration via `addColumn`
+  - [x] `watchAll()` mit optionalem `status`-Filter
+  - [x] `setStatus()`, `watchWishlist()`, `addToWishlist()`, `addToShelf()` im Repository
+  - [x] `getOrCreateBookId()` setzt wishlist/preordered-Bücher beim Erfassen auf `owned`
+  - [x] `logBookAsReadFromEntry()` für Bücher die bereits in der DB sind
+  - [x] `WishlistScreen` mit Filter-Pills (Alle / Vorgemerkt / Vorbestellt) und `pickMode`
+  - [x] `BookListScreen` zeigt nur noch `owned`-Bücher
+  - [x] `book_actions.dart`: `addToWishlistViaSearch`, `addToShelfViaSearch`,
+    `addToShelfViaScanner`, `showAddOptions`, „Von Wunschliste"-Option in `showLogReadOptions`
+  - [x] Dashboard-Umbau: 2×2 Leseprotokoll + 2×2 Buchverwaltung (Regal, Wunschliste,
+    Hinzufügen, Kategorien)
+
+---
+
+## Bekannte Bugs — zu beheben
+
+- [ ] **Soft-Delete + Wunschliste**: Nach dem Löschen eines `owned`-Buchs kann es nicht zur
+  Wunschliste hinzugefügt werden, weil `addToWishlist()` das soft-gelöschte Buch als „vorhanden"
+  erkennt und die ID zurückgibt, ohne den Status auf `wishlist` zu setzen.
+  → `addToWishlist()` muss bei soft-deleted Büchern `isDeleted = false` **und**
+  `status = wishlist` schreiben (analog zu `getOrCreateBookId()`).
+
+- [ ] **BookDetailScreen für Wunschlisten-Bücher**: Bewertung, Favorit-Herz und
+  „Behalten/Verkaufen"-Toggle sollen für Bücher mit Status `wishlist` oder `preordered`
+  ausgeblendet werden — diese Felder sind erst relevant wenn das Buch im Regal ist.
+  → Im `BookDetailScreen` prüfen: `BookStatus.fromDb(book.status) == BookStatus.owned`
+  vor dem Rendern dieser Sektionen.
+
+- [ ] **Kategorien beim Löschen nicht zurückgesetzt**: Wenn ein Buch soft-deleted wird,
+  bleiben die `BookCategories`-Einträge erhalten. Wird das Buch später reaktiviert, hat es
+  noch die alten Kategorien. Beim Hinzufügen zur Wunschliste (nach vorherigem Löschen)
+  sind die Kategorien ebenfalls noch vorhanden, obwohl das Buch neu erfasst wird.
+  → `delete()` im Repository soll zusätzlich alle `BookCategories`-Einträge für das Buch
+  löschen (`DELETE FROM book_categories WHERE book_id = ?`).
 
 ---
 
 ## Offen / zurückgestellt
 
-- [ ] **Stage 9 — Etappe 5: Kategorien-Navigation & Filter**
-  - Eigener Kategorien-Übersichts-Screen (Ordner-Ansicht); Antippen öffnet gefilterte Bücherliste
-  - Hängt mit dem Dashboard zusammen (Kachel "Kategorien")
-  - Repository-Methode "Bücher einer Kategorie" (JOIN in Gegenrichtung) noch zu bauen
+- [ ] **Kategorien-Navigation (Stage 9 — Etappe 5)**
+  Eigener Kategorien-Übersichts-Screen; Antippen öffnet gefilterte Bücherliste.
+  Repository-Methode „Bücher einer Kategorie" (JOIN in Gegenrichtung) noch zu bauen.
+  Verdrahtet die „Kategorien"-Kachel im Dashboard.
+
+- [ ] **ISBN-Eingabe in der Suchleiste**
+  `SearchScreen` erkennt ISBN (rein numerisch, 10/13 Stellen) und ruft `searchByIsbn()` auf.
+
+- [ ] **`getOrCreateBookId` Rückgabe verbessern**
+  `Future<(int, BookLogResult)>` mit Enum `created | reactivated | alreadyInShelf` für
+  differenziertere Snackbar-Texte in `_logAndConfirm`.
 
 ---
 
-## NEU geplant — großer Umbau: Leseprotokoll + Dashboard
+## Geplant — Stage 12: Buchreihen
 
-### Leseprotokoll (Reading Log)
-Zusätzlich zum **Bücherregal** (= aktueller Bestand) ein **Leseprotokoll** (= Lese-Historie).
+### Konzept
 
-- [ ] Eigene Ansicht "Leseprotokoll" neben dem Bücherregal
-- [ ] Ein Buch wird ins Leseprotokoll an dem **Datum aufgenommen, an dem man es ausgelesen hat**
-- [ ] Dieses "Ausgelesen am"-Datum soll **nachträglich änderbar** sein
-- [ ] Im Leseprotokoll wird das "Ausgelesen am"-Datum angezeigt — **kein** Löschen-Button
-- [ ] "Verkauft"-/"nicht mehr im Besitz"-Anzeige im Leseprotokoll (Begriff noch festzulegen)
-- [ ] Ein Buch kann **mehrfach** im Leseprotokoll vorkommen (mehrmals gelesen → mehrere Einträge)
+Anhand eines Buchs die zugehörige Reihe ableiten und andere Bände anzeigen.
+Pro Band ist sichtbar, welchen Status er hat (wishlist / owned / gelesen / nicht vorhanden).
 
-  **Offene Design-Fragen (vor Implementierung klären):**
-  - Eigene Tabelle (z. B. `ReadingLog`) mit Lesedatum + Bezug zum Buch — Buch kann mehrere Einträge haben (1:n)
-  - Was passiert mit Protokoll-Einträgen, wenn das Buch aus dem Regal entfernt/verkauft wird?
-    → Eintrag soll bleiben (man hat es ja gelesen), mit Markierung "nicht mehr im Besitz".
-    Das bedeutet: Protokoll-Eintrag darf nicht per `cascade` mitgelöscht werden bzw. relevante Buchdaten
-    (Titel/Autor/Cover) müssen erhalten bleiben — Konzept noch festzulegen.
-  - Verhältnis Bücherregal ↔ Leseprotokoll sauber definieren (Bestand vs. Historie)
+### Datenquelle
 
-### Dashboard-Umbau (ersetzt den bisherigen Dashboard-Entwurf)
-- [ ] Dashboard als Startbildschirm mit Kacheln (2×2-Raster, große Karten)
-- [ ] **Hinzufügen auf EINE Kachel beschränken** (nicht mehr getrennt Suche + Scanner)
-- [ ] Diese Hinzufügen-Kachel führt zu einem **Menüpunkt/Auswahl**: ISBN-Scan **oder** manuelle Suche
-- [ ] **Leseprotokoll** als eigene Dashboard-Kachel
-- [ ] Voraussichtliche Kacheln: Bücherregal · Hinzufügen (→ Scan/Suche) · Leseprotokoll · Kategorien
-- [ ] Such-/Scan-Logik nach `utils/book_actions.dart` auslagern (war für altes Dashboard geplant, gilt weiter)
+- **Hardcover.app API** — vollständigste freie Reihen-Datenbank, speziell für Bücher gebaut
+- Als vierter Service im `BookApiService`-Orchestrator
+- Abruf lazy (nur wenn Buch-Detailscreen geöffnet wird), Ergebnis gecacht
 
-### Suche erweitern
-- [ ] **ISBN-Eingabe direkt in der Suchleiste** ermöglichen (SearchScreen erkennt, ob die Eingabe eine ISBN ist, und nutzt dann `searchByIsbn`)
+### Geplante Änderungen
+
+- [ ] `HardcoverService` in `lib/services/`
+- [ ] Reihen-Sektion im `BookDetailScreen`: Bandnummer, Titel, Cover, Status-Pill
+- [ ] Tippen auf einen Band → öffnet `BookDetailScreen` (falls vorhanden) oder Suche (falls nicht)
+- [ ] Optional: eigener `SeriesScreen` für die Gesamtübersicht einer Reihe
 
 ---
 
-## Geplant — DNB (Deutsche Nationalbibliothek) als dritte Quelle
+## Geplant — DNB (Deutsche Nationalbibliothek)
 - [ ] Pflichtexemplar-Datenbank: vollständigste Quelle für deutsche Titel
-- [ ] SRU-Schnittstelle (`https://services.dnb.de/sru/dnb?...`), XML statt JSON, CQL-Syntax, wenig Cover
-- [ ] `DnbService` als dritter Service im Orchestrator; Cover ggf. aus Google Books/Open Library nachladen
+- [ ] SRU-Schnittstelle, XML statt JSON, CQL-Syntax, kaum Cover
+- [ ] `DnbService` als dritter Service im Orchestrator
 
 ---
 
 ## Weitere Ideen (unsortiert, für später)
-- [ ] Filter nach Status (gelesen / ungelesen, behalten / verkaufen)
+- [ ] Filter nach Status (behalten / verkaufen) in der Bücherliste
 - [ ] Suchfeld / Filter innerhalb der eigenen Bücherliste
-- [ ] "Gelesen"-Statistik (Anzahl gelesen, Durchschnittsbewertung etc.) — passt thematisch zum Leseprotokoll
+- [ ] Lese-Statistik (Anzahl gelesen, Durchschnittsbewertung etc.)
 - [ ] Export der Liste (CSV / JSON)
-- [ ] Cover-Schatten / Card-Wrapper im Detail-Screen (BoxShadow oder Card `elevation`)
+- [ ] Cover-Schatten im Detail-Screen (Card mit `elevation`)
 - [ ] Sortier-Einstellung über App-Neustarts persistieren (`shared_preferences`)
-- [ ] CLAUDE.md auf aktuellen Stand bringen (Scanner, Duplikat-Prüfung, Sortierung, Google Books, Kategorien, Favoriten fehlen dort)
-- [ ] Bei breiterer Verteilung (>~10 Nutzer): Backend-Proxy für Google Books API-Key (z. B. Cloudflare Workers)
+- [ ] Bei breiterer Verteilung: Backend-Proxy für Google Books API-Key
 - [ ] API-Key auf Android-Apps mit SHA-1-Fingerprint einschränken
+- [ ] CLAUDE.md auf aktuellen Stand bringen

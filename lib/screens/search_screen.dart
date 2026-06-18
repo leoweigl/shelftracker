@@ -60,7 +60,7 @@ class _SearchScreenState extends State<SearchScreen> {
       });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Fehler bei der Suche: $e';
+        _errorMessage = 'Search error: $e';
         _isLoading = false;
       });
     }
@@ -70,7 +70,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Buch suchen'),
+        title: const Text('Search book'),
       ),
       body: Column(
         children: [
@@ -79,7 +79,7 @@ class _SearchScreenState extends State<SearchScreen> {
             child: TextField(
               controller: _controller,
               decoration: InputDecoration(
-                hintText: 'Titel oder Autor eingeben...',
+                hintText: 'Enter title or author...',
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search),

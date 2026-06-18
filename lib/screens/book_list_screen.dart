@@ -6,6 +6,7 @@ import '../widgets/star_rating.dart';
 import 'book_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/book_sort.dart';
+import '../models/book_status.dart';
 import '../utils/book_actions.dart';
 
 class BookListScreen extends StatefulWidget {
@@ -23,11 +24,11 @@ class _BookListScreenState extends State<BookListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bücherregal'),
+        title: const Text('Bookshelf'),
         actions: [
           PopupMenuButton<BookSort>(
             icon: const Icon(Icons.sort),
-            tooltip: 'Sortieren nach',
+            tooltip: 'Sort by',
             initialValue: _sort,
             onSelected: (value) => setState(() => _sort = value),
             itemBuilder: (_) => BookSort.values
@@ -36,18 +37,18 @@ class _BookListScreenState extends State<BookListScreen> {
           ),
           IconButton(
             icon: Icon(_ascending ? Icons.arrow_upward : Icons.arrow_downward),
-            tooltip: _ascending ? 'Aufsteigen' : 'Absteigend',
+            tooltip: _ascending ? 'Ascending' : 'Descending',
             onPressed: () => setState(() => _ascending = !_ascending),
           ),
           IconButton(
             icon: const Icon(Icons.bookmark_added_outlined),
-            tooltip: 'Gelesenes Buch erfassen',
+            tooltip: 'Log read book',
             onPressed: () => showLogReadOptions(context),
           ),
         ],
       ),
       body: StreamBuilder<List<BookEntry>>(
-        stream: bookRepository.watchAll(sort: _sort, ascending: _ascending),
+        stream: bookRepository.watchAll(sort: _sort, ascending: _ascending, status: BookStatus.owned),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -58,7 +59,7 @@ class _BookListScreenState extends State<BookListScreen> {
           if (books.isEmpty) {
             return const Center(
               child: Text(
-                'Noch keine Bücher.\nErfasse dein erstes gelesenes Buch oben rechts.',
+                'No books yet.\nLog your first read book in the top right.',
                 textAlign: TextAlign.center,
               ),
             );
@@ -130,7 +131,7 @@ class _BookListScreenState extends State<BookListScreen> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Favorit',
+                                  'Favorite',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
@@ -149,7 +150,7 @@ class _BookListScreenState extends State<BookListScreen> {
                     Row(
                       children: [
                         book.userRating == null
-                            ? const Text('noch nicht bewertet')
+                            ? const Text('not yet rated')
                             : StarRating(rating: book.userRating!),
                         const Spacer(),
                         if (!book.keepBook)
@@ -176,7 +177,7 @@ class _BookListScreenState extends State<BookListScreen> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Verkaufen',
+                                  'For sale',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
@@ -205,10 +206,10 @@ class _BookListScreenState extends State<BookListScreen> {
                   onPressed: () async {
                     final confirmed = await confirmDialog(
                       context,
-                      title: 'Buch löschen?',
+                      title: 'Delete book?',
                       message:
-                          '"${book.title}" wird aus deinem Regal entfernt.',
-                      confirmLabel: 'Löschen',
+                          '"${book.title}" will be removed from your shelf.',
+                      confirmLabel: 'Delete',
                       isDestructive: true,
                     );
                     if (!confirmed) return;

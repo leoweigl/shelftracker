@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shelftracker/screens/reading_log_screen.dart';
 import '../utils/book_actions.dart';
 import 'book_list_screen.dart';
+import 'wishlist_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -9,7 +10,7 @@ class DashboardScreen extends StatelessWidget {
   void _comingSoon(BuildContext context, String what) {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text('$what folgt')));
+    ).showSnackBar(SnackBar(content: Text('$what coming soon')));
   }
 
   @override
@@ -19,42 +20,55 @@ class DashboardScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _SectionHeader('Leseprotokoll'),
+          _SectionHeader('Reading Log'),
           const SizedBox(height: 8),
           _CardGrid(
             children: [
               _DashboardCard(
                 icon: Icons.auto_stories,
-                label: 'Leseprotokoll',
+                label: 'View\nLog',
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const ReadingLogScreen()),
                 ),
               ),
               _DashboardCard(
-                icon: Icons.add,
-                label: 'Gelesenes Buch erfassen',
+                icon: Icons.done_all,
+                label: 'Log\nRead',
                 onTap: () => showLogReadOptions(context),
               ),
             ],
           ),
           const SizedBox(height: 24),
-          _SectionHeader('Buchverwaltung'),
+          _SectionHeader('Book Management'),
           const SizedBox(height: 8),
           _CardGrid(
             children: [
               _DashboardCard(
                 icon: Icons.shelves,
-                label: 'Bücherregal',
+                label: 'Bookshelf',
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const BookListScreen()),
                 ),
               ),
               _DashboardCard(
+                icon: Icons.add_circle_outline,
+                label: 'Add',
+                onTap: () => showAddOptions(context),
+              ),
+              _DashboardCard(
                 icon: Icons.category,
-                label: 'Kategorien',
-                onTap: () => _comingSoon(context, 'Kategorien-Übersicht'),
+                label: 'Categories',
+                onTap: () => _comingSoon(context, 'Category overview'),
+              ),
+              _DashboardCard(
+                icon: Icons.checklist,
+                label: 'Wishlist',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const WishlistScreen()),
+                ),
               ),
             ],
           ),

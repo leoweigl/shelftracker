@@ -10,15 +10,15 @@ extension BookSortLabel on BookSort {
   String get label {
     switch (this) {
       case BookSort.title:
-        return 'Titel';
+        return 'Title';
       case BookSort.author:
-        return 'Autor';
+        return 'Author';
       case BookSort.rating:
-        return 'Bewertung';
+        return 'Rating';
       case BookSort.keep:
-        return 'Behalten / Verkaufen';
+        return 'Keep / Sell';
       case BookSort.addedAt:
-        return 'Hinzugefügt';
+        return 'Added';
     }
   }
 }

@@ -45,16 +45,16 @@ class BookDetailScreen extends StatelessWidget {
                     ? Theme.of(context).colorScheme.primary
                     : null,
                 tooltip: book.isFavorite
-                    ? 'Aus Favoriten entfernen'
-                    : 'Zu Favoriten hinzufügen',
+                    ? 'Remove from favorites'
+                    : 'Add to favorites',
               ),
               IconButton(
                 onPressed: () async {
                   final confirmed = await confirmDialog(
                     context,
-                    title: 'Buch löschen?',
-                    message: '"${book.title}" wird aus deinem Regal entfernt.',
-                    confirmLabel: 'Löschen',
+                    title: 'Delete book?',
+                    message: '"${book.title}" will be removed from your shelf.',
+                    confirmLabel: 'Delete',
                     isDestructive: true,
                   );
                   if (!confirmed || !context.mounted) return;
@@ -62,7 +62,7 @@ class BookDetailScreen extends StatelessWidget {
                   if (context.mounted) Navigator.pop(context);
                 },
                 icon: const Icon(Icons.delete_outline),
-                tooltip: 'Buch löschen',
+                tooltip: 'Delete book',
               ),
             ],
           ),
@@ -114,7 +114,7 @@ class BookDetailScreen extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Bewertung',
+                    'Rating',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -134,7 +134,7 @@ class BookDetailScreen extends StatelessWidget {
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Status'),
-                  subtitle: Text(book.keepBook ? 'Behalten' : 'Verkaufen'),
+                  subtitle: Text(book.keepBook ? 'Keep' : 'For sale'),
                   secondary: Icon(
                     book.keepBook ? Icons.shelves : Icons.sell_outlined,
                   ),
@@ -147,7 +147,7 @@ class BookDetailScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 Text(
-                  'Kategorien',
+                  'Categories',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -176,7 +176,7 @@ class BookDetailScreen extends StatelessWidget {
                         ),
                         ActionChip(
                           avatar: const Icon(Icons.add, size: 18),
-                          label: const Text('Hinzufügen'),
+                          label: const Text('Add'),
                           onPressed: () =>
                               _showAddCategoryDialog(context, book.id),
                         ),
@@ -188,7 +188,7 @@ class BookDetailScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 Text(
-                  'Hinzugefügt am ${DateFormat('dd.MM.yyyy').format(book.addedAt)}',
+                  'Added on ${DateFormat('MM/dd/yyyy').format(book.addedAt)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -232,7 +232,7 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Kategorien'),
+      title: const Text('Categories'),
       content: SizedBox(
         width: double.maxFinite,
         child: StreamBuilder<List<CategoryEntry>>(
@@ -265,7 +265,7 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
                 TextField(
                   controller: _searchController,
                   decoration: const InputDecoration(
-                    hintText: 'Suchen oder neu anlegen',
+                    hintText: 'Search or create new',
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(),
                     isDense: true,
@@ -297,7 +297,7 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
                           if (q.isNotEmpty && !exactExists)
                             ListTile(
                               leading: const Icon(Icons.add),
-                              title: Text('"${_query.trim()}" anlegen'),
+                              title: Text('Create "${_query.trim()}"'),
                               onTap: () => _createAndAdd(_query),
                             ),
                           ...available.map(
@@ -312,7 +312,7 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
                           if (available.isEmpty && (q.isEmpty || exactExists))
                             const Padding(
                               padding: EdgeInsets.all(8),
-                              child: Text('Keine weiteren Kategorien.'),
+                              child: Text('No more categories.'),
                             ),
                         ],
                       ),
@@ -327,7 +327,7 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Fertig'),
+          child: const Text('Done'),
         ),
       ],
     );
