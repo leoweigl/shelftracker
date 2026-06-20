@@ -94,28 +94,27 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
   - [x] `setStatus()`, `watchWishlist()`, `addToWishlist()`, `addToShelf()` im Repository
   - [x] `getOrCreateBookId()` setzt wishlist/preordered-Bücher beim Erfassen auf `owned`
   - [x] `logBookAsReadFromEntry()` für Bücher die bereits in der DB sind
-  - [x] `WishlistScreen` mit Filter-Pills (Alle / Vorgemerkt / Vorbestellt) und `pickMode`
+  - [x] `WishlistScreen` mit Filter-Pills (All / Wishlisted / Pre-ordered) und `pickMode`
   - [x] `BookListScreen` zeigt nur noch `owned`-Bücher
   - [x] `book_actions.dart`: `addToWishlistViaSearch`, `addToShelfViaSearch`,
-    `addToShelfViaScanner`, `showAddOptions`, „Von Wunschliste"-Option in `showLogReadOptions`
+    `addToShelfViaScanner`, `showAddOptions`, „From Wishlist"-Option in `showLogReadOptions`
   - [x] Dashboard-Umbau: 2×2 Leseprotokoll + 2×2 Buchverwaltung (Regal, Wunschliste,
     Hinzufügen, Kategorien)
+
+- [x] **Bug-Fixes & Wishlist-Erweiterungen**
+  - [x] `addToWishlist()`: soft-deleted Bücher werden korrekt reaktiviert mit `status = wishlist`
+  - [x] `BookDetailScreen`: Bewertung, Favorit-Herz und Keep/Sell-Toggle werden für
+    `wishlist`/`preordered`-Bücher ausgeblendet (`isOwned`-Flag)
+  - [x] Klappentext (`description`) in `Book`-Modell und `Books`-Tabelle ergänzt,
+    schemaVersion → 7; wird von Google Books API befüllt und im `BookDetailScreen`
+    für Wunschlisten-Bücher angezeigt
+  - [x] Pre-order-Status in `WishlistScreen`: "Mark as pre-ordered" / "Remove pre-order"
+    im Popup-Menü; `preordered`-Pill inline im Subtitle der Listeneinträge
+  - [x] UI-Labels auf Englisch vereinheitlicht
 
 ---
 
 ## Bekannte Bugs — zu beheben
-
-- [ ] **Soft-Delete + Wunschliste**: Nach dem Löschen eines `owned`-Buchs kann es nicht zur
-  Wunschliste hinzugefügt werden, weil `addToWishlist()` das soft-gelöschte Buch als „vorhanden"
-  erkennt und die ID zurückgibt, ohne den Status auf `wishlist` zu setzen.
-  → `addToWishlist()` muss bei soft-deleted Büchern `isDeleted = false` **und**
-  `status = wishlist` schreiben (analog zu `getOrCreateBookId()`).
-
-- [ ] **BookDetailScreen für Wunschlisten-Bücher**: Bewertung, Favorit-Herz und
-  „Behalten/Verkaufen"-Toggle sollen für Bücher mit Status `wishlist` oder `preordered`
-  ausgeblendet werden — diese Felder sind erst relevant wenn das Buch im Regal ist.
-  → Im `BookDetailScreen` prüfen: `BookStatus.fromDb(book.status) == BookStatus.owned`
-  vor dem Rendern dieser Sektionen.
 
 - [ ] **Kategorien beim Löschen nicht zurückgesetzt**: Wenn ein Buch soft-deleted wird,
   bleiben die `BookCategories`-Einträge erhalten. Wird das Buch später reaktiviert, hat es
@@ -172,8 +171,7 @@ Pro Band ist sichtbar, welchen Status er hat (wishlist / owned / gelesen / nicht
 ---
 
 ## Weitere Ideen (unsortiert, für später)
-- [ ] Klappentext im BookDetailScreen für Wunschlisten-Bücher (wishlist/preordered) anzeigen
-  — Daten kommen von Google Books API (`volumeInfo.description`), müssen gespeichert werden
+- [ ] Klappentext auch für owned-Bücher anzeigen (sofern vorhanden)
 - [ ] Filter nach Status (behalten / verkaufen) in der Bücherliste
 - [ ] Suchfeld / Filter innerhalb der eigenen Bücherliste
 - [ ] Lese-Statistik (Anzahl gelesen, Durchschnittsbewertung etc.)
