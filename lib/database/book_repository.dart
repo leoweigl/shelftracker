@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:shelftracker/models/wishlist_add_result.dart';
 import '../models/book.dart';
 import '../models/book_status.dart';
 import 'app_database.dart';
@@ -130,36 +131,50 @@ class BookRepository {
         .watch();
   }
 
-  Future<int> addToWishlist(Book book) async {
-    final existing = await (_db.select(_db.books)
-          ..where(
-            (b) =>
-                b.title.lower().equals(book.title.toLowerCase()) &
-                b.author.lower().equals(book.author.toLowerCase()),
-          ))
-        .getSingleOrNull();
+  Future<WishlistAddResult> addToWishlist(Book book) async {
+    final existing =
+        await (_db.select(_db.books)..where(
+              (b) =>
+                  b.title.lower().equals(book.title.toLowerCase()) &
+                  b.author.lower().equals(book.author.toLowerCase()),
+            ))
+            .getSingleOrNull();
 
-    if (existing != null) {
-      if (existing.isDeleted) {
-        await (_db.update(_db.books)..where((b) => b.id.equals(existing.id)))
-            .write(const BooksCompanion(
-              isDeleted: Value(false),
-              status: Value('wishlist'),
-            ));
+    if (existing != null && !existing.isDeleted) {
+      if (existing.status == BookStatus.owned.name) {
+        return WishlistAddResult.alreadyOwned;
       }
-      return existing.id;
+      if (existing.status == BookStatus.preordered.name) {
+        return WishlistAddResult.alreadyPreordered;
+      }
+      return WishlistAddResult.alreadyWishlisted;
     }
 
-    return _db.into(_db.books).insert(
-      BooksCompanion(
-        title: Value(book.title),
-        author: Value(book.author),
-        publicationYear: Value(book.publicationYear),
-        coverUrl: Value(book.coverUrl),
-        description: Value(book.description),
-        status: Value(BookStatus.wishlist.name),
-      ),
-    );
+    if (existing != null && existing.isDeleted) {
+      await (_db.update(
+        _db.books,
+      )..where((b) => b.id.equals(existing.id))).write(
+        const BooksCompanion(
+          isDeleted: Value(false),
+          status: Value('wishlist'),
+        ),
+      );
+      return WishlistAddResult.added;
+    }
+
+    await _db
+        .into(_db.books)
+        .insert(
+          BooksCompanion(
+            title: Value(book.title),
+            author: Value(book.author),
+            publicationYear: Value(book.publicationYear),
+            coverUrl: Value(book.coverUrl),
+            description: Value(book.description),
+            status: Value(BookStatus.wishlist.name),
+          ),
+        );
+    return WishlistAddResult.added;
   }
 
   Future<int> addToShelf(Book book) => getOrCreateBookId(book);
@@ -230,17 +245,21 @@ class BookRepository {
   Future<int> getOrCreateBookId(Book book) async {
     var existing =
         await (_db.select(_db.books)..where(
-              (b) => b.title.lower().equals(book.title.toLowerCase()) & b.author.lower().equals(book.author.toLowerCase()),
+              (b) =>
+                  b.title.lower().equals(book.title.toLowerCase()) &
+                  b.author.lower().equals(book.author.toLowerCase()),
             ))
             .getSingleOrNull();
 
     if (existing != null) {
-      final needsUpdate = existing.isDeleted ||
+      final needsUpdate =
+          existing.isDeleted ||
           existing.status == BookStatus.wishlist.name ||
           existing.status == BookStatus.preordered.name;
       if (needsUpdate) {
-        await (_db.update(_db.books)..where((b) => b.id.equals(existing.id)))
-            .write(
+        await (_db.update(
+          _db.books,
+        )..where((b) => b.id.equals(existing.id))).write(
           BooksCompanion(
             isDeleted: const Value(false),
             status: Value(BookStatus.owned.name),
@@ -271,17 +290,22 @@ class BookRepository {
     return bookId;
   }
 
-  Future<void> logBookAsReadFromEntry(BookEntry entry, {DateTime? readDate}) async {
+  Future<void> logBookAsReadFromEntry(
+    BookEntry entry, {
+    DateTime? readDate,
+  }) async {
     await setStatus(entry.id, BookStatus.owned);
-    await _db.into(_db.readingLog).insert(
-      ReadingLogCompanion(
-        title: Value(entry.title),
-        author: Value(entry.author),
-        coverUrl: Value(entry.coverUrl),
-        bookId: Value(entry.id),
-        readDate: Value(readDate ?? DateTime.now()),
-      ),
-    );
+    await _db
+        .into(_db.readingLog)
+        .insert(
+          ReadingLogCompanion(
+            title: Value(entry.title),
+            author: Value(entry.author),
+            coverUrl: Value(entry.coverUrl),
+            bookId: Value(entry.id),
+            readDate: Value(readDate ?? DateTime.now()),
+          ),
+        );
   }
 
   Future<void> logBookAsRead(Book book, {DateTime? readDate}) async {

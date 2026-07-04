@@ -26,7 +26,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Log read book',
+            tooltip: 'Add to wishlist',
             onPressed: () => addToWishlistViaSearch(context),
           ),
         ],

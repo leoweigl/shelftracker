@@ -1,101 +1,137 @@
 import 'package:flutter/material.dart';
+import 'package:shelftracker/models/wishlist_add_result.dart';
 import '../main.dart';
 import '../models/book.dart';
-import '../database/app_database.dart';
 import '../services/book_api_service.dart';
 import '../screens/search_screen.dart';
 import '../screens/scanner_screen.dart';
-import '../screens/wishlist_screen.dart';
 
-// ── Gelesenes Buch erfassen ──────────────────────────────────────────────────
+enum _FindMethod { scan, search }
 
-Future<void> logReadViaSearch(BuildContext context) async {
-  final book = await Navigator.push<Book>(
-    context,
-    MaterialPageRoute(builder: (_) => const SearchScreen()),
-  );
+enum _SaveAs { alreadyRead, inShelf, wishlist }
+
+Future<void> showAddBookOptions(BuildContext context) async {
+  final book = await _findBook(context);
   if (book == null || !context.mounted) return;
-  await _logAndConfirm(context, book);
-}
 
-Future<void> logReadViaScanner(BuildContext context) async {
-  final isbn = await Navigator.push<String>(
-    context,
-    MaterialPageRoute(builder: (_) => const ScannerScreen()),
-  );
-  if (isbn == null || !context.mounted) return;
+  final saveAs = await _showSaveAsDialog(context);
+  if (saveAs == null || !context.mounted) return;
 
-  try {
-    final book = await BookApiService().searchByIsbn(isbn);
-    if (!context.mounted) return;
-    if (book == null) {
+  switch (saveAs) {
+    case _SaveAs.alreadyRead:
+      await bookRepository.logBookAsRead(book);
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No results for ISBN $isbn')),
+        SnackBar(content: Text('"${book.title}" logged as read')),
       );
-      return;
-    }
-    await _logAndConfirm(context, book);
-  } catch (e) {
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: $e')),
-    );
+      break;
+
+    case _SaveAs.inShelf:
+      await bookRepository.addToShelf(book);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('"${book.title}" added to shelf')),
+      );
+      break;
+
+    case _SaveAs.wishlist:
+      final result = await bookRepository.addToWishlist(book);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_wishlistMessage(book.title, result))),
+      );
+      break;
   }
 }
 
-Future<void> logReadFromWishlist(BuildContext context) async {
-  final entry = await Navigator.push<BookEntry>(
-    context,
-    MaterialPageRoute(builder: (_) => const WishlistScreen(pickMode: true)),
-  );
-  if (entry == null || !context.mounted) return;
-
-  await bookRepository.logBookAsReadFromEntry(entry);
-  if (!context.mounted) return;
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('"${entry.title}" logged as read')),
-  );
-}
-
-Future<void> _logAndConfirm(BuildContext context, Book book) async {
-  await bookRepository.logBookAsRead(book);
-  if (!context.mounted) return;
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('"${book.title}" logged as read')),
-  );
-}
-
-void showLogReadOptions(BuildContext context) {
-  showDialog<void>(
+Future<Book?> _findBook(BuildContext context) async {
+  final method = await showDialog<_FindMethod>(
     context: context,
     builder: (dialogContext) => AlertDialog(
+      title: const Text('Add book'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
             leading: const Icon(Icons.qr_code_scanner),
             title: const Text('Scan ISBN'),
-            onTap: () {
-              Navigator.pop(dialogContext);
-              logReadViaScanner(context);
-            },
+            onTap: () => Navigator.pop(dialogContext, _FindMethod.scan),
           ),
           ListTile(
             leading: const Icon(Icons.search),
             title: const Text('Search book'),
-            onTap: () {
-              Navigator.pop(dialogContext);
-              logReadViaSearch(context);
-            },
+            onTap: () => Navigator.pop(dialogContext, _FindMethod.search),
           ),
-          // ListTile(
-          //   leading: const Icon(Icons.checklist),
-          //   title: const Text('From wishlist'),
-          //   onTap: () {
-          //     Navigator.pop(dialogContext);
-          //     logReadFromWishlist(context);
-          //   },
-          // ),
+        ],
+      ),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+        ),
+      ],
+    ),
+  );
+
+  if (method == null || !context.mounted) return null;
+
+  if (method == _FindMethod.search) {
+    return Navigator.push<Book>(
+      context,
+      MaterialPageRoute(builder: (_) => const SearchScreen()),
+    );
+  }
+
+  final isbn = await Navigator.push<String>(
+    context,
+    MaterialPageRoute(builder: (_) => const ScannerScreen()),
+  );
+  if (isbn == null || !context.mounted) return null;
+
+  try {
+    final book = await BookApiService().searchByIsbn(isbn);
+    if (book == null && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No results for ISBN $isbn')),
+      );
+    }
+    return book;
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+    return null;
+  }
+}
+
+Future<_SaveAs?> _showSaveAsDialog(BuildContext context) {
+  return showDialog<_SaveAs>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Save as'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.done_all),
+            title: const Text('Already read'),
+            subtitle: const Text('Adds to shelf and creates a log entry'),
+            onTap: () => Navigator.pop(dialogContext, _SaveAs.alreadyRead),
+          ),
+          ListTile(
+            leading: const Icon(Icons.shelves),
+            title: const Text('To shelf'),
+            subtitle: const Text('Adds to shelf only, no log entry'),
+            onTap: () => Navigator.pop(dialogContext, _SaveAs.inShelf),
+          ),
+          ListTile(
+            leading: const Icon(Icons.favorite_border),
+            title: const Text('Wishlist'),
+            subtitle: const Text('For books you don\'t own yet'),
+            onTap: () => Navigator.pop(dialogContext, _SaveAs.wishlist),
+          ),
         ],
       ),
       actions: [
@@ -108,7 +144,18 @@ void showLogReadOptions(BuildContext context) {
   );
 }
 
-// ── Buch hinzufügen ──────────────────────────────────────────────────────────
+String _wishlistMessage(String title, WishlistAddResult result) {
+  switch (result) {
+    case WishlistAddResult.added:
+      return '"$title" added to wishlist';
+    case WishlistAddResult.alreadyOwned:
+      return '"$title" is already in your shelf';
+    case WishlistAddResult.alreadyPreordered:
+      return '"$title" is already pre-ordered';
+    case WishlistAddResult.alreadyWishlisted:
+      return '"$title" is already on your wishlist';
+  }
+}
 
 Future<void> addToWishlistViaSearch(BuildContext context) async {
   final book = await Navigator.push<Book>(
@@ -117,125 +164,9 @@ Future<void> addToWishlistViaSearch(BuildContext context) async {
   );
   if (book == null || !context.mounted) return;
 
-  await bookRepository.addToWishlist(book);
+  final result = await bookRepository.addToWishlist(book);
   if (!context.mounted) return;
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('"${book.title}" added to wishlist')),
-  );
-}
-
-Future<void> addToShelfViaSearch(BuildContext context) async {
-  final book = await Navigator.push<Book>(
-    context,
-    MaterialPageRoute(builder: (_) => const SearchScreen()),
-  );
-  if (book == null || !context.mounted) return;
-
-  await bookRepository.addToShelf(book);
-  if (!context.mounted) return;
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('"${book.title}" added to shelf')),
-  );
-}
-
-Future<void> addToShelfViaScanner(BuildContext context) async {
-  final isbn = await Navigator.push<String>(
-    context,
-    MaterialPageRoute(builder: (_) => const ScannerScreen()),
-  );
-  if (isbn == null || !context.mounted) return;
-
-  try {
-    final book = await BookApiService().searchByIsbn(isbn);
-    if (!context.mounted) return;
-    if (book == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No results for ISBN $isbn')),
-      );
-      return;
-    }
-    await bookRepository.addToShelf(book);
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('"${book.title}" added to shelf')),
-    );
-  } catch (e) {
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: $e')),
-    );
-  }
-}
-
-void showAddOptions(BuildContext context) {
-  showDialog<void>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text('Add book'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.checklist),
-            title: const Text('To Wishlist'),
-            onTap: () {
-              Navigator.pop(dialogContext);
-              addToWishlistViaSearch(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.shelves),
-            title: const Text('To Shelf'),
-            subtitle: const Text('Search or Scan'),
-            onTap: () {
-              Navigator.pop(dialogContext);
-              _showAddToShelfOptions(context);
-            },
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext),
-          child: const Text('Cancel'),
-        ),
-      ],
-    ),
-  );
-}
-
-void _showAddToShelfOptions(BuildContext context) {
-  showDialog<void>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text('To Shelf'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.qr_code_scanner),
-            title: const Text('Scan ISBN'),
-            onTap: () {
-              Navigator.pop(dialogContext);
-              addToShelfViaScanner(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.search),
-            title: const Text('Search book'),
-            onTap: () {
-              Navigator.pop(dialogContext);
-              addToShelfViaSearch(context);
-            },
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext),
-          child: const Text('Cancel'),
-        ),
-      ],
-    ),
+    SnackBar(content: Text(_wishlistMessage(book.title, result))),
   );
 }

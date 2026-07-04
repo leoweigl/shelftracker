@@ -7,72 +7,45 @@ import 'wishlist_screen.dart';
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
-  void _comingSoon(BuildContext context, String what) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('$what coming soon')));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('ShelfTracker')),
-      body: ListView(
+      body: Padding(
         padding: const EdgeInsets.all(16),
-        children: [
-          _SectionHeader('Reading Log'),
-          const SizedBox(height: 8),
-          _CardGrid(
-            children: [
-              _DashboardCard(
-                icon: Icons.auto_stories,
-                label: 'View\nLog',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ReadingLogScreen()),
-                ),
+        child: _CardGrid(
+          children: [
+            _DashboardCard(
+              icon: Icons.auto_stories,
+              label: 'Reading\nLog',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ReadingLogScreen()),
               ),
-              _DashboardCard(
-                icon: Icons.done_all,
-                label: 'Log\nRead',
-                onTap: () => showLogReadOptions(context),
+            ),
+            _DashboardCard(
+              icon: Icons.shelves,
+              label: 'Bookshelf',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const BookListScreen()),
               ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          _SectionHeader('Book Management'),
-          const SizedBox(height: 8),
-          _CardGrid(
-            children: [
-              _DashboardCard(
-                icon: Icons.shelves,
-                label: 'Bookshelf',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const BookListScreen()),
-                ),
+            ),
+            _DashboardCard(
+              icon: Icons.add_circle_outline,
+              label: 'Add Book',
+              onTap: () => showAddBookOptions(context),
+            ),
+            _DashboardCard(
+              icon: Icons.favorite_border,
+              label: 'Wishlist',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const WishlistScreen()),
               ),
-              _DashboardCard(
-                icon: Icons.add_circle_outline,
-                label: 'Add',
-                onTap: () => showAddOptions(context),
-              ),
-              _DashboardCard(
-                icon: Icons.category,
-                label: 'Categories',
-                onTap: () => _comingSoon(context, 'Category overview'),
-              ),
-              _DashboardCard(
-                icon: Icons.favorite_border,
-                label: 'Wishlist',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const WishlistScreen()),
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -108,21 +81,6 @@ class _DashboardCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader(this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: Theme.of(
-        context,
-      ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
     );
   }
 }

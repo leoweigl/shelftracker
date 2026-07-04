@@ -68,11 +68,6 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
               });
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.bookmark_added_outlined),
-            tooltip: 'Log read book',
-            onPressed: () => showLogReadOptions(context),
-          ),
         ],
       ),
       body: Column(

@@ -123,6 +123,28 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
     Streams (`_bookStream` / `_logStream`) werden in `initState()` einmalig erzeugt statt
     live in `build()`, um Neuladen/Flackern beim Umschalten der Suche zu vermeiden.
 
+- [x] **Add-Flow vereinheitlicht + Dashboard vereinfacht**
+  - [x] `book_actions.dart` komplett neu geschrieben: ein einziger Einstiegspunkt
+    `showAddBookOptions()` — erst Scan/Suche (`_findBook`), dann Auswahl „Save as“
+    (Already read / To shelf / Wishlist) über `_showSaveAsDialog`. ISBN-Scan ist jetzt
+    auch für Wishlist-Einträge möglich (bewusste Änderung gegenüber der ursprünglichen
+    Stage-11-Einschränkung „nur Suche“).
+  - [x] Alte, redundante Funktionen entfernt: `logReadViaSearch`, `logReadViaScanner`,
+    `logReadFromWishlist` (unbenutzt), `_logAndConfirm`, `showLogReadOptions`,
+    `addToShelfViaSearch`, `addToShelfViaScanner`, `showAddOptions`,
+    `_showAddToShelfOptions`
+  - [x] `WishlistAddResult`-Enum (`added` / `alreadyOwned` / `alreadyWishlisted` /
+    `alreadyPreordered`) in `lib/models/wishlist_add_result.dart`; `addToWishlist()`
+    gibt jetzt Auskunft statt stillschweigend nichts zu tun — Nutzer bekommt eine
+    passende Meldung, wenn ein Buch beim Hinzufügen zur Wishlist bereits besessen,
+    gewunschlistet oder vorbestellt ist
+  - [x] `DashboardScreen`: keine Sektionsüberschriften mehr, ein einziges 2×2-Grid
+    (Reading Log, Bookshelf, Add Book, Wishlist); Kategorien-Kachel vorerst entfernt
+    (kommt zurück, sobald die Kategorien-Navigation gebaut ist); „Log Read“-Kachel
+    entfernt, läuft jetzt über „Add Book“
+  - [x] Aufgeräumt: unbenutzter Import in `book_list_screen.dart`, falscher Tooltip
+    „Log read book“ → „Add to wishlist“ in `WishlistScreen`
+
 ---
 
 ---
@@ -132,7 +154,8 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
 - [ ] **Kategorien-Navigation (Stage 9 — Etappe 5)**
   Eigener Kategorien-Übersichts-Screen; Antippen öffnet gefilterte Bücherliste.
   Repository-Methode „Bücher einer Kategorie" (JOIN in Gegenrichtung) noch zu bauen.
-  Verdrahtet die „Kategorien"-Kachel im Dashboard.
+  Verdrahtet nicht mehr automatisch — benötigt eine neue Kachel im Dashboard-Grid
+  (aktuell 2×2 mit 4 Einträgen; Layout müsste bei 5 Kacheln angepasst werden).
 
 - [ ] **`getOrCreateBookId` Rückgabe verbessern**
   `Future<(int, BookLogResult)>` mit Enum `created | reactivated | alreadyInShelf` für
