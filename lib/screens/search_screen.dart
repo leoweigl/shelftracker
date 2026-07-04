@@ -44,8 +44,8 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<void> _search() async {
-    final query = _controller.text;
-    if (query.trim().isEmpty) return;
+    final query = _controller.text.trim();
+    if (query.isEmpty) return;
 
     setState(() {
       _isLoading = true;
@@ -53,6 +53,16 @@ class _SearchScreenState extends State<SearchScreen> {
     });
 
     try {
+      final isIsbn = RegExp(r'^\d{10}(\d{3})?$').hasMatch(query);
+      if (isIsbn) {
+        final book = await _apiService.searchByIsbn(query);
+        setState(() {
+          _results = book != null ? [book] : [];
+          _isLoading = false;
+        });
+        return;
+      }
+
       final results = await _apiService.search(query);
       setState(() {
         _results = results;

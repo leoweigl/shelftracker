@@ -111,17 +111,19 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
   - [x] Pre-order-Status in `WishlistScreen`: "Mark as pre-ordered" / "Remove pre-order"
     im Popup-Menü; `preordered`-Pill inline im Subtitle der Listeneinträge
   - [x] UI-Labels auf Englisch vereinheitlicht
+  - [x] Klärung: Kategorien bleiben beim Soft-Delete erhalten (kein Bug, sondern
+    bewusstes Verhalten) — beim Reaktivieren eines gelöschten Buchs (Regal oder
+    Wunschliste) sollen die früher zugewiesenen Kategorien zurückkehren, statt
+    verloren zu gehen.
+  - [x] ISBN-Eingabe in der Suchleiste: `SearchScreen` erkennt ISBN (10/13 Ziffern,
+    getrimmt) und ruft `searchByIsbn()` statt der normalen Titel/Autor-Suche auf.
+  - [x] Such- und Filtermöglichkeit in `BookListScreen` und `ReadingLogScreen`: Such-Icon
+    in der AppBar klappt ein `TextField` auf, filtert client-seitig nach Titel/Autor.
+    `ReadingLogScreen` dafür von `StatelessWidget` zu `StatefulWidget` umgebaut.
+    Streams (`_bookStream` / `_logStream`) werden in `initState()` einmalig erzeugt statt
+    live in `build()`, um Neuladen/Flackern beim Umschalten der Suche zu vermeiden.
 
 ---
-
-## Bekannte Bugs — zu beheben
-
-- [ ] **Kategorien beim Löschen nicht zurückgesetzt**: Wenn ein Buch soft-deleted wird,
-  bleiben die `BookCategories`-Einträge erhalten. Wird das Buch später reaktiviert, hat es
-  noch die alten Kategorien. Beim Hinzufügen zur Wunschliste (nach vorherigem Löschen)
-  sind die Kategorien ebenfalls noch vorhanden, obwohl das Buch neu erfasst wird.
-  → `delete()` im Repository soll zusätzlich alle `BookCategories`-Einträge für das Buch
-  löschen (`DELETE FROM book_categories WHERE book_id = ?`).
 
 ---
 
@@ -131,9 +133,6 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
   Eigener Kategorien-Übersichts-Screen; Antippen öffnet gefilterte Bücherliste.
   Repository-Methode „Bücher einer Kategorie" (JOIN in Gegenrichtung) noch zu bauen.
   Verdrahtet die „Kategorien"-Kachel im Dashboard.
-
-- [ ] **ISBN-Eingabe in der Suchleiste**
-  `SearchScreen` erkennt ISBN (rein numerisch, 10/13 Stellen) und ruft `searchByIsbn()` auf.
 
 - [ ] **`getOrCreateBookId` Rückgabe verbessern**
   `Future<(int, BookLogResult)>` mit Enum `created | reactivated | alreadyInShelf` für
@@ -173,7 +172,6 @@ Pro Band ist sichtbar, welchen Status er hat (wishlist / owned / gelesen / nicht
 ## Weitere Ideen (unsortiert, für später)
 - [ ] Klappentext auch für owned-Bücher anzeigen (sofern vorhanden)
 - [ ] Filter nach Status (behalten / verkaufen) in der Bücherliste
-- [ ] Suchfeld / Filter innerhalb der eigenen Bücherliste
 - [ ] Lese-Statistik (Anzahl gelesen, Durchschnittsbewertung etc.)
 - [ ] Export der Liste (CSV / JSON)
 - [ ] Cover-Schatten im Detail-Screen (Card mit `elevation`)
