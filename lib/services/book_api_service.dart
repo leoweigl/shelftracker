@@ -6,17 +6,41 @@ class BookApiService {
   final OpenLibraryService _openLibrary = OpenLibraryService();
   final GoogleBooksService _googleBooks = GoogleBooksService();
 
+  // Future<List<Book>> search(String query) async {
+  //   if (query.trim().isEmpty) return [];
+  //
+  //   try {
+  //     final results = await _googleBooks.search(query);
+  //     if (results.isNotEmpty) return results;
+  //   } catch (_) {}
+  //
+  //   try {
+  //     return await _openLibrary.search(query);
+  //   } catch (_) {
+  //     return [];
+  //   }
+  // }
+
   Future<List<Book>> search(String query) async {
     if (query.trim().isEmpty) return [];
 
     try {
       final results = await _googleBooks.search(query);
-      if (results.isNotEmpty) return results;
-    } catch (_) {}
+      if (results.isNotEmpty) {
+        print('[DEBUG] Google Books: ${results.length} Treffer für "$query"');
+        print('[DEBUG] Erstes Ergebnis "${results.first.title}" — description: ${results.first.description == null ? "NULL" : "${results.first.description!.length} Zeichen"}');
+        return results;
+      }
+      print('[DEBUG] Google Books: leeres Ergebnis für "$query"');
+    } catch (e) {
+      print('[DEBUG] Google Books Fehler: $e');
+    }
 
+    print('[DEBUG] Fallback auf Open Library für "$query"');
     try {
       return await _openLibrary.search(query);
-    } catch (_) {
+    } catch (e) {
+      print('[DEBUG] Open Library Fehler: $e');
       return [];
     }
   }
