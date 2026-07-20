@@ -202,3 +202,5 @@ Pro Band ist sichtbar, welchen Status er hat (wishlist / owned / gelesen / nicht
 - [ ] Bei breiterer Verteilung: Backend-Proxy für Google Books API-Key
 - [ ] API-Key auf Android-Apps mit SHA-1-Fingerprint einschränken
 - [ ] CLAUDE.md auf aktuellen Stand bringen
+- [ ] Unit-Tests für `book_repository.dart` (v. a. `addToWishlist()`, `getOrCreateBookId()`,
+  Soft-Delete/Kategorien-Logik) — In-Memory-Testdatenbank für Drift als Einstieg
