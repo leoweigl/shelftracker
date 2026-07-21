@@ -10,10 +10,40 @@ class GoogleBooksService {
     defaultValue: '',
   );
 
+  static const _retryableStatusCodes = {429, 500, 503};
+  static const _maxRetries = 2;
+  static const _requestTimeout = Duration(seconds: 8);
+
   String _withKey(String url) {
     if (_apiKey.isEmpty) return url;
     final separator = url.contains('?') ? '&' : '?';
     return '$url${separator}key=$_apiKey';
+  }
+
+  Future<http.Response> _getWithRetry(Uri url) async {
+    Object? lastError;
+
+    for (var attempt = 0; attempt <= _maxRetries; attempt++) {
+      try {
+        final response = await http.get(url).timeout(_requestTimeout);
+
+        if (response.statusCode == 200) return response;
+
+        if (!_retryableStatusCodes.contains(response.statusCode) ||
+            attempt == _maxRetries) {
+          throw Exception('Google Books: ${response.statusCode}');
+        }
+
+        lastError = Exception('Google Books: ${response.statusCode}');
+      } catch (e) {
+        lastError = e;
+        if (attempt == _maxRetries) rethrow;
+      }
+
+      await Future.delayed(Duration(milliseconds: 300 * (attempt + 1)));
+    }
+
+    throw lastError ?? Exception('Google Books: unknown error');
   }
 
   Future<List<Book>> search(String query) async {
@@ -25,11 +55,7 @@ class GoogleBooksService {
       '$_baseUrl/volumes?q=${Uri.encodeQueryComponent(query)}&maxResults=20',
     ));
 
-    final response = await http.get(url);
-
-    if (response.statusCode != 200) {
-      throw Exception('Google Books: ${response.statusCode}');
-    }
+    final response = await _getWithRetry(url);
 
     final data = jsonDecode(response.body) as Map<String, dynamic>;
     final items = data['items'] as List?;
@@ -49,11 +75,7 @@ class GoogleBooksService {
       '$_baseUrl/volumes?q=isbn:$cleanIsbn&maxResults=1',
     ));
 
-    final response = await http.get(url);
-
-    if (response.statusCode != 200) {
-      throw Exception('Google Books: ${response.statusCode}');
-    }
+    final response = await _getWithRetry(url);
 
     final data = jsonDecode(response.body) as Map<String, dynamic>;
     final items = data['items'] as List?;
