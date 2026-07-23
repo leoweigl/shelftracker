@@ -5,6 +5,10 @@ import '../models/book.dart';
 class OpenLibraryService {
   static const String _baseUrl = 'https://openlibrary.org';
 
+  static const Map<String, String> _headers = {
+    'User-Agent': 'ShelfTracker/1.0 (leonhard@weigl.dev)',
+  };
+
   Future<List<Book>> search(String query) async {
     if (query.trim().isEmpty) {
       return [];
@@ -16,7 +20,7 @@ class OpenLibraryService {
       '&fields=key,title,author_name,first_publish_year,cover_i,subject',
     );
 
-    final response = await http.get(url);
+    final response = await http.get(url, headers: _headers);
 
     if (response.statusCode != 200) {
       throw Exception('Open Library: ${response.statusCode}');
@@ -40,7 +44,7 @@ class OpenLibraryService {
       '&fields=key,title,author_name,first_publish_year,cover_i,subject',
     );
 
-    final response = await http.get(url);
+    final response = await http.get(url, headers: _headers);
 
     if (response.statusCode != 200) {
       throw Exception('Open Library: ${response.statusCode}');

@@ -161,6 +161,11 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
   `Future<(int, BookLogResult)>` mit Enum `created | reactivated | alreadyInShelf` für
   differenziertere Snackbar-Texte in `_logAndConfirm`.
 
+- [ ] **`addedAt` beim Reaktivieren aktualisieren**
+  Wenn ein zuvor soft-gelöschtes Buch erneut hinzugefügt wird (Regal oder Wunschliste),
+  soll das `addedAt`-Datum auf den Zeitpunkt der Reaktivierung aktualisiert werden,
+  statt das alte Datum beizubehalten — betrifft `getOrCreateBookId()` / `addToWishlist()`.
+
 ---
 
 ## Geplant — Stage 12: Buchreihen

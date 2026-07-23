@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import '../models/book.dart';
 
@@ -11,8 +12,11 @@ class GoogleBooksService {
   );
 
   static const _retryableStatusCodes = {429, 500, 503};
-  static const _maxRetries = 2;
+  static const _maxRetries = 3;
+  static const _baseDelay = Duration(milliseconds: 300);
   static const _requestTimeout = Duration(seconds: 8);
+
+  final _random = Random();
 
   String _withKey(String url) {
     if (_apiKey.isEmpty) return url;
@@ -29,18 +33,20 @@ class GoogleBooksService {
 
         if (response.statusCode == 200) return response;
 
-        if (!_retryableStatusCodes.contains(response.statusCode) ||
-            attempt == _maxRetries) {
+        if (!_retryableStatusCodes.contains(response.statusCode)) {
           throw Exception('Google Books: ${response.statusCode}');
         }
 
         lastError = Exception('Google Books: ${response.statusCode}');
       } catch (e) {
         lastError = e;
-        if (attempt == _maxRetries) rethrow;
       }
 
-      await Future.delayed(Duration(milliseconds: 300 * (attempt + 1)));
+      if (attempt == _maxRetries) break;
+
+      final exponentialDelay = _baseDelay * pow(2, attempt).toInt();
+      final jitter = Duration(milliseconds: _random.nextInt(100));
+      await Future.delayed(exponentialDelay + jitter);
     }
 
     throw lastError ?? Exception('Google Books: unknown error');
