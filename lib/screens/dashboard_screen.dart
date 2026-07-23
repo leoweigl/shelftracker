@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shelftracker/l10n/app_localizations.dart';
 import 'package:shelftracker/screens/reading_log_screen.dart';
 import '../utils/book_actions.dart';
 import 'book_list_screen.dart';
 import 'wishlist_screen.dart';
+import 'settings_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -10,14 +12,25 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('ShelfTracker')),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.appTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            ),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _CardGrid(
           children: [
             _DashboardCard(
               icon: Icons.auto_stories,
-              label: 'Reading\nLog',
+              label: AppLocalizations.of(context)!.dashboardReadingLog,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const ReadingLogScreen()),
@@ -25,7 +38,7 @@ class DashboardScreen extends StatelessWidget {
             ),
             _DashboardCard(
               icon: Icons.shelves,
-              label: 'Bookshelf',
+              label: AppLocalizations.of(context)!.dashboardBookshelf,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const BookListScreen()),
@@ -33,12 +46,12 @@ class DashboardScreen extends StatelessWidget {
             ),
             _DashboardCard(
               icon: Icons.add_circle_outline,
-              label: 'Add Book',
+              label: AppLocalizations.of(context)!.dashboardAddBook,
               onTap: () => showAddBookOptions(context),
             ),
             _DashboardCard(
               icon: Icons.favorite_border,
-              label: 'Wishlist',
+              label: AppLocalizations.of(context)!.dashboardWishlist,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const WishlistScreen()),

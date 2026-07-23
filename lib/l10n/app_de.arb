@@ -1,0 +1,11 @@
+{
+  "@@locale": "de",
+  "languageGerman": "Deutsch",
+  "languageEnglish": "Englisch",
+  "appTitle": "ShelfTracker",
+  "settingsTitle": "Einstellungen",
+  "dashboardReadingLog": "Lesetagebuch",
+  "dashboardBookshelf": "Bücherregal",
+  "dashboardAddBook": "Buch hinzufügen",
+  "dashboardWishlist": "Wunschliste"
+}
