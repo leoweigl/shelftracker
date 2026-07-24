@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelftracker/l10n/app_localizations.dart';
 import '../database/app_database.dart';
 import '../main.dart';
 import '../widgets/star_rating.dart';
@@ -21,7 +22,7 @@ class LogDetailScreen extends StatelessWidget {
       initialDate: current,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      helpText: 'Change read date',
+      helpText: AppLocalizations.of(context)!.changeReadDate,
     );
     if (picked == null) return;
     await bookRepository.updateReadDate(logId, picked);
@@ -29,6 +30,7 @@ class LogDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return StreamBuilder<ReadingLogEntry>(
       stream: bookRepository.watchReadingLogById(logId),
       builder: (context, logSnapshot) {
@@ -65,17 +67,17 @@ class LogDetailScreen extends StatelessWidget {
                         ? Theme.of(context).colorScheme.primary
                         : null,
                     tooltip: isFavorite
-                        ? 'Remove from favorites'
-                        : 'Add to favorites',
+                        ? l10n.detailRemoveFav
+                        : l10n.detailAddFav,
                   ),
                   IconButton(
                     onPressed: () async {
                       final confirmed = await confirmDialog(
                         context,
-                        title: 'Delete entry?',
+                        title: l10n.askDeleteLog,
                         message:
-                            'This reading entry will be permanently removed from the log.',
-                        confirmLabel: 'Remove',
+                            l10n.confirmDeleteLog,
+                        confirmLabel: l10n.remove,
                         isDestructive: true,
                       );
                       if (!confirmed || !context.mounted) return;
@@ -83,7 +85,7 @@ class LogDetailScreen extends StatelessWidget {
                       if (context.mounted) Navigator.pop(context);
                     },
                     icon: const Icon(Icons.delete_outline),
-                    tooltip: 'Delete entry',
+                    tooltip: l10n.deleteLog,
                   ),
                 ],
               ),
@@ -140,7 +142,7 @@ class LogDetailScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Rating',
+                          l10n.rating,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.w600),
                         ),
@@ -169,8 +171,8 @@ class LogDetailScreen extends StatelessWidget {
                         const Icon(Icons.event, size: 14),
                         const SizedBox(width: 4),
                         Text(
-                          'Read on '
-                          '${DateFormat('MM/dd/yyyy').format(entry.readDate)}',
+                          '${l10n.readOn} '
+                          '${DateFormat(l10n.dateFormat).format(entry.readDate)}',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         IconButton(

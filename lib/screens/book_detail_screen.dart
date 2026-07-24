@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelftracker/l10n/app_localizations.dart';
 import '../database/app_database.dart';
 import '../main.dart';
 import '../widgets/star_rating.dart';
@@ -48,16 +49,16 @@ class BookDetailScreen extends StatelessWidget {
                       ? Theme.of(context).colorScheme.primary
                       : null,
                   tooltip: book.isFavorite
-                      ? 'Remove from favorites'
-                      : 'Add to favorites',
+                      ? AppLocalizations.of(context)!.detailRemoveFav
+                      : AppLocalizations.of(context)!.detailAddFav,
                 ),
               IconButton(
                 onPressed: () async {
                   final confirmed = await confirmDialog(
                     context,
-                    title: 'Delete book?',
-                    message: '"${book.title}" will be removed from your shelf.',
-                    confirmLabel: 'Delete',
+                    title: AppLocalizations.of(context)!.askDeleteBook,
+                    message: book.title + AppLocalizations.of(context)!.confirmDelete,
+                    confirmLabel: AppLocalizations.of(context)!.delete,
                     isDestructive: true,
                   );
                   if (!confirmed || !context.mounted) return;
@@ -65,7 +66,7 @@ class BookDetailScreen extends StatelessWidget {
                   if (context.mounted) Navigator.pop(context);
                 },
                 icon: const Icon(Icons.delete_outline),
-                tooltip: 'Delete book',
+                tooltip: AppLocalizations.of(context)!.deleteBook,
               ),
             ],
           ),
@@ -118,7 +119,7 @@ class BookDetailScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Rating',
+                      AppLocalizations.of(context)!.rating,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -136,8 +137,11 @@ class BookDetailScreen extends StatelessWidget {
 
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('Status'),
-                    subtitle: Text(book.keepBook ? 'Keep' : 'For sale'),
+                    title: Text(AppLocalizations.of(context)!.status),
+                    subtitle: Text(book.keepBook
+                      ? AppLocalizations.of(context)!.keep
+                      : AppLocalizations.of(context)!.forSale
+                    ),
                     secondary: Icon(
                       book.keepBook ? Icons.shelves : Icons.sell_outlined,
                     ),
@@ -150,7 +154,7 @@ class BookDetailScreen extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   Text(
-                    'Categories',
+                    AppLocalizations.of(context)!.categories,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -179,7 +183,7 @@ class BookDetailScreen extends StatelessWidget {
                             ),
                             ActionChip(
                               avatar: const Icon(Icons.add, size: 18),
-                              label: const Text('Add'),
+                              label: Text(AppLocalizations.of(context)!.add),
                               onPressed: () =>
                                   _showAddCategoryDialog(context, book.id),
                             ),
@@ -190,22 +194,23 @@ class BookDetailScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                 ],
 
-
-
                 if (!isOwned && (book.description == null || book.description!.isEmpty)) ...[
-                  const Text(
-                    'No description available',
+                  Text(
+                    AppLocalizations.of(context)!.noDescrAvailable,
                     style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic, height: 2),
                   ),
                   const SizedBox(height: 24),
                 ],
 
                 if (!isOwned && book.description != null && book.description!.isNotEmpty) ...[
-                  const Align(
+                  Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Description',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      AppLocalizations.of(context)!.description,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -217,7 +222,8 @@ class BookDetailScreen extends StatelessWidget {
                 ],
 
                 Text(
-                  'Added on ${DateFormat('MM/dd/yyyy').format(book.addedAt)}',
+                  '${AppLocalizations.of(context)!.addedOn}'
+                  ' ${DateFormat(AppLocalizations.of(context)!.dateFormat).format(book.addedAt)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -261,7 +267,7 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Categories'),
+      title: Text(AppLocalizations.of(context)!.categories),
       content: SizedBox(
         width: double.maxFinite,
         child: StreamBuilder<List<CategoryEntry>>(
@@ -293,8 +299,8 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
 
                 TextField(
                   controller: _searchController,
-                  decoration: const InputDecoration(
-                    hintText: 'Search or create new',
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)!.searchOrCreate,
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(),
                     isDense: true,
@@ -326,7 +332,7 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
                           if (q.isNotEmpty && !exactExists)
                             ListTile(
                               leading: const Icon(Icons.add),
-                              title: Text('Create "${_query.trim()}"'),
+                              title: Text('${AppLocalizations.of(context)!.createCategory} "${_query.trim()}"'),
                               onTap: () => _createAndAdd(_query),
                             ),
                           ...available.map(
@@ -339,9 +345,9 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
                             ),
                           ),
                           if (available.isEmpty && (q.isEmpty || exactExists))
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.all(8),
-                              child: Text('No more categories.'),
+                              child: Text(AppLocalizations.of(context)!.noMoreCategories),
                             ),
                         ],
                       ),
@@ -356,7 +362,7 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Done'),
+          child: Text(AppLocalizations.of(context)!.done),
         ),
       ],
     );

@@ -151,6 +151,21 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
 
 ## Offen / zurückgestellt
 
+- [ ] **Lokalisierung (Deutsch/Englisch) — laufend**
+  App-weite Lokalisierung via Flutter `intl` (ARB-Dateien, `LocaleController` mit
+  SharedPreferences-Persistenz, Sprachumschalter in `SettingsScreen`). Screen-für-Screen-Migration:
+  - [x] `dashboard_screen.dart`
+  - [x] `book_list_screen.dart`
+  - [x] `book_detail_screen.dart`
+  - [x] `log_detail_screen.dart`
+  - [ ] `reading_log_screen.dart`
+  - [ ] `scanner_screen.dart`
+  - [ ] `search_screen.dart`
+  - [ ] `settings_screen.dart`
+  - [ ] `wishlist_screen.dart`
+  - [ ] `book_sort.dart` (Sortierungs-Labels) — `BookSortLabel.label` zu `label(BuildContext)`
+    umgebaut, ARB-Keys `title`/`author`/`rating`/`keepSell`/`added` wiederverwendet
+
 - [ ] **Kategorien-Navigation (Stage 9 — Etappe 5)**
   Eigener Kategorien-Übersichts-Screen; Antippen öffnet gefilterte Bücherliste.
   Repository-Methode „Bücher einer Kategorie" (JOIN in Gegenrichtung) noch zu bauen.

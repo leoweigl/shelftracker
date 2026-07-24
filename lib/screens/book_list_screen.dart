@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelftracker/l10n/app_localizations.dart';
 import 'package:shelftracker/utils/dialogs.dart';
 import '../database/app_database.dart';
 import '../main.dart';
@@ -56,11 +57,11 @@ class _BookListScreenState extends State<BookListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bookshelf'),
+        title: Text(AppLocalizations.of(context)!.bookshelf),
         actions: [
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search),
-            tooltip: _isSearching ? 'Close search' : 'Search',
+            tooltip: _isSearching ? AppLocalizations.of(context)!.closeSearch : AppLocalizations.of(context)!.search,
             onPressed: () {
               setState(() {
                 _isSearching = !_isSearching;
@@ -73,16 +74,16 @@ class _BookListScreenState extends State<BookListScreen> {
           ),
           PopupMenuButton<BookSort>(
             icon: const Icon(Icons.sort),
-            tooltip: 'Sort by',
+            tooltip: AppLocalizations.of(context)!.sort,
             initialValue: _sort,
             onSelected: (value) => _updateSort(value, _ascending),
             itemBuilder: (_) => BookSort.values
-                .map((s) => PopupMenuItem(value: s, child: Text(s.label)))
+                .map((s) => PopupMenuItem(value: s, child: Text(s.label(context))))
                 .toList(),
           ),
           IconButton(
             icon: Icon(_ascending ? Icons.arrow_upward : Icons.arrow_downward),
-            tooltip: _ascending ? 'Ascending' : 'Descending',
+            tooltip: _ascending ? AppLocalizations.of(context)!.asc : AppLocalizations.of(context)!.desc,
             onPressed: () => _updateSort(_sort, !_ascending),
           ),
         ],
@@ -95,8 +96,8 @@ class _BookListScreenState extends State<BookListScreen> {
               child: TextField(
                 controller: _searchController,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Search title or author...',
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.searchTitleOrAuthor,
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(),
                 ),
@@ -125,8 +126,8 @@ class _BookListScreenState extends State<BookListScreen> {
                   return Center(
                     child: Text(
                       _searchQuery.isEmpty
-                        ? 'No books yet.\nLog your first read book in the top right.'
-                        : 'No books match your search.',
+                        ? AppLocalizations.of(context)!.noBooksYet
+                        : AppLocalizations.of(context)!.noBooksMatch,
                       textAlign: TextAlign.center,
                     ),
                   );
@@ -200,7 +201,7 @@ class _BookListScreenState extends State<BookListScreen> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        'Favorite',
+                                        AppLocalizations.of(context)!.favorite,
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontWeight: FontWeight.w500,
@@ -219,7 +220,7 @@ class _BookListScreenState extends State<BookListScreen> {
                           Row(
                             children: [
                               book.userRating == null
-                                  ? const Text('not yet rated')
+                                  ? Text(AppLocalizations.of(context)!.notYetRated)
                                   : StarRating(rating: book.userRating!),
                               const Spacer(),
                               if (!book.keepBook)
@@ -246,7 +247,7 @@ class _BookListScreenState extends State<BookListScreen> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        'For sale',
+                                        AppLocalizations.of(context)!.forSale,
                                         style: TextStyle(
                                           fontSize: 11,
                                           fontWeight: FontWeight.w500,
@@ -275,10 +276,10 @@ class _BookListScreenState extends State<BookListScreen> {
                         onPressed: () async {
                           final confirmed = await confirmDialog(
                             context,
-                            title: 'Delete book?',
+                            title: AppLocalizations.of(context)!.askDeleteBook,
                             message:
-                                '"${book.title}" will be removed from your shelf.',
-                            confirmLabel: 'Delete',
+                                '"${book.title}" ${AppLocalizations.of(context)!.confirmDelete}',
+                            confirmLabel: AppLocalizations.of(context)!.delete,
                             isDestructive: true,
                           );
                           if (!confirmed) return;

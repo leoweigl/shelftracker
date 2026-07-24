@@ -145,6 +145,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wishlist'**
   String get dashboardWishlist;
+
+  /// No description provided for @detailRemoveFav.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get detailRemoveFav;
+
+  /// No description provided for @detailAddFav.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get detailAddFav;
+
+  /// No description provided for @askDeleteBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete book?'**
+  String get askDeleteBook;
+
+  /// No description provided for @askDeleteLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete entry?'**
+  String get askDeleteLog;
+
+  /// No description provided for @deleteLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete entry'**
+  String get deleteLog;
+
+  /// No description provided for @confirmDelete.
+  ///
+  /// In en, this message translates to:
+  /// **' will be removed from your shelf.'**
+  String get confirmDelete;
+
+  /// No description provided for @confirmDeleteLog.
+  ///
+  /// In en, this message translates to:
+  /// **'This reading entry will be permanently removed from the log.'**
+  String get confirmDeleteLog;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @deleteBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete book'**
+  String get deleteBook;
+
+  /// No description provided for @rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get rating;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @keep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get keep;
+
+  /// No description provided for @forSale.
+  ///
+  /// In en, this message translates to:
+  /// **'For sale'**
+  String get forSale;
+
+  /// No description provided for @categories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categories;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @noDescrAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No description available'**
+  String get noDescrAvailable;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @dateFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'MM/dd/yyyy'**
+  String get dateFormat;
+
+  /// No description provided for @addedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Added on'**
+  String get addedOn;
+
+  /// No description provided for @searchOrCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Search or create new'**
+  String get searchOrCreate;
+
+  /// No description provided for @createCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get createCategory;
+
+  /// No description provided for @noMoreCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'No more categories.'**
+  String get noMoreCategories;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// No description provided for @bookshelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookshelf'**
+  String get bookshelf;
+
+  /// No description provided for @closeSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Close search'**
+  String get closeSearch;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @sort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sort;
+
+  /// No description provided for @asc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ascending'**
+  String get asc;
+
+  /// No description provided for @desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Descending'**
+  String get desc;
+
+  /// No description provided for @searchTitleOrAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Search title or author...'**
+  String get searchTitleOrAuthor;
+
+  /// No description provided for @noBooksYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No books yet.'**
+  String get noBooksYet;
+
+  /// No description provided for @noBooksMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No books match your search.'**
+  String get noBooksMatch;
+
+  /// No description provided for @favorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite'**
+  String get favorite;
+
+  /// No description provided for @notYetRated.
+  ///
+  /// In en, this message translates to:
+  /// **'not yet rated'**
+  String get notYetRated;
+
+  /// No description provided for @title.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get title;
+
+  /// No description provided for @author.
+  ///
+  /// In en, this message translates to:
+  /// **'Author'**
+  String get author;
+
+  /// No description provided for @keepSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep / Sell'**
+  String get keepSell;
+
+  /// No description provided for @added.
+  ///
+  /// In en, this message translates to:
+  /// **'Added'**
+  String get added;
+
+  /// No description provided for @changeReadDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Change read date'**
+  String get changeReadDate;
+
+  /// No description provided for @readOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Read on'**
+  String get readOn;
 }
 
 class _AppLocalizationsDelegate

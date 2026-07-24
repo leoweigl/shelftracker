@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart';
+import '../l10n/app_localizations.dart';
+
 enum BookSort {
   title,
   author,
@@ -7,18 +10,19 @@ enum BookSort {
 }
 
 extension BookSortLabel on BookSort {
-  String get label {
+  String label(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (this) {
       case BookSort.title:
-        return 'Title';
+        return l10n.title;
       case BookSort.author:
-        return 'Author';
+        return l10n.author;
       case BookSort.rating:
-        return 'Rating';
+        return l10n.rating;
       case BookSort.keep:
-        return 'Keep / Sell';
+        return l10n.keepSell;
       case BookSort.addedAt:
-        return 'Added';
+        return l10n.added;
     }
   }
 }
