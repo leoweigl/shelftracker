@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:shelftracker/l10n/app_localizations.dart';
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({super.key});
@@ -38,7 +39,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ISBN scannen'),
+        title: Text(AppLocalizations.of(context)!.scanIsbn),
       ),
       body: Stack(
         children: [
@@ -46,7 +47,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
             controller: _controller,
             onDetect: _onDetect,
           ),
-          const Positioned(
+          Positioned(
             left: 16,
             right: 16,
             bottom: 32,
@@ -54,7 +55,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
               child: Padding(
                 padding: EdgeInsets.all(12),
                 child: Text(
-                  'Richte die Kamera auf den Barcode hinten am Buch.',
+                  AppLocalizations.of(context)!.scanIsbnHelpText,
                   textAlign: TextAlign.center,
                 ),
               ),

@@ -9,6 +9,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get language => 'Language';
+
+  @override
   String get languageGerman => 'German';
 
   @override
@@ -155,4 +158,94 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get readOn => 'Read on';
+
+  @override
+  String get readingLog => 'Reading Log';
+
+  @override
+  String get noLogsYet => 'No read books logged yet.';
+
+  @override
+  String get noEntriesMatch => 'No entries match your search.';
+
+  @override
+  String get notInShelf => 'not in shelf';
+
+  @override
+  String get scanIsbn => 'Scan ISBN';
+
+  @override
+  String get scanIsbnHelpText =>
+      'Point the camera at the barcode on the back of the book.';
+
+  @override
+  String get searchError => 'Search error:';
+
+  @override
+  String get searchBook => 'Search book';
+
+  @override
+  String get enterTitleAuthorIsbn => 'Enter title, author or ISBN...';
+
+  @override
+  String get selectBook => 'Select book';
+
+  @override
+  String get wishlist => 'Wishlist';
+
+  @override
+  String get addToWishlist => 'Add to wishlist';
+
+  @override
+  String get statusWishlisted => 'Wishlisted';
+
+  @override
+  String get statusPreordered => 'Pre-ordered';
+
+  @override
+  String get statusOnShelf => 'On shelf';
+
+  @override
+  String noFilteredBooks(String filter) {
+    String _temp0 = intl.Intl.selectLogic(filter, {
+      'all': 'No books.',
+      'wishlist': 'No wishlisted books.',
+      'preordered': 'No pre-ordered books.',
+      'other': 'No books.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get moveToShelf => 'Move to Shelf';
+
+  @override
+  String get logAsRead => 'Log as read';
+
+  @override
+  String get markAsPreordered => 'Mark as pre-ordered';
+
+  @override
+  String get removePreorder => 'Remove pre-order';
+
+  @override
+  String get movedToShelf => 'moved to shelf';
+
+  @override
+  String get loggedAsRead => 'logged as read';
+
+  @override
+  String get markedAsPreordered => 'marked as pre-ordered';
+
+  @override
+  String get removedPreorder => 'Removed pre-order for';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get ok => 'OK';
 }

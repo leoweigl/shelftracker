@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shelftracker/l10n/app_localizations.dart';
 import '../database/app_database.dart';
 import '../main.dart';
 import '../models/book_status.dart';
@@ -20,13 +21,14 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.pickMode ? 'Select book' : 'Wishlist'),
+        title: Text(widget.pickMode ? l10n.selectBook : l10n.wishlist),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Add to wishlist',
+            tooltip: l10n.addToWishlist,
             onPressed: () => addToWishlistViaSearch(context),
           ),
         ],
@@ -52,10 +54,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
                 if (books.isEmpty) {
                   return Center(
-                    child: Text(
-                      _filter == null
-                          ? 'No books on the wishlist.'
-                          : 'No ${_filter!.label} books.',
+                    child: Text(l10n.noFilteredBooks(_filter?.name ?? 'all'),
                       textAlign: TextAlign.center,
                     ),
                   );
@@ -94,6 +93,7 @@ class _FilterPills extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     Widget pill(String label, BookStatus? value) {
@@ -115,9 +115,9 @@ class _FilterPills extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
-          pill('All', null),
-          pill('Wishlisted', BookStatus.wishlist),
-          pill('Pre-ordered', BookStatus.preordered),
+          pill(l10n.all, null),
+          pill(l10n.statusWishlisted, BookStatus.wishlist),
+          pill(l10n.statusPreordered, BookStatus.preordered),
         ],
       ),
     );
@@ -169,7 +169,7 @@ class _WishlistTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                'Pre-ordered',
+                AppLocalizations.of(context)!.statusPreordered,
                 style: TextStyle(
                   fontSize: 11,
                   color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -202,40 +202,41 @@ class _WishlistActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return PopupMenuButton<_WishlistAction>(
       onSelected: (action) => _handleAction(context, action),
       itemBuilder: (_) => [
-        const PopupMenuItem(
+        PopupMenuItem(
           value: _WishlistAction.moveToShelf,
           child: ListTile(
             leading: Icon(Icons.shelves),
-            title: Text('Move to Shelf'),
+            title: Text(l10n.moveToShelf),
             contentPadding: EdgeInsets.zero,
           ),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: _WishlistAction.logAsRead,
           child: ListTile(
             leading: Icon(Icons.done_all),
-            title: Text('Log as read'),
+            title: Text(l10n.logAsRead),
             contentPadding: EdgeInsets.zero,
           ),
         ),
         if (status == BookStatus.wishlist)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: _WishlistAction.markAsPreordered,
             child: ListTile(
               leading: Icon(Icons.schedule),
-              title: Text('Mark as pre-ordered'),
+              title: Text(l10n.markAsPreordered),
               contentPadding: EdgeInsets.zero,
             ),
           ),
         if (status == BookStatus.preordered)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: _WishlistAction.removePreorder,
             child: ListTile(
               leading: Icon(Icons.undo),
-              title: Text('Remove pre-order'),
+              title: Text(l10n.removePreorder),
               contentPadding: EdgeInsets.zero,
             ),
           ),
@@ -244,33 +245,34 @@ class _WishlistActions extends StatelessWidget {
   }
 
   Future<void> _handleAction(BuildContext context, _WishlistAction action) async {
+    final l10n = AppLocalizations.of(context)!;
     switch (action) {
       case _WishlistAction.moveToShelf:
         await bookRepository.setStatus(book.id, BookStatus.owned);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${book.title}" moved to shelf')),
+          SnackBar(content: Text('"${book.title}" ${l10n.movedToShelf}')),
         );
 
       case _WishlistAction.logAsRead:
         await bookRepository.logBookAsReadFromEntry(book);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${book.title}" logged as read')),
+          SnackBar(content: Text('"${book.title}" ${l10n.loggedAsRead}')),
         );
 
       case _WishlistAction.markAsPreordered:
         await bookRepository.setStatus(book.id, BookStatus.preordered);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${book.title}" marked as pre-ordered')),
+          SnackBar(content: Text('"${book.title}" ${l10n.markedAsPreordered}')),
         );
 
       case _WishlistAction.removePreorder:
         await bookRepository.setStatus(book.id, BookStatus.wishlist);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Removed pre-order for "${book.title}"')),
+          SnackBar(content: Text('${l10n.removedPreorder} "${book.title}"')),
         );
     }
   }

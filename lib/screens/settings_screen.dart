@@ -13,13 +13,24 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(l10n.settingsTitle),
       ),
-      body: ValueListenableBuilder(
+      body:
+      ValueListenableBuilder(
         valueListenable: localeController,
         builder: (context, currentLocale, _) {
-          return Column(
+          return ListView(
             children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Text(
+                  l10n.language,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
               RadioListTile<Locale>(
-                title: Text (AppLocalizations.of(context)!.languageGerman),
+                title: Text (l10n.languageGerman),
                 value: const Locale('de'),
                 groupValue: currentLocale,
                 onChanged: (locale) {
@@ -27,7 +38,7 @@ class SettingsScreen extends StatelessWidget {
                 },
               ),
               RadioListTile<Locale>(
-                title: Text (AppLocalizations.of(context)!.languageEnglish),
+                title: Text (l10n.languageEnglish),
                 value: const Locale('en'),
                 groupValue: currentLocale,
                 onChanged: (locale) {

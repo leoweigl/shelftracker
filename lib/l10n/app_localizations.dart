@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
   /// No description provided for @languageGerman.
   ///
   /// In en, this message translates to:
@@ -391,6 +397,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read on'**
   String get readOn;
+
+  /// No description provided for @readingLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Log'**
+  String get readingLog;
+
+  /// No description provided for @noLogsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No read books logged yet.'**
+  String get noLogsYet;
+
+  /// No description provided for @noEntriesMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries match your search.'**
+  String get noEntriesMatch;
+
+  /// No description provided for @notInShelf.
+  ///
+  /// In en, this message translates to:
+  /// **'not in shelf'**
+  String get notInShelf;
+
+  /// No description provided for @scanIsbn.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan ISBN'**
+  String get scanIsbn;
+
+  /// No description provided for @scanIsbnHelpText.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the barcode on the back of the book.'**
+  String get scanIsbnHelpText;
+
+  /// No description provided for @searchError.
+  ///
+  /// In en, this message translates to:
+  /// **'Search error:'**
+  String get searchError;
+
+  /// No description provided for @searchBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Search book'**
+  String get searchBook;
+
+  /// No description provided for @enterTitleAuthorIsbn.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter title, author or ISBN...'**
+  String get enterTitleAuthorIsbn;
+
+  /// No description provided for @selectBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Select book'**
+  String get selectBook;
+
+  /// No description provided for @wishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Wishlist'**
+  String get wishlist;
+
+  /// No description provided for @addToWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to wishlist'**
+  String get addToWishlist;
+
+  /// No description provided for @statusWishlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Wishlisted'**
+  String get statusWishlisted;
+
+  /// No description provided for @statusPreordered.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-ordered'**
+  String get statusPreordered;
+
+  /// No description provided for @statusOnShelf.
+  ///
+  /// In en, this message translates to:
+  /// **'On shelf'**
+  String get statusOnShelf;
+
+  /// No description provided for @noFilteredBooks.
+  ///
+  /// In en, this message translates to:
+  /// **'{filter, select, all{No books.} wishlist{No wishlisted books.} preordered{No pre-ordered books.} other{No books.}}'**
+  String noFilteredBooks(String filter);
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @moveToShelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to Shelf'**
+  String get moveToShelf;
+
+  /// No description provided for @logAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Log as read'**
+  String get logAsRead;
+
+  /// No description provided for @markAsPreordered.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as pre-ordered'**
+  String get markAsPreordered;
+
+  /// No description provided for @removePreorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove pre-order'**
+  String get removePreorder;
+
+  /// No description provided for @movedToShelf.
+  ///
+  /// In en, this message translates to:
+  /// **'moved to shelf'**
+  String get movedToShelf;
+
+  /// No description provided for @loggedAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'logged as read'**
+  String get loggedAsRead;
+
+  /// No description provided for @markedAsPreordered.
+  ///
+  /// In en, this message translates to:
+  /// **'marked as pre-ordered'**
+  String get markedAsPreordered;
+
+  /// No description provided for @removedPreorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed pre-order for'**
+  String get removedPreorder;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
 }
 
 class _AppLocalizationsDelegate

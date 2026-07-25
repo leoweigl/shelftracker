@@ -5,7 +5,7 @@ import 'package:shelftracker/screens/log_detail_screen.dart';
 import '../main.dart';
 import '../database/book_repository.dart';
 import '../widgets/star_rating.dart';
-import '../utils/book_actions.dart';
+import '../l10n/app_localizations.dart';
 
 class ReadingLogScreen extends StatefulWidget {
   const ReadingLogScreen({super.key});
@@ -43,7 +43,7 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
       initialDate: current,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      helpText: 'Change read date',
+      helpText: AppLocalizations.of(context)!.changeReadDate,
     );
     if (picked == null) return;
     await bookRepository.updateReadDate(logId, picked);
@@ -51,13 +51,14 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reading Log'),
+        title: Text(l10n.readingLog),
         actions: [
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search),
-            tooltip: _isSearching ? 'Close search' : 'Search',
+            tooltip: _isSearching ? l10n.closeSearch : l10n.search,
             onPressed: () {
               setState(() {
                 _isSearching = !_isSearching;
@@ -78,8 +79,8 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
               child: TextField(
                 controller: _searchController,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Search title or author...',
+                decoration: InputDecoration(
+                  hintText: l10n.searchTitleOrAuthor,
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(),
                 ),
@@ -104,8 +105,8 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
                   return Center(
                     child: Text(
                       _searchQuery.isEmpty
-                        ? 'No read books logged yet.'
-                        : 'No entries match your search',
+                        ? l10n.noLogsYet
+                        : l10n.noEntriesMatch,
                     ),
                   );
                 }
@@ -160,7 +161,7 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               item.userRating == null
-                                  ? const Text('not yet rated')
+                                  ? Text(l10n.notYetRated)
                                   : StarRating(rating: item.userRating!),
                               const Spacer(),
                               if (!item.inShelf) _notOwnedPill(context),
@@ -179,8 +180,8 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
                                 const Icon(Icons.event, size: 14),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Read on '
-                                  '${DateFormat('MM/dd/yyyy').format(entry.readDate)}',
+                                  '${l10n.readOn} '
+                                  '${DateFormat(l10n.dateFormat).format(entry.readDate)}',
                                 ),
                                 const SizedBox(width: 4),
                                 Icon(
@@ -229,7 +230,7 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
           ),
           const SizedBox(width: 4),
           Text(
-            'Favorite',
+            AppLocalizations.of(context)!.favorite,
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
@@ -248,7 +249,7 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Text('not in shelf', style: Theme.of(context).textTheme.bodySmall),
+      child: Text(AppLocalizations.of(context)!.notInShelf, style: Theme.of(context).textTheme.bodySmall),
     );
   }
 }

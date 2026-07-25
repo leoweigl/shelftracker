@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart';
+import '../l10n/app_localizations.dart';
+
 enum BookStatus {
   wishlist,
   preordered,
@@ -6,9 +9,12 @@ enum BookStatus {
   static BookStatus fromDb(String value) =>
       BookStatus.values.firstWhere((s) => s.name == value, orElse: () => BookStatus.owned);
 
-  String get label => switch (this) {
-    BookStatus.wishlist => 'Wishlisted',
-    BookStatus.preordered => 'Pre-ordered',
-    BookStatus.owned => 'On shelf',
-  };
+  String label(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return switch (this) {
+      BookStatus.wishlist => l10n.statusWishlisted,
+      BookStatus.preordered => l10n.statusPreordered,
+      BookStatus.owned => l10n.statusOnShelf,
+    };
+  }
 }

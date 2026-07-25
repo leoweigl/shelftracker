@@ -1,5 +1,6 @@
 {
   "@@locale": "en",
+  "language": "Language",
   "languageGerman": "German",
   "languageEnglish": "English",
   "appTitle": "ShelfTracker",
@@ -48,5 +49,39 @@
   "keepSell": "Keep / Sell",
   "added": "Added",
   "changeReadDate": "Change read date",
-  "readOn": "Read on"
+  "readOn": "Read on",
+  "readingLog": "Reading Log",
+  "noLogsYet": "No read books logged yet.",
+  "noEntriesMatch": "No entries match your search.",
+  "notInShelf": "not in shelf",
+  "scanIsbn": "Scan ISBN",
+  "scanIsbnHelpText": "Point the camera at the barcode on the back of the book.",
+  "searchError": "Search error:",
+  "searchBook": "Search book",
+  "enterTitleAuthorIsbn": "Enter title, author or ISBN...",
+  "selectBook": "Select book",
+  "wishlist": "Wishlist",
+  "addToWishlist": "Add to wishlist",
+  "statusWishlisted": "Wishlisted",
+  "statusPreordered": "Pre-ordered",
+  "statusOnShelf": "On shelf",
+  "noFilteredBooks": "{filter, select, all{No books.} wishlist{No wishlisted books.} preordered{No pre-ordered books.} other{No books.}}",
+  "@noFilteredBooks": {
+    "placeholders": {
+      "filter": {
+        "type": "String"
+      }
+    }
+  },
+  "all": "All",
+  "moveToShelf": "Move to Shelf",
+  "logAsRead": "Log as read",
+  "markAsPreordered": "Mark as pre-ordered",
+  "removePreorder": "Remove pre-order",
+  "movedToShelf": "moved to shelf",
+  "loggedAsRead": "logged as read",
+  "markedAsPreordered": "marked as pre-ordered",
+  "removedPreorder": "Removed pre-order for",
+  "cancel": "Cancel",
+  "ok": "OK"
 }

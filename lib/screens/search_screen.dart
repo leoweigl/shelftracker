@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelftracker/l10n/app_localizations.dart';
 import '../models/book.dart';
 import '../services/book_api_service.dart';
 import 'dart:async';
@@ -70,7 +71,7 @@ class _SearchScreenState extends State<SearchScreen> {
       });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Search error: $e';
+        _errorMessage = '${AppLocalizations.of(context)!.searchError} $e';
         _isLoading = false;
       });
     }
@@ -80,7 +81,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search book'),
+        title: Text(AppLocalizations.of(context)!.searchBook),
       ),
       body: Column(
         children: [
@@ -89,7 +90,7 @@ class _SearchScreenState extends State<SearchScreen> {
             child: TextField(
               controller: _controller,
               decoration: InputDecoration(
-                hintText: 'Enter title or author...',
+                hintText: AppLocalizations.of(context)!.enterTitleAuthorIsbn,
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search),

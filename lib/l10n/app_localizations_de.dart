@@ -9,6 +9,9 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get language => 'Sprache';
+
+  @override
   String get languageGerman => 'Deutsch';
 
   @override
@@ -155,4 +158,94 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get readOn => 'Gelesen am';
+
+  @override
+  String get readingLog => 'Lesetagebuch';
+
+  @override
+  String get noLogsYet => 'Bisher wurden noch keine Leseeinträge erstellt.';
+
+  @override
+  String get noEntriesMatch => 'Keine Einträge entsprechen den Suchkriterien.';
+
+  @override
+  String get notInShelf => 'nicht im Bücherregal';
+
+  @override
+  String get scanIsbn => 'ISBN scannen';
+
+  @override
+  String get scanIsbnHelpText =>
+      'Richte die Kamera auf den Barcode hinten am Buch.';
+
+  @override
+  String get searchError => 'Fehler bei der Suche:';
+
+  @override
+  String get searchBook => 'Buch suchen';
+
+  @override
+  String get enterTitleAuthorIsbn => 'Titel, Autor oder ISBN eingeben...';
+
+  @override
+  String get selectBook => 'Buch auswählen';
+
+  @override
+  String get wishlist => 'Wunschliste';
+
+  @override
+  String get addToWishlist => 'Zur Wunschliste hinzufügen';
+
+  @override
+  String get statusWishlisted => 'Wunschliste';
+
+  @override
+  String get statusPreordered => 'Vorbestellt';
+
+  @override
+  String get statusOnShelf => 'Im Regal';
+
+  @override
+  String noFilteredBooks(String filter) {
+    String _temp0 = intl.Intl.selectLogic(filter, {
+      'all': 'Keine Bücher.',
+      'wishlist': 'Keine Bücher auf der Wunschliste.',
+      'preordered': 'Keine vorbestellten Bücher.',
+      'other': 'Keine Bücher.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get all => 'Alle';
+
+  @override
+  String get moveToShelf => 'In\'s Regal stellen';
+
+  @override
+  String get logAsRead => 'Leseeintrag erstellen';
+
+  @override
+  String get markAsPreordered => 'Als vorbestellt markieren';
+
+  @override
+  String get removePreorder => 'Vorbestellung entfernen';
+
+  @override
+  String get movedToShelf => 'in\'s Regal gestellt';
+
+  @override
+  String get loggedAsRead => 'als gelesen markiert';
+
+  @override
+  String get markedAsPreordered => 'als vorbestellt markiert';
+
+  @override
+  String get removedPreorder => 'Vorbestellung entfernt für';
+
+  @override
+  String get cancel => 'Abbrechen';
+
+  @override
+  String get ok => 'Fertig';
 }
