@@ -145,6 +145,21 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
   - [x] Aufgeräumt: unbenutzter Import in `book_list_screen.dart`, falscher Tooltip
     „Log read book“ → „Add to wishlist“ in `WishlistScreen`
 
+- [x] **Design-Experiment — Navigation & UX (branch: design-experiment)**
+  - [x] `DashboardScreen` ersetzt durch `MainShell`: Bottom-`NavigationBar` mit 4 Tabs
+    (Reading Log, Bookshelf, Wishlist, Settings); `IndexedStack` erhält Tab-Zustand;
+    FAB „Add Book" global sichtbar (ausgeblendet auf dem Settings-Tab)
+  - [x] `SearchScreen`: Antippen einer Zeile öffnet `SearchPreviewScreen` (Cover, Autor,
+    Klappentext) zur Prüfung vor dem Hinzufügen; `+`-Button fügt direkt hinzu
+  - [x] `WishlistScreen`: Löschen-Button pro Kachel (mit Bestätigungsdialog, eigenem
+    l10n-Text „wird von der Wunschliste entfernt"); `+`-Button in der AppBar entfernt
+  - [x] `confirmDialog` in `dialogs.dart`: `confirmLabel`/`cancelLabel` nullable,
+    Fallback auf `l10n.ok` / `l10n.cancel` — keine hartcodierten Strings mehr
+  - [x] Neuer l10n-Key `confirmDeleteWishlist` in `app_en.arb`, `app_de.arb`,
+    `app_localizations.dart`, `app_localizations_en.dart`, `app_localizations_de.dart`
+  - [x] `macos/Flutter/GeneratedPluginRegistrant.swift` aus Git-Tracking entfernt
+    und in `.gitignore` aufgenommen
+
 ---
 
 ---
@@ -217,10 +232,8 @@ Pro Band ist sichtbar, welchen Status er hat (wishlist / owned / gelesen / nicht
 ---
 
 ## Weitere Ideen (unsortiert, für später)
-- [ ] Buchvorschau vor dem Hinzufügen: Im Add-Book-Flow (`_findBook` → Suchergebnis /
-  ISBN-Scan) vor der "Save as"-Auswahl erst eine Detailansicht des gefundenen Buchs
-  zeigen (Cover, Titel, Autor, Klappentext, Kategorien), damit man das Buch prüfen kann,
-  bevor man es zum Regal/zur Wunschliste hinzufügt oder als gelesen vermerkt.
+- [x] Buchvorschau vor dem Hinzufügen: `SearchPreviewScreen` zeigt Cover, Titel, Autor
+  und Klappentext — umgesetzt in design-experiment.
 - [ ] Klappentext auch für owned-Bücher anzeigen (sofern vorhanden)
 - [ ] Filter nach Status (behalten / verkaufen) in der Bücherliste
 - [ ] Lese-Statistik (Anzahl gelesen, Durchschnittsbewertung etc.)
