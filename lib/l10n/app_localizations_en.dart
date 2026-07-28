@@ -54,6 +54,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmDelete => ' will be removed from your shelf.';
 
   @override
+  String get confirmDeleteWishlist => ' will be removed from your wishlist.';
+
+  @override
   String get confirmDeleteLog =>
       'This reading entry will be permanently removed from the log.';
 

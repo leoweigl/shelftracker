@@ -188,6 +188,12 @@ abstract class AppLocalizations {
   /// **' will be removed from your shelf.'**
   String get confirmDelete;
 
+  /// No description provided for @confirmDeleteWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **' will be removed from your wishlist.'**
+  String get confirmDeleteWishlist;
+
   /// No description provided for @confirmDeleteLog.
   ///
   /// In en, this message translates to:

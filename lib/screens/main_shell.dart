@@ -32,11 +32,13 @@ class _MainShellState extends State<MainShell> {
         index: _currentIndex,
         children: _screens,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showAddBookOptions(context),
-        tooltip: l10n.dashboardAddBook,
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: _currentIndex < 3
+          ? FloatingActionButton(
+              onPressed: () => showAddBookOptions(context),
+              tooltip: l10n.dashboardAddBook,
+              child: const Icon(Icons.add),
+            )
+          : null,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) =>

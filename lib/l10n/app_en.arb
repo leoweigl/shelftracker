@@ -15,6 +15,7 @@
   "askDeleteLog": "Delete entry?",
   "deleteLog": "Delete entry",
   "confirmDelete": " will be removed from your shelf.",
+  "confirmDeleteWishlist": " will be removed from your wishlist.",
   "confirmDeleteLog": "This reading entry will be permanently removed from the log.",
   "delete": "Delete",
   "remove": "Remove",

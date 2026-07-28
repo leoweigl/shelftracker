@@ -15,6 +15,7 @@
   "askDeleteLog": "Eintrag löschen?",
   "deleteLog": "Eintrag löschen",
   "confirmDelete": " wird aus dem Regal entfernt.",
+  "confirmDeleteWishlist": " wird von der Wunschliste entfernt.",
   "confirmDeleteLog": "Dieser Leseeintrag wird dauerhaft vom Tagebuch entfernt.",
   "delete": "Löschen",
   "remove": "Entfernen",

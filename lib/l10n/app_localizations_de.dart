@@ -54,6 +54,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get confirmDelete => ' wird aus dem Regal entfernt.';
 
   @override
+  String get confirmDeleteWishlist => ' wird von der Wunschliste entfernt.';
+
+  @override
   String get confirmDeleteLog =>
       'Dieser Leseeintrag wird dauerhaft vom Tagebuch entfernt.';
 

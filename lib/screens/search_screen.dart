@@ -4,6 +4,7 @@ import '../models/book.dart';
 import '../services/book_api_service.dart';
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'search_preview_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -144,9 +145,21 @@ class _SearchScreenState extends State<SearchScreen> {
                     '${book.author ?? AppLocalizations.of(context)!.unknown}'
                     '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
                   ),
-                  trailing: const Icon(Icons.add),
-                  onTap: () {
-                    Navigator.pop(context, book);
+                  trailing: IconButton(
+                    icon: const Icon(Icons.add),
+                    tooltip: AppLocalizations.of(context)!.add,
+                    onPressed: () => Navigator.pop(context, book),
+                  ),
+                  onTap: () async {
+                    final result = await Navigator.push<Book>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SearchPreviewScreen(book: book),
+                      ),
+                    );
+                    if (result != null && context.mounted) {
+                      Navigator.pop(context, result);
+                    }
                   },
                 );
               },

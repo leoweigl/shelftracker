@@ -5,7 +5,7 @@ import '../database/app_database.dart';
 import '../main.dart';
 import '../models/book_status.dart';
 import 'book_detail_screen.dart';
-import '../utils/book_actions.dart';
+import '../utils/dialogs.dart';
 
 class WishlistScreen extends StatefulWidget {
   final bool pickMode;
@@ -25,7 +25,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.pickMode ? l10n.selectBook : l10n.wishlist),
-        actions: [],
       ),
       body: Column(
         children: [
@@ -164,7 +163,7 @@ class _WishlistTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                AppLocalizations.of(context)!.statusPreordered,
+                l10n.statusPreordered,
                 style: TextStyle(
                   fontSize: 11,
                   color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -176,7 +175,28 @@ class _WishlistTile extends StatelessWidget {
       ),
       trailing: pickMode
           ? null
-          : _WishlistActions(book: book, status: status),
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  tooltip: l10n.delete,
+                  onPressed: () async {
+                    final title = book.title.isEmpty ? l10n.noTitle : book.title;
+                    final confirmed = await confirmDialog(
+                      context,
+                      title: l10n.askDeleteBook,
+                      message: '"$title" ${l10n.confirmDeleteWishlist}',
+                      confirmLabel: l10n.delete,
+                      isDestructive: true,
+                    );
+                    if (!confirmed) return;
+                    await bookRepository.delete(book.id);
+                  },
+                ),
+                _WishlistActions(book: book, status: status),
+              ],
+            ),
       onTap: pickMode
           ? () => Navigator.pop(context, book)
           : () => Navigator.push(
