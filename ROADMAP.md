@@ -151,20 +151,24 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
 
 ## Offen / zurückgestellt
 
-- [ ] **Lokalisierung (Deutsch/Englisch) — laufend**
+- [x] **Lokalisierung (Deutsch/Englisch) — abgeschlossen**
   App-weite Lokalisierung via Flutter `intl` (ARB-Dateien, `LocaleController` mit
-  SharedPreferences-Persistenz, Sprachumschalter in `SettingsScreen`). Screen-für-Screen-Migration:
+  SharedPreferences-Persistenz, Sprachumschalter in `SettingsScreen`). Alle Screens migriert:
   - [x] `dashboard_screen.dart`
   - [x] `book_list_screen.dart`
   - [x] `book_detail_screen.dart`
   - [x] `log_detail_screen.dart`
-  - [ ] `reading_log_screen.dart`
-  - [ ] `scanner_screen.dart`
-  - [ ] `search_screen.dart`
-  - [ ] `settings_screen.dart`
-  - [ ] `wishlist_screen.dart`
-  - [ ] `book_sort.dart` (Sortierungs-Labels) — `BookSortLabel.label` zu `label(BuildContext)`
+  - [x] `reading_log_screen.dart`
+  - [x] `scanner_screen.dart`
+  - [x] `search_screen.dart`
+  - [x] `settings_screen.dart`
+  - [x] `wishlist_screen.dart`
+  - [x] `book_sort.dart` (Sortierungs-Labels) — `BookSortLabel.label` zu `label(BuildContext)`
     umgebaut, ARB-Keys `title`/`author`/`rating`/`keepSell`/`added` wiederverwendet
+  - [x] Bugfix: `unknown`/`noTitle`-Werte waren zwischen `app_en.arb`/`app_de.arb` vertauscht
+  - [x] `book_actions.dart` nachträglich gefunden und lokalisiert (Add-Book-/Save-As-Dialoge,
+    ISBN-Fehlermeldungen, Wishlist-Snackbar-Texte) — Vollständiger Scan von `lib/` bestätigt
+    keine weiteren hartcodierten UI-Strings
 
 - [ ] **Kategorien-Navigation (Stage 9 — Etappe 5)**
   Eigener Kategorien-Übersichts-Screen; Antippen öffnet gefilterte Bücherliste.
@@ -213,6 +217,10 @@ Pro Band ist sichtbar, welchen Status er hat (wishlist / owned / gelesen / nicht
 ---
 
 ## Weitere Ideen (unsortiert, für später)
+- [ ] Buchvorschau vor dem Hinzufügen: Im Add-Book-Flow (`_findBook` → Suchergebnis /
+  ISBN-Scan) vor der "Save as"-Auswahl erst eine Detailansicht des gefundenen Buchs
+  zeigen (Cover, Titel, Autor, Klappentext, Kategorien), damit man das Buch prüfen kann,
+  bevor man es zum Regal/zur Wunschliste hinzufügt oder als gelesen vermerkt.
 - [ ] Klappentext auch für owned-Bücher anzeigen (sofern vorhanden)
 - [ ] Filter nach Status (behalten / verkaufen) in der Bücherliste
 - [ ] Lese-Statistik (Anzahl gelesen, Durchschnittsbewertung etc.)

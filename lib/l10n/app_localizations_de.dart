@@ -248,4 +248,57 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get ok => 'Fertig';
+
+  @override
+  String get unknown => 'Unbekannt';
+
+  @override
+  String get noTitle => 'Ohne Titel';
+
+  @override
+  String get addBookTitle => 'Buch hinzufügen';
+
+  @override
+  String get saveAsTitle => 'Speichern als';
+
+  @override
+  String get alreadyRead => 'Bereits gelesen';
+
+  @override
+  String get alreadyReadSubtitle =>
+      'Fügt zum Regal hinzu und erstellt einen Leseeintrag';
+
+  @override
+  String get toShelf => 'Ins Regal';
+
+  @override
+  String get toShelfSubtitle => 'Nur zum Regal hinzufügen, kein Leseeintrag';
+
+  @override
+  String get wishlistSubtitle => 'Für Bücher, die du noch nicht besitzt';
+
+  @override
+  String noResultsForIsbn(String isbn) {
+    return 'Keine Ergebnisse für ISBN $isbn';
+  }
+
+  @override
+  String errorPrefix(String error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String get addedToShelf => 'zum Regal hinzugefügt';
+
+  @override
+  String get addedToWishlist => 'zur Wunschliste hinzugefügt';
+
+  @override
+  String get alreadyInShelf => 'ist bereits in deinem Regal';
+
+  @override
+  String get alreadyPreorderedMsg => 'ist bereits vorbestellt';
+
+  @override
+  String get alreadyOnWishlist => 'ist bereits auf deiner Wunschliste';
 }

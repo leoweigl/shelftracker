@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelftracker/l10n/app_localizations.dart';
 import 'package:shelftracker/models/wishlist_add_result.dart';
 import '../main.dart';
 import '../models/book.dart';
@@ -11,6 +12,7 @@ enum _FindMethod { scan, search }
 enum _SaveAs { alreadyRead, inShelf, wishlist }
 
 Future<void> showAddBookOptions(BuildContext context) async {
+  final l10n = AppLocalizations.of(context)!;
   final book = await _findBook(context);
   if (book == null || !context.mounted) return;
 
@@ -22,7 +24,7 @@ Future<void> showAddBookOptions(BuildContext context) async {
       await bookRepository.logBookAsRead(book);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('"${book.title}" logged as read')),
+        SnackBar(content: Text('"${book.title ?? l10n.noTitle}" ${l10n.loggedAsRead}')),
       );
       break;
 
@@ -30,7 +32,7 @@ Future<void> showAddBookOptions(BuildContext context) async {
       await bookRepository.addToShelf(book);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('"${book.title}" added to shelf')),
+        SnackBar(content: Text('"${book.title ?? l10n.noTitle}" ${l10n.addedToShelf}')),
       );
       break;
 
@@ -38,28 +40,29 @@ Future<void> showAddBookOptions(BuildContext context) async {
       final result = await bookRepository.addToWishlist(book);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_wishlistMessage(book.title, result))),
+        SnackBar(content: Text(_wishlistMessage(l10n, book.title ?? l10n.noTitle, result))),
       );
       break;
   }
 }
 
 Future<Book?> _findBook(BuildContext context) async {
+  final l10n = AppLocalizations.of(context)!;
   final method = await showDialog<_FindMethod>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: const Text('Add book'),
+      title: Text(l10n.addBookTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
             leading: const Icon(Icons.qr_code_scanner),
-            title: const Text('Scan ISBN'),
+            title: Text(l10n.scanIsbn),
             onTap: () => Navigator.pop(dialogContext, _FindMethod.scan),
           ),
           ListTile(
             leading: const Icon(Icons.search),
-            title: const Text('Search book'),
+            title: Text(l10n.searchBook),
             onTap: () => Navigator.pop(dialogContext, _FindMethod.search),
           ),
         ],
@@ -67,7 +70,7 @@ Future<Book?> _findBook(BuildContext context) async {
       actions: [
         TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
         ),
       ],
     ),
@@ -92,14 +95,14 @@ Future<Book?> _findBook(BuildContext context) async {
     final book = await BookApiService().searchByIsbn(isbn);
     if (book == null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No results for ISBN $isbn')),
+        SnackBar(content: Text(l10n.noResultsForIsbn(isbn))),
       );
     }
     return book;
   } catch (e) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(content: Text(l10n.errorPrefix(e.toString()))),
       );
     }
     return null;
@@ -107,29 +110,30 @@ Future<Book?> _findBook(BuildContext context) async {
 }
 
 Future<_SaveAs?> _showSaveAsDialog(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
   return showDialog<_SaveAs>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: const Text('Save as'),
+      title: Text(l10n.saveAsTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
             leading: const Icon(Icons.done_all),
-            title: const Text('Already read'),
-            subtitle: const Text('Adds to shelf and creates a log entry'),
+            title: Text(l10n.alreadyRead),
+            subtitle: Text(l10n.alreadyReadSubtitle),
             onTap: () => Navigator.pop(dialogContext, _SaveAs.alreadyRead),
           ),
           ListTile(
             leading: const Icon(Icons.shelves),
-            title: const Text('To shelf'),
-            subtitle: const Text('Adds to shelf only, no log entry'),
+            title: Text(l10n.toShelf),
+            subtitle: Text(l10n.toShelfSubtitle),
             onTap: () => Navigator.pop(dialogContext, _SaveAs.inShelf),
           ),
           ListTile(
             leading: const Icon(Icons.favorite_border),
-            title: const Text('Wishlist'),
-            subtitle: const Text('For books you don\'t own yet'),
+            title: Text(l10n.wishlist),
+            subtitle: Text(l10n.wishlistSubtitle),
             onTap: () => Navigator.pop(dialogContext, _SaveAs.wishlist),
           ),
         ],
@@ -137,27 +141,28 @@ Future<_SaveAs?> _showSaveAsDialog(BuildContext context) {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(dialogContext),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
       ],
     ),
   );
 }
 
-String _wishlistMessage(String title, WishlistAddResult result) {
+String _wishlistMessage(AppLocalizations l10n, String title, WishlistAddResult result) {
   switch (result) {
     case WishlistAddResult.added:
-      return '"$title" added to wishlist';
+      return '"$title" ${l10n.addedToWishlist}';
     case WishlistAddResult.alreadyOwned:
-      return '"$title" is already in your shelf';
+      return '"$title" ${l10n.alreadyInShelf}';
     case WishlistAddResult.alreadyPreordered:
-      return '"$title" is already pre-ordered';
+      return '"$title" ${l10n.alreadyPreorderedMsg}';
     case WishlistAddResult.alreadyWishlisted:
-      return '"$title" is already on your wishlist';
+      return '"$title" ${l10n.alreadyOnWishlist}';
   }
 }
 
 Future<void> addToWishlistViaSearch(BuildContext context) async {
+  final l10n = AppLocalizations.of(context)!;
   final book = await Navigator.push<Book>(
     context,
     MaterialPageRoute(builder: (_) => const SearchScreen()),
@@ -167,6 +172,6 @@ Future<void> addToWishlistViaSearch(BuildContext context) async {
   final result = await bookRepository.addToWishlist(book);
   if (!context.mounted) return;
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(_wishlistMessage(book.title, result))),
+    SnackBar(content: Text(_wishlistMessage(l10n, book.title ?? l10n.noTitle, result))),
   );
 }

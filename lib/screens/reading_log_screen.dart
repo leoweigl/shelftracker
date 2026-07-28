@@ -145,14 +145,14 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
                                   const Icon(Icons.menu_book_rounded),
                             )
                           : const Icon(Icons.menu_book_rounded),
-                      title: Text(entry.title),
+                      title: Text(entry.title.isEmpty ? l10n.noTitle : entry.title),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Expanded(child: Text(entry.author)),
+                              Expanded(child: Text(entry.author.isEmpty ? l10n.unknown : entry.author)),
                               if (item.isFavorite) _favoritePill(context),
                             ],
                           ),

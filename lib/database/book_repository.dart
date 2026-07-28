@@ -135,8 +135,8 @@ class BookRepository {
     final existing =
         await (_db.select(_db.books)..where(
               (b) =>
-                  b.title.lower().equals(book.title.toLowerCase()) &
-                  b.author.lower().equals(book.author.toLowerCase()),
+                  b.title.lower().equals((book.title ?? '').toLowerCase()) &
+                  b.author.lower().equals((book.author ?? '').toLowerCase()),
             ))
             .getSingleOrNull();
 
@@ -166,8 +166,8 @@ class BookRepository {
         .into(_db.books)
         .insert(
           BooksCompanion(
-            title: Value(book.title),
-            author: Value(book.author),
+            title: Value(book.title ?? ''),
+            author: Value(book.author ?? ''),
             publicationYear: Value(book.publicationYear),
             coverUrl: Value(book.coverUrl),
             description: Value(book.description),
@@ -246,8 +246,8 @@ class BookRepository {
     var existing =
         await (_db.select(_db.books)..where(
               (b) =>
-                  b.title.lower().equals(book.title.toLowerCase()) &
-                  b.author.lower().equals(book.author.toLowerCase()),
+                  b.title.lower().equals((book.title ?? '').toLowerCase()) &
+                  b.author.lower().equals((book.author ?? '').toLowerCase()),
             ))
             .getSingleOrNull();
 
@@ -273,8 +273,8 @@ class BookRepository {
         .into(_db.books)
         .insert(
           BooksCompanion(
-            title: Value(book.title),
-            author: Value(book.author),
+            title: Value(book.title ?? ''),
+            author: Value(book.author ?? ''),
             publicationYear: Value(book.publicationYear),
             coverUrl: Value(book.coverUrl),
             description: Value(book.description),
@@ -315,8 +315,8 @@ class BookRepository {
         .into(_db.readingLog)
         .insert(
           ReadingLogCompanion(
-            title: Value(book.title),
-            author: Value(book.author),
+            title: Value(book.title ?? ''),
+            author: Value(book.author ?? ''),
             coverUrl: Value(book.coverUrl),
             bookId: Value(bookId),
             readDate: Value(readDate ?? DateTime.now()),

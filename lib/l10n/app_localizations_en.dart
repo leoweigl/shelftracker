@@ -248,4 +248,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String get noTitle => 'Untitled';
+
+  @override
+  String get addBookTitle => 'Add book';
+
+  @override
+  String get saveAsTitle => 'Save as';
+
+  @override
+  String get alreadyRead => 'Already read';
+
+  @override
+  String get alreadyReadSubtitle => 'Adds to shelf and creates a log entry';
+
+  @override
+  String get toShelf => 'To shelf';
+
+  @override
+  String get toShelfSubtitle => 'Adds to shelf only, no log entry';
+
+  @override
+  String get wishlistSubtitle => 'For books you don\'t own yet';
+
+  @override
+  String noResultsForIsbn(String isbn) {
+    return 'No results for ISBN $isbn';
+  }
+
+  @override
+  String errorPrefix(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get addedToShelf => 'added to shelf';
+
+  @override
+  String get addedToWishlist => 'added to wishlist';
+
+  @override
+  String get alreadyInShelf => 'is already in your shelf';
+
+  @override
+  String get alreadyPreorderedMsg => 'is already pre-ordered';
+
+  @override
+  String get alreadyOnWishlist => 'is already on your wishlist';
 }

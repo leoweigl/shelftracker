@@ -83,5 +83,35 @@
   "markedAsPreordered": "marked as pre-ordered",
   "removedPreorder": "Removed pre-order for",
   "cancel": "Cancel",
-  "ok": "OK"
+  "ok": "OK",
+  "unknown": "Unknown",
+  "noTitle": "Untitled",
+  "addBookTitle": "Add book",
+  "saveAsTitle": "Save as",
+  "alreadyRead": "Already read",
+  "alreadyReadSubtitle": "Adds to shelf and creates a log entry",
+  "toShelf": "To shelf",
+  "toShelfSubtitle": "Adds to shelf only, no log entry",
+  "wishlistSubtitle": "For books you don't own yet",
+  "noResultsForIsbn": "No results for ISBN {isbn}",
+  "@noResultsForIsbn": {
+    "placeholders": {
+      "isbn": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPrefix": "Error: {error}",
+  "@errorPrefix": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addedToShelf": "added to shelf",
+  "addedToWishlist": "added to wishlist",
+  "alreadyInShelf": "is already in your shelf",
+  "alreadyPreorderedMsg": "is already pre-ordered",
+  "alreadyOnWishlist": "is already on your wishlist"
 }

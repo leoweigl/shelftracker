@@ -36,7 +36,7 @@ class BookDetailScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(book.title),
+            title: Text(book.title.isEmpty ? AppLocalizations.of(context)!.noTitle : book.title),
             actions: [
               if (isOwned)
                 IconButton(
@@ -57,7 +57,8 @@ class BookDetailScreen extends StatelessWidget {
                   final confirmed = await confirmDialog(
                     context,
                     title: AppLocalizations.of(context)!.askDeleteBook,
-                    message: book.title + AppLocalizations.of(context)!.confirmDelete,
+                    message: (book.title.isEmpty ? AppLocalizations.of(context)!.noTitle : book.title)
+                        + AppLocalizations.of(context)!.confirmDelete,
                     confirmLabel: AppLocalizations.of(context)!.delete,
                     isDestructive: true,
                   );
@@ -95,7 +96,7 @@ class BookDetailScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: Text(
-                    book.title,
+                    book.title.isEmpty ? AppLocalizations.of(context)!.noTitle : book.title,
                     style: Theme.of(context).textTheme.headlineSmall,
                     textAlign: TextAlign.center,
                   ),
@@ -106,7 +107,7 @@ class BookDetailScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: Text(
-                    '${book.author}'
+                    '${book.author.isEmpty ? AppLocalizations.of(context)!.unknown : book.author}'
                     '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
                     style: Theme.of(context).textTheme.titleMedium,
                     textAlign: TextAlign.center,

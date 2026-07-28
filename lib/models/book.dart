@@ -1,6 +1,6 @@
 class Book {
-  final String title;
-  final String author;
+  final String? title;
+  final String? author;
   final int? publicationYear;
   final String? coverUrl;
   final double? userRating;
@@ -8,8 +8,8 @@ class Book {
   final String? description;
 
   Book({
-    required this.title,
-    required this.author,
+    this.title,
+    this.author,
     this.publicationYear,
     this.coverUrl,
     this.userRating,
@@ -26,7 +26,7 @@ class Book {
     final authors = json['author_name'] as List?;
     final firstAuthor = (authors != null && authors.isNotEmpty)
         ? authors.first.toString()
-        : 'Unbekannt';
+        : null;
 
     final rawSubjects = json['subject'] as List?;
     final categories = <String>{};
@@ -38,7 +38,7 @@ class Book {
     }
 
     return Book(
-      title: json['title']?.toString() ?? 'Ohne Titel',
+      title: json['title']?.toString(),
       author: firstAuthor,
       publicationYear: json['first_publish_year'] as int?,
       coverUrl: coverUrl,
@@ -62,7 +62,7 @@ class Book {
     final authors = volumeInfo['authors'] as List?;
     final firstAuthor = (authors != null && authors.isNotEmpty)
         ? authors.first.toString()
-        : 'Unbekannt';
+        : null;
 
     int? year;
     final publishedDate = volumeInfo['publishedDate']?.toString();
@@ -84,7 +84,7 @@ class Book {
     final description = volumeInfo['description']?.toString();
 
     return Book(
-      title: volumeInfo['title']?.toString() ?? 'Ohne Titel',
+      title: volumeInfo['title']?.toString(),
       author: firstAuthor,
       publicationYear: year,
       coverUrl: coverUrl,

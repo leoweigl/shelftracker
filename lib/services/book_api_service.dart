@@ -50,7 +50,9 @@ class BookApiService {
   }
 
   String _dedupeKey(Book book) {
-    return '${book.title.toLowerCase().trim()}|${book.author.toLowerCase().trim()}';
+    final title = (book.title ?? '').toLowerCase().trim();
+    final author = (book.author ?? '').toLowerCase().trim();
+    return '$title|$author';
   }
 
   Future<Book?> searchByIsbn(String isbn) async {

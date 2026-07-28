@@ -559,6 +559,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OK'**
   String get ok;
+
+  /// No description provided for @unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
+
+  /// No description provided for @noTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled'**
+  String get noTitle;
+
+  /// No description provided for @addBookTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add book'**
+  String get addBookTitle;
+
+  /// No description provided for @saveAsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as'**
+  String get saveAsTitle;
+
+  /// No description provided for @alreadyRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Already read'**
+  String get alreadyRead;
+
+  /// No description provided for @alreadyReadSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds to shelf and creates a log entry'**
+  String get alreadyReadSubtitle;
+
+  /// No description provided for @toShelf.
+  ///
+  /// In en, this message translates to:
+  /// **'To shelf'**
+  String get toShelf;
+
+  /// No description provided for @toShelfSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds to shelf only, no log entry'**
+  String get toShelfSubtitle;
+
+  /// No description provided for @wishlistSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For books you don\'t own yet'**
+  String get wishlistSubtitle;
+
+  /// No description provided for @noResultsForIsbn.
+  ///
+  /// In en, this message translates to:
+  /// **'No results for ISBN {isbn}'**
+  String noResultsForIsbn(String isbn);
+
+  /// No description provided for @errorPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String errorPrefix(String error);
+
+  /// No description provided for @addedToShelf.
+  ///
+  /// In en, this message translates to:
+  /// **'added to shelf'**
+  String get addedToShelf;
+
+  /// No description provided for @addedToWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'added to wishlist'**
+  String get addedToWishlist;
+
+  /// No description provided for @alreadyInShelf.
+  ///
+  /// In en, this message translates to:
+  /// **'is already in your shelf'**
+  String get alreadyInShelf;
+
+  /// No description provided for @alreadyPreorderedMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'is already pre-ordered'**
+  String get alreadyPreorderedMsg;
+
+  /// No description provided for @alreadyOnWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'is already on your wishlist'**
+  String get alreadyOnWishlist;
 }
 
 class _AppLocalizationsDelegate

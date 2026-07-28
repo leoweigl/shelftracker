@@ -133,6 +133,7 @@ class _WishlistTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final status = BookStatus.fromDb(book.status);
+    final l10n = AppLocalizations.of(context)!;
 
     return ListTile(
       leading: book.coverUrl != null
@@ -153,12 +154,12 @@ class _WishlistTile extends StatelessWidget {
               errorWidget: (ctx, url, err) => const Icon(Icons.menu_book_rounded),
             )
           : const Icon(Icons.menu_book_rounded),
-      title: Text(book.title),
+      title: Text(book.title.isEmpty ? l10n.noTitle : book.title),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            '${book.author}'
+            '${book.author.isEmpty ? l10n.unknown : book.author}'
             '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
           ),
           if (status == BookStatus.preordered) ...[
@@ -251,28 +252,28 @@ class _WishlistActions extends StatelessWidget {
         await bookRepository.setStatus(book.id, BookStatus.owned);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${book.title}" ${l10n.movedToShelf}')),
+          SnackBar(content: Text('"${book.title.isEmpty ? l10n.noTitle : book.title}" ${l10n.movedToShelf}')),
         );
 
       case _WishlistAction.logAsRead:
         await bookRepository.logBookAsReadFromEntry(book);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${book.title}" ${l10n.loggedAsRead}')),
+          SnackBar(content: Text('"${book.title.isEmpty ? l10n.noTitle : book.title}" ${l10n.loggedAsRead}')),
         );
 
       case _WishlistAction.markAsPreordered:
         await bookRepository.setStatus(book.id, BookStatus.preordered);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${book.title}" ${l10n.markedAsPreordered}')),
+          SnackBar(content: Text('"${book.title.isEmpty ? l10n.noTitle : book.title}" ${l10n.markedAsPreordered}')),
         );
 
       case _WishlistAction.removePreorder:
         await bookRepository.setStatus(book.id, BookStatus.wishlist);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n.removedPreorder} "${book.title}"')),
+          SnackBar(content: Text('${l10n.removedPreorder} "${book.title.isEmpty ? l10n.noTitle : book.title}"')),
         );
     }
   }

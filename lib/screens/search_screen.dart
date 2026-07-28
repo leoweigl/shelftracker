@@ -139,9 +139,9 @@ class _SearchScreenState extends State<SearchScreen> {
                             const Icon(Icons.book),
                       )
                     : const Icon(Icons.book),
-                  title: Text(book.title),
+                  title: Text(book.title ?? AppLocalizations.of(context)!.noTitle),
                   subtitle: Text(
-                    '${book.author}'
+                    '${book.author ?? AppLocalizations.of(context)!.unknown}'
                     '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
                   ),
                   trailing: const Icon(Icons.add),

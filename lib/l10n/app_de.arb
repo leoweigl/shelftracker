@@ -76,5 +76,21 @@
   "markedAsPreordered": "als vorbestellt markiert",
   "removedPreorder": "Vorbestellung entfernt für",
   "cancel": "Abbrechen",
-  "ok": "Fertig"
+  "ok": "Fertig",
+  "unknown": "Unbekannt",
+  "noTitle": "Ohne Titel",
+  "addBookTitle": "Buch hinzufügen",
+  "saveAsTitle": "Speichern als",
+  "alreadyRead": "Bereits gelesen",
+  "alreadyReadSubtitle": "Fügt zum Regal hinzu und erstellt einen Leseeintrag",
+  "toShelf": "Ins Regal",
+  "toShelfSubtitle": "Nur zum Regal hinzufügen, kein Leseeintrag",
+  "wishlistSubtitle": "Für Bücher, die du noch nicht besitzt",
+  "noResultsForIsbn": "Keine Ergebnisse für ISBN {isbn}",
+  "errorPrefix": "Fehler: {error}",
+  "addedToShelf": "zum Regal hinzugefügt",
+  "addedToWishlist": "zur Wunschliste hinzugefügt",
+  "alreadyInShelf": "ist bereits in deinem Regal",
+  "alreadyPreorderedMsg": "ist bereits vorbestellt",
+  "alreadyOnWishlist": "ist bereits auf deiner Wunschliste"
 }

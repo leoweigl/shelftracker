@@ -165,14 +165,14 @@ class _BookListScreenState extends State<BookListScreen> {
                                   const Icon(Icons.menu_book_rounded),
                             )
                           : const Icon(Icons.menu_book_rounded),
-                      title: Text(book.title),
+                      title: Text(book.title.isEmpty ? AppLocalizations.of(context)!.noTitle : book.title),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
                               Text(
-                                '${book.author}'
+                                '${book.author.isEmpty ? AppLocalizations.of(context)!.unknown : book.author}'
                                 '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
                               ),
                               const Spacer(),
@@ -278,7 +278,7 @@ class _BookListScreenState extends State<BookListScreen> {
                             context,
                             title: AppLocalizations.of(context)!.askDeleteBook,
                             message:
-                                '"${book.title}" ${AppLocalizations.of(context)!.confirmDelete}',
+                                '"${book.title.isEmpty ? AppLocalizations.of(context)!.noTitle : book.title}" ${AppLocalizations.of(context)!.confirmDelete}',
                             confirmLabel: AppLocalizations.of(context)!.delete,
                             isDestructive: true,
                           );

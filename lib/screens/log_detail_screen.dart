@@ -51,7 +51,7 @@ class LogDetailScreen extends StatelessWidget {
 
             return Scaffold(
               appBar: AppBar(
-                title: Text(entry.title),
+                title: Text(entry.title.isEmpty ? l10n.noTitle : entry.title),
                 actions: [
                   IconButton(
                     onPressed: () {
@@ -118,7 +118,7 @@ class LogDetailScreen extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: Text(
-                        entry.title,
+                        entry.title.isEmpty ? l10n.noTitle : entry.title,
                         style: Theme.of(context).textTheme.headlineSmall,
                         textAlign: TextAlign.center,
                       ),
@@ -150,10 +150,10 @@ class LogDetailScreen extends StatelessWidget {
                       const SizedBox(height: 8),
 
                       StarRating(
-                        rating: book?.userRating ?? 0,
+                        rating: book.userRating ?? 0,
                         size: 36,
                         onRatingChanged: (newRating) {
-                          if (book != null && entry.bookId != null) {
+                          if (entry.bookId != null) {
                             bookRepository.updateRating(
                               entry.bookId!,
                               newRating,
