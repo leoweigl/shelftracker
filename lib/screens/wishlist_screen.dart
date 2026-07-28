@@ -25,13 +25,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.pickMode ? l10n.selectBook : l10n.wishlist),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: l10n.addToWishlist,
-            onPressed: () => addToWishlistViaSearch(context),
-          ),
-        ],
+        actions: [],
       ),
       body: Column(
         children: [

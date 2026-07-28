@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'database/app_database.dart';
 import 'database/book_repository.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'screens/dashboard_screen.dart';
+import 'screens/main_shell.dart';
 import 'services/locale_controller.dart';
 import 'l10n/app_localizations.dart';
 
@@ -45,7 +45,7 @@ class ShelfTrackerApp extends StatelessWidget {
             useMaterial3: true,
           ),
           themeMode: ThemeMode.system,
-          home: const DashboardScreen(),
+          home: const MainShell(),
         );
       },
     );
