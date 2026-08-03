@@ -6,7 +6,13 @@ import '../models/book.dart';
 class SearchPreviewScreen extends StatelessWidget {
   final Book book;
 
-  const SearchPreviewScreen({super.key, required this.book});
+  /// Called when the user picks this book to add. Should perform (or let the
+  /// user cancel) the save and return true if the book was saved. Returning
+  /// true closes the preview screen; returning false keeps it open so a
+  /// mis-tapped add can be cancelled without losing this book's details.
+  final Future<bool> Function(BuildContext context, Book book) onAddBook;
+
+  const SearchPreviewScreen({super.key, required this.book, required this.onAddBook});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +26,12 @@ class SearchPreviewScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: l10n.add,
-            onPressed: () => Navigator.pop(context, book),
+            onPressed: () async {
+              final added = await onAddBook(context, book);
+              if (added && context.mounted) {
+                Navigator.pop(context, true);
+              }
+            },
           ),
         ],
       ),

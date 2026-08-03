@@ -160,6 +160,46 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
   - [x] `macos/Flutter/GeneratedPluginRegistrant.swift` aus Git-Tracking entfernt
     und in `.gitignore` aufgenommen
 
+- [x] **Design-Experiment — Theming & Listen-Konsistenz (branch: design-experiment)**
+  - [x] Wishlist-Kacheln kompakter: Löschen-Button ins `⋮`-Popup-Menü verschoben
+    (`_WishlistActions`, neuer `delete`-Eintrag), Icon-Buttons auf 20px/32×32
+    verkleinert, `contentPadding: left 16 / right 8`
+  - [x] Such-Flow überarbeitet: `SearchScreen` nimmt jetzt `onAddBook`-Callback statt
+    per `Navigator.pop` sofort zurückzuspringen — Abbrechen im „Save as"-Dialog lässt
+    die Suchergebnisse (bzw. `SearchPreviewScreen`) sichtbar, statt sie zu verwerfen;
+    `book_actions.dart`: `showAddBookOptions()` und `addToWishlistViaSearch()`
+    entsprechend umgebaut, `_saveBookWithDialog()` extrahiert
+  - [x] Farbschema komplett neu: Paket `flex_color_scheme` eingebunden,
+    `FlexThemeData.light/dark(scheme: ...)` ersetzt die manuelle
+    `ColorScheme.fromSeed`-Lösung
+  - [x] `ThemeController` (`ValueNotifier<FlexScheme>`, SharedPreferences-Persistenz,
+    Pattern analog `LocaleController`) — 7 kuratierte Themes: Midnight (Ebony Clay),
+    Parchment (Sepia), Slate, Twilight (Indigo M3), Amethyst, Ruby, Emerald,
+    lokalisiert in `app_en.arb`/`app_de.arb`
+  - [x] `SettingsScreen`: Sprache + Design in eigene abgerundete/umrandete
+    `_SettingsGroup`-Container (analog Card-Gruppierung), Radio-Control auf
+    `trailing` verschoben, Flaggen-Icons (🇩🇪/🇬🇧) bei der Sprachauswahl,
+    Theme-Zeilen mit kleinen Farbpunkten (`FlexColor.schemes[scheme]`) statt reinem
+    Radio-Button
+  - [x] Bücherregal: Löschen-IconButton durch `⋮`-Popup ersetzt (`_BookActions`:
+    „Log as read" / „Delete"), gleiche Proportionen wie Wishlist
+  - [x] Listenkacheln-Konsistenz über Bücherregal/Wishlist/Leseprotokoll/Suche:
+    einzeilige Titel mit Ellipsis, einheitliches `contentPadding`/`horizontalTitleGap`,
+    einheitliches Fallback-Icon (`Icons.menu_book_rounded`), Suchergebnis-„+"-Button
+    auf gleiche Größe kompaktiert
+  - [x] Bewertungssterne aus Leseprotokoll entfernt (`reading_log_screen.dart` +
+    `log_detail_screen.dart`), unbenutzten `star_rating.dart`-Import entfernt
+  - [x] Farbrollen-Audit: hartcodiertes `Colors.red` in `search_screen.dart`
+    (Fehlertext) durch `colorScheme.error` ersetzt; restliche Farbverwendung
+    (`error`/`primary`/`secondaryContainer`/`tertiaryContainer`/`outline`) als
+    konsistent bestätigt
+  - [x] „Vorbestellt"-Pill in `WishlistScreen` an Favorit-/Verkauf-Pills angeglichen
+    (fehlendes `fontWeight.w500`, `borderRadius` von 12 auf 8 vereinheitlicht,
+    `Icons.schedule` ergänzt)
+  - [x] Listenkacheln auf allen drei Haupt-Screens in `Card` gewrappt
+    (`surfaceContainer`-Hintergrund, `elevation: 1`, `borderRadius: 16`, kein Rand) —
+    `ListView.separated` mit Trennlinien durch `ListView.builder` ersetzt
+
 ---
 
 ---
@@ -245,3 +285,7 @@ Pro Band ist sichtbar, welchen Status er hat (wishlist / owned / gelesen / nicht
 - [ ] CLAUDE.md auf aktuellen Stand bringen
 - [ ] Unit-Tests für `book_repository.dart` (v. a. `addToWishlist()`, `getOrCreateBookId()`,
   Soft-Delete/Kategorien-Logik) — In-Memory-Testdatenbank für Drift als Einstieg
+- [ ] Pill-Farben (Favorit/Verkauf/Vorbestellt, `secondaryContainer`/`tertiaryContainer`)
+  gegen jedes der 7 Themes prüfen — sicherstellen, dass sie sich immer vom
+  `surfaceContainer`-Hintergrund der Bücherkacheln abheben und nicht zufällig
+  ähnlich/gleich ausfallen

@@ -8,6 +8,7 @@ import 'book_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/book_sort.dart';
 import '../models/book_status.dart';
+import '../utils/searchable_list_state.dart';
 
 class BookListScreen extends StatefulWidget {
   const BookListScreen({super.key});
@@ -16,12 +17,10 @@ class BookListScreen extends StatefulWidget {
   State<BookListScreen> createState() => _BookListScreenState();
 }
 
-class _BookListScreenState extends State<BookListScreen> {
+class _BookListScreenState extends State<BookListScreen>
+    with SearchableListState<BookListScreen> {
   BookSort _sort = BookSort.addedAt;
   bool _ascending = false;
-  final _searchController = TextEditingController();
-  String _searchQuery = '';
-  bool _isSearching = false;
 
   late Stream<List<BookEntry>> _bookStream;
 
@@ -48,64 +47,35 @@ class _BookListScreenState extends State<BookListScreen> {
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.bookshelf),
         actions: [
-          IconButton(
-            icon: Icon(_isSearching ? Icons.close : Icons.search),
-            tooltip: _isSearching ? AppLocalizations.of(context)!.closeSearch : AppLocalizations.of(context)!.search,
-            onPressed: () {
-              setState(() {
-                _isSearching = !_isSearching;
-                if (!_isSearching) {
-                  _searchController.clear();
-                  _searchQuery = '';
-                }
-              });
-            },
-          ),
+          buildSearchAction(context),
           PopupMenuButton<BookSort>(
             icon: const Icon(Icons.sort),
             tooltip: AppLocalizations.of(context)!.sort,
             initialValue: _sort,
             onSelected: (value) => _updateSort(value, _ascending),
             itemBuilder: (_) => BookSort.values
-                .map((s) => PopupMenuItem(value: s, child: Text(s.label(context))))
+                .map(
+                  (s) => PopupMenuItem(value: s, child: Text(s.label(context))),
+                )
                 .toList(),
           ),
           IconButton(
             icon: Icon(_ascending ? Icons.arrow_upward : Icons.arrow_downward),
-            tooltip: _ascending ? AppLocalizations.of(context)!.asc : AppLocalizations.of(context)!.desc,
+            tooltip: _ascending
+                ? AppLocalizations.of(context)!.asc
+                : AppLocalizations.of(context)!.desc,
             onPressed: () => _updateSort(_sort, !_ascending),
           ),
         ],
       ),
       body: Column(
         children: [
-          if (_isSearching)
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: TextField(
-                controller: _searchController,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.searchTitleOrAuthor,
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  setState(() => _searchQuery = value.trim().toLowerCase());
-                },
-              ),
-            ),
+          buildSearchField(context),
           Expanded(
             child: StreamBuilder<List<BookEntry>>(
               stream: _bookStream,
@@ -116,175 +86,181 @@ class _BookListScreenState extends State<BookListScreen> {
 
                 final books = snapshot.data ?? [];
 
-                final filteredBooks = _searchQuery.isEmpty
-                  ? books
-                  : books.where((b) =>
-                    b.title.toLowerCase().contains(_searchQuery) ||
-                    b.author.toLowerCase().contains(_searchQuery)).toList();
+                final filteredBooks = filterBySearch(books);
 
                 if (filteredBooks.isEmpty) {
                   return Center(
                     child: Text(
-                      _searchQuery.isEmpty
-                        ? AppLocalizations.of(context)!.noBooksYet
-                        : AppLocalizations.of(context)!.noBooksMatch,
+                      searchQuery.isEmpty
+                          ? AppLocalizations.of(context)!.noBooksYet
+                          : AppLocalizations.of(context)!.noBooksMatch,
                       textAlign: TextAlign.center,
                     ),
                   );
                 }
 
-                return ListView.separated(
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
                   itemCount: filteredBooks.length,
-                  separatorBuilder: (context, index) => Divider(
-                    height: 8,
-                    indent: 72,
-                    endIndent: 16,
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
                   itemBuilder: (context, index) {
                     final book = filteredBooks[index];
-                    return ListTile(
-                      leading: book.coverUrl != null
-                          ? CachedNetworkImage(
-                              imageUrl: book.coverUrl!,
-                              width: 40,
-                              placeholder: (_, __) => const SizedBox(
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      elevation: 1,
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.only(
+                          left: 16,
+                          right: 8,
+                        ),
+                        horizontalTitleGap: 8,
+                        leading: book.coverUrl != null
+                            ? CachedNetworkImage(
+                                imageUrl: book.coverUrl!,
                                 width: 40,
-                                height: 40,
-                                child: Center(
-                                  child: SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
+                                placeholder: (_, __) => const SizedBox(
+                                  width: 40,
+                                  height: 40,
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              errorWidget: (_, __, ___) =>
-                                  const Icon(Icons.menu_book_rounded),
-                            )
-                          : const Icon(Icons.menu_book_rounded),
-                      title: Text(book.title.isEmpty ? AppLocalizations.of(context)!.noTitle : book.title),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                '${book.author.isEmpty ? AppLocalizations.of(context)!.unknown : book.author}'
-                                '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
-                              ),
-                              const Spacer(),
-                              if (book.isFavorite)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer
-                                        .withValues(alpha: 0.5),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.favorite,
-                                        size: 12,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSecondaryContainer,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        AppLocalizations.of(context)!.favorite,
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w500,
+                                errorWidget: (_, __, ___) =>
+                                    const Icon(Icons.menu_book_rounded),
+                              )
+                            : const Icon(Icons.menu_book_rounded),
+                        title: Text(
+                          book.title.isEmpty
+                              ? AppLocalizations.of(context)!.noTitle
+                              : book.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  '${book.author.isEmpty ? AppLocalizations.of(context)!.unknown : book.author}'
+                                  '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
+                                ),
+                                const Spacer(),
+                                if (book.isFavorite)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondaryContainer
+                                          .withValues(alpha: 0.5),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.favorite,
+                                          size: 12,
                                           color: Theme.of(
                                             context,
                                           ).colorScheme.onSecondaryContainer,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.favorite,
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w500,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSecondaryContainer,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                            ],
-                          ),
+                              ],
+                            ),
 
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              book.userRating == null
-                                  ? Text(AppLocalizations.of(context)!.notYetRated)
-                                  : StarRating(rating: book.userRating!),
-                              const Spacer(),
-                              if (!book.keepBook)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.tertiaryContainer,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.sell_outlined,
-                                        size: 12,
-                                        color: Theme.of(
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                book.userRating == null
+                                    ? Text(
+                                        AppLocalizations.of(
                                           context,
-                                        ).colorScheme.onTertiaryContainer,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        AppLocalizations.of(context)!.forSale,
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w500,
+                                        )!.notYetRated,
+                                      )
+                                    : StarRating(rating: book.userRating!),
+                                const Spacer(),
+                                if (!book.keepBook)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.tertiaryContainer,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.sell_outlined,
+                                          size: 12,
                                           color: Theme.of(
                                             context,
                                           ).colorScheme.onTertiaryContainer,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          AppLocalizations.of(context)!.forSale,
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w500,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onTertiaryContainer,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BookDetailScreen(bookId: book.id),
-                          ),
-                        );
-                      },
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline),
-                        onPressed: () async {
-                          final confirmed = await confirmDialog(
+                              ],
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
                             context,
-                            title: AppLocalizations.of(context)!.askDeleteBook,
-                            message:
-                                '"${book.title.isEmpty ? AppLocalizations.of(context)!.noTitle : book.title}" ${AppLocalizations.of(context)!.confirmDelete}',
-                            confirmLabel: AppLocalizations.of(context)!.delete,
-                            isDestructive: true,
+                            MaterialPageRoute(
+                              builder: (_) => BookDetailScreen(bookId: book.id),
+                            ),
                           );
-                          if (!confirmed) return;
-                          await bookRepository.delete(book.id);
                         },
+                        trailing: _BookActions(book: book),
                       ),
                     );
                   },
@@ -295,5 +271,68 @@ class _BookListScreenState extends State<BookListScreen> {
         ],
       ),
     );
+  }
+}
+
+enum _BookAction { logAsRead, delete }
+
+class _BookActions extends StatelessWidget {
+  final BookEntry book;
+
+  const _BookActions({required this.book});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final errorColor = Theme.of(context).colorScheme.error;
+    return PopupMenuButton<_BookAction>(
+      icon: const Icon(Icons.more_vert, size: 20),
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+      onSelected: (action) => _handleAction(context, action),
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: _BookAction.logAsRead,
+          child: ListTile(
+            leading: const Icon(Icons.done_all),
+            title: Text(l10n.logAsRead),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+        PopupMenuItem(
+          value: _BookAction.delete,
+          child: ListTile(
+            leading: Icon(Icons.delete_outline, color: errorColor),
+            title: Text(l10n.delete, style: TextStyle(color: errorColor)),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _handleAction(BuildContext context, _BookAction action) async {
+    final l10n = AppLocalizations.of(context)!;
+    final title = book.title.isEmpty ? l10n.noTitle : book.title;
+
+    switch (action) {
+      case _BookAction.logAsRead:
+        await bookRepository.logBookAsReadFromEntry(book);
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('"$title" ${l10n.loggedAsRead}')),
+        );
+
+      case _BookAction.delete:
+        final confirmed = await confirmDialog(
+          context,
+          title: l10n.askDeleteBook,
+          message: '"$title" ${l10n.confirmDelete}',
+          confirmLabel: l10n.delete,
+          isDestructive: true,
+        );
+        if (!confirmed) return;
+        await bookRepository.delete(book.id);
+    }
   }
 }

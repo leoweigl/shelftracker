@@ -116,6 +116,54 @@ abstract class AppLocalizations {
   /// **'English'**
   String get languageEnglish;
 
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @themeEbonyClay.
+  ///
+  /// In en, this message translates to:
+  /// **'Midnight'**
+  String get themeEbonyClay;
+
+  /// No description provided for @themeSepia.
+  ///
+  /// In en, this message translates to:
+  /// **'Parchment'**
+  String get themeSepia;
+
+  /// No description provided for @themeStone.
+  ///
+  /// In en, this message translates to:
+  /// **'Slate'**
+  String get themeStone;
+
+  /// No description provided for @themeIndigoNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Twilight'**
+  String get themeIndigoNight;
+
+  /// No description provided for @themeViolet.
+  ///
+  /// In en, this message translates to:
+  /// **'Amethyst'**
+  String get themeViolet;
+
+  /// No description provided for @themeCrimson.
+  ///
+  /// In en, this message translates to:
+  /// **'Ruby'**
+  String get themeCrimson;
+
+  /// No description provided for @themeGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Emerald'**
+  String get themeGreen;
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:

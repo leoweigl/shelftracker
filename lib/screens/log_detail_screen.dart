@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shelftracker/l10n/app_localizations.dart';
 import '../database/app_database.dart';
 import '../main.dart';
-import '../widgets/star_rating.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../utils/dialogs.dart';
@@ -137,33 +136,6 @@ class LogDetailScreen extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 24),
-
-                    if (book != null) ...[
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          l10n.rating,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      StarRating(
-                        rating: book.userRating ?? 0,
-                        size: 36,
-                        onRatingChanged: (newRating) {
-                          if (entry.bookId != null) {
-                            bookRepository.updateRating(
-                              entry.bookId!,
-                              newRating,
-                            );
-                          }
-                        },
-                      ),
-
-                      const SizedBox(height: 24),
-                    ],
 
                     Row(
                       mainAxisSize: MainAxisSize.min,

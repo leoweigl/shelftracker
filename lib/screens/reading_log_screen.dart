@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:shelftracker/screens/log_detail_screen.dart';
 import '../main.dart';
 import '../database/book_repository.dart';
-import '../widgets/star_rating.dart';
 import '../l10n/app_localizations.dart';
 
 class ReadingLogScreen extends StatefulWidget {
@@ -96,108 +95,131 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
                 final items = snapshot.data ?? [];
 
                 final filteredItems = _searchQuery.isEmpty
-                  ? items
-                  : items.where((i) =>
-                      i.entry.title.toLowerCase().contains(_searchQuery) ||
-                      i.entry.author.toLowerCase().contains(_searchQuery)).toList();
+                    ? items
+                    : items
+                          .where(
+                            (i) =>
+                                i.entry.title.toLowerCase().contains(
+                                  _searchQuery,
+                                ) ||
+                                i.entry.author.toLowerCase().contains(
+                                  _searchQuery,
+                                ),
+                          )
+                          .toList();
 
                 if (filteredItems.isEmpty) {
                   return Center(
                     child: Text(
                       _searchQuery.isEmpty
-                        ? l10n.noLogsYet
-                        : l10n.noEntriesMatch,
+                          ? l10n.noLogsYet
+                          : l10n.noEntriesMatch,
                     ),
                   );
                 }
 
-                return ListView.separated(
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
                   itemCount: filteredItems.length,
-                  separatorBuilder: (context, index) => Divider(
-                    height: 8,
-                    indent: 72,
-                    endIndent: 16,
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
                   itemBuilder: (context, index) {
                     final item = filteredItems[index];
                     final entry = item.entry;
 
-                    return ListTile(
-                      leading: entry.coverUrl != null
-                          ? CachedNetworkImage(
-                              imageUrl: entry.coverUrl!,
-                              width: 40,
-                              placeholder: (_, __) => const SizedBox(
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      elevation: 1,
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: ListTile(
+                        leading: entry.coverUrl != null
+                            ? CachedNetworkImage(
+                                imageUrl: entry.coverUrl!,
                                 width: 40,
-                                height: 40,
-                                child: Center(
-                                  child: SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
+                                placeholder: (_, __) => const SizedBox(
+                                  width: 40,
+                                  height: 40,
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              errorWidget: (_, __, ___) =>
-                                  const Icon(Icons.menu_book_rounded),
-                            )
-                          : const Icon(Icons.menu_book_rounded),
-                      title: Text(entry.title.isEmpty ? l10n.noTitle : entry.title),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Expanded(child: Text(entry.author.isEmpty ? l10n.unknown : entry.author)),
-                              if (item.isFavorite) _favoritePill(context),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              item.userRating == null
-                                  ? Text(l10n.notYetRated)
-                                  : StarRating(rating: item.userRating!),
-                              const Spacer(),
-                              if (!item.inShelf) _notOwnedPill(context),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          InkWell(
-                            onTap: () => _editReadDate(
-                              context,
-                              entry.id,
-                              entry.readDate,
-                            ),
-                            child: Row(
+                                errorWidget: (_, __, ___) =>
+                                    const Icon(Icons.menu_book_rounded),
+                              )
+                            : const Icon(Icons.menu_book_rounded),
+                        title: Text(
+                          entry.title.isEmpty ? l10n.noTitle : entry.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.event, size: 14),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '${l10n.readOn} '
-                                  '${DateFormat(l10n.dateFormat).format(entry.readDate)}',
+                                Expanded(
+                                  child: Text(
+                                    entry.author.isEmpty
+                                        ? l10n.unknown
+                                        : entry.author,
+                                  ),
                                 ),
-                                const SizedBox(width: 4),
-                                Icon(
-                                  Icons.edit,
-                                  size: 12,
-                                  color: Theme.of(context).colorScheme.outline,
-                                ),
+                                if (item.isFavorite) _favoritePill(context),
                               ],
                             ),
+                            if (!item.inShelf) ...[
+                              const SizedBox(height: 6),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: _notOwnedPill(context),
+                              ),
+                            ],
+                            const SizedBox(height: 6),
+                            InkWell(
+                              onTap: () => _editReadDate(
+                                context,
+                                entry.id,
+                                entry.readDate,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.event, size: 14),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${l10n.readOn} '
+                                    '${DateFormat(l10n.dateFormat).format(entry.readDate)}',
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.edit,
+                                    size: 12,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => LogDetailScreen(logId: entry.id),
                           ),
-                        ],
-                      ),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => LogDetailScreen(logId: entry.id),
                         ),
                       ),
                     );
@@ -249,7 +271,10 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Text(AppLocalizations.of(context)!.notInShelf, style: Theme.of(context).textTheme.bodySmall),
+      child: Text(
+        AppLocalizations.of(context)!.notInShelf,
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
     );
   }
 }

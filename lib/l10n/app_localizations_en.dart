@@ -18,6 +18,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageEnglish => 'English';
 
   @override
+  String get theme => 'Theme';
+
+  @override
+  String get themeEbonyClay => 'Midnight';
+
+  @override
+  String get themeSepia => 'Parchment';
+
+  @override
+  String get themeStone => 'Slate';
+
+  @override
+  String get themeIndigoNight => 'Twilight';
+
+  @override
+  String get themeViolet => 'Amethyst';
+
+  @override
+  String get themeCrimson => 'Ruby';
+
+  @override
+  String get themeGreen => 'Emerald';
+
+  @override
   String get appTitle => 'ShelfTracker';
 
   @override

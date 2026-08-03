@@ -7,7 +7,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'search_preview_screen.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  /// Called when the user picks a book to add. Should perform (or let the
+  /// user cancel) the save and return true if the book was saved. Returning
+  /// true closes the search screen; returning false keeps the results
+  /// visible so another book can be picked.
+  final Future<bool> Function(BuildContext context, Book book) onAddBook;
+
+  const SearchScreen({super.key, required this.onAddBook});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -112,7 +118,7 @@ class _SearchScreenState extends State<SearchScreen> {
               padding: const EdgeInsets.all(16),
               child: Text(
                 _errorMessage!,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
           Expanded(
@@ -121,6 +127,8 @@ class _SearchScreenState extends State<SearchScreen> {
               itemBuilder: (context, index) {
                 final book = _results[index];
                 return ListTile(
+                  contentPadding: const EdgeInsets.only(left: 16, right: 8),
+                  horizontalTitleGap: 8,
                   leading: book.coverUrl != null
                     ? CachedNetworkImage(
                         imageUrl: book.coverUrl!,
@@ -137,28 +145,42 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         ),
                         errorWidget: (_, __, ___) =>
-                            const Icon(Icons.book),
+                            const Icon(Icons.menu_book_rounded),
                       )
-                    : const Icon(Icons.book),
-                  title: Text(book.title ?? AppLocalizations.of(context)!.noTitle),
+                    : const Icon(Icons.menu_book_rounded),
+                  title: Text(
+                    book.title ?? AppLocalizations.of(context)!.noTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   subtitle: Text(
                     '${book.author ?? AppLocalizations.of(context)!.unknown}'
                     '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
                   ),
                   trailing: IconButton(
-                    icon: const Icon(Icons.add),
+                    icon: const Icon(Icons.add, size: 20),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                     tooltip: AppLocalizations.of(context)!.add,
-                    onPressed: () => Navigator.pop(context, book),
+                    onPressed: () async {
+                      final added = await widget.onAddBook(context, book);
+                      if (added && context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    },
                   ),
                   onTap: () async {
-                    final result = await Navigator.push<Book>(
+                    final added = await Navigator.push<bool>(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => SearchPreviewScreen(book: book),
+                        builder: (_) => SearchPreviewScreen(
+                          book: book,
+                          onAddBook: widget.onAddBook,
+                        ),
                       ),
                     );
-                    if (result != null && context.mounted) {
-                      Navigator.pop(context, result);
+                    if (added == true && context.mounted) {
+                      Navigator.pop(context);
                     }
                   },
                 );

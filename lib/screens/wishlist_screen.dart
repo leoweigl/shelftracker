@@ -6,6 +6,7 @@ import '../main.dart';
 import '../models/book_status.dart';
 import 'book_detail_screen.dart';
 import '../utils/dialogs.dart';
+import '../utils/searchable_list_state.dart';
 
 class WishlistScreen extends StatefulWidget {
   final bool pickMode;
@@ -16,7 +17,8 @@ class WishlistScreen extends StatefulWidget {
   State<WishlistScreen> createState() => _WishlistScreenState();
 }
 
-class _WishlistScreenState extends State<WishlistScreen> {
+class _WishlistScreenState extends State<WishlistScreen>
+    with SearchableListState<WishlistScreen> {
   BookStatus? _filter;
 
   @override
@@ -25,9 +27,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.pickMode ? l10n.selectBook : l10n.wishlist),
+        actions: [buildSearchAction(context)],
       ),
       body: Column(
         children: [
+          buildSearchField(context),
           _FilterPills(
             selected: _filter,
             onChanged: (f) => setState(() => _filter = f),
@@ -41,31 +45,40 @@ class _WishlistScreenState extends State<WishlistScreen> {
                 }
 
                 final all = snapshot.data ?? [];
-                final books = _filter == null
+                final statusFiltered = _filter == null
                     ? all
                     : all.where((b) => b.status == _filter!.name).toList();
+                final books = filterBySearch(statusFiltered);
 
                 if (books.isEmpty) {
                   return Center(
-                    child: Text(l10n.noFilteredBooks(_filter?.name ?? 'all'),
+                    child: Text(
+                      l10n.noFilteredBooks(_filter?.name ?? 'all'),
                       textAlign: TextAlign.center,
                     ),
                   );
                 }
 
-                return ListView.separated(
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
                   itemCount: books.length,
-                  separatorBuilder: (context, index) => Divider(
-                    height: 8,
-                    indent: 72,
-                    endIndent: 16,
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
                   itemBuilder: (context, index) {
                     final book = books[index];
-                    return _WishlistTile(
-                      book: book,
-                      pickMode: widget.pickMode,
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      elevation: 1,
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: _WishlistTile(
+                        book: book,
+                        pickMode: widget.pickMode,
+                      ),
                     );
                   },
                 );
@@ -144,67 +157,67 @@ class _WishlistTile extends StatelessWidget {
                   ),
                 ),
               ),
-              errorWidget: (ctx, url, err) => const Icon(Icons.menu_book_rounded),
+              errorWidget: (ctx, url, err) =>
+                  const Icon(Icons.menu_book_rounded),
             )
           : const Icon(Icons.menu_book_rounded),
-      title: Text(book.title.isEmpty ? l10n.noTitle : book.title),
+      title: Text(
+        book.title.isEmpty ? l10n.noTitle : book.title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            '${book.author.isEmpty ? l10n.unknown : book.author}'
-            '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
+          Expanded(
+            child: Text(
+              '${book.author.isEmpty ? l10n.unknown : book.author}'
+              '${book.publicationYear != null ? ' • ${book.publicationYear}' : ''}',
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           if (status == BookStatus.preordered) ...[
+            const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.secondaryContainer,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                l10n.statusPreordered,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.schedule,
+                    size: 12,
+                    color: Theme.of(context).colorScheme.onSecondaryContainer,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    l10n.statusPreordered,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ],
       ),
-      trailing: pickMode
-          ? null
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  tooltip: l10n.delete,
-                  onPressed: () async {
-                    final title = book.title.isEmpty ? l10n.noTitle : book.title;
-                    final confirmed = await confirmDialog(
-                      context,
-                      title: l10n.askDeleteBook,
-                      message: '"$title" ${l10n.confirmDeleteWishlist}',
-                      confirmLabel: l10n.delete,
-                      isDestructive: true,
-                    );
-                    if (!confirmed) return;
-                    await bookRepository.delete(book.id);
-                  },
-                ),
-                _WishlistActions(book: book, status: status),
-              ],
-            ),
+      contentPadding: const EdgeInsets.only(left: 16, right: 8),
+      horizontalTitleGap: 8,
+      trailing: pickMode ? null : _WishlistActions(book: book, status: status),
       onTap: pickMode
           ? () => Navigator.pop(context, book)
           : () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BookDetailScreen(bookId: book.id),
-                ),
+              context,
+              MaterialPageRoute(
+                builder: (_) => BookDetailScreen(bookId: book.id),
               ),
+            ),
     );
   }
 }
@@ -218,7 +231,11 @@ class _WishlistActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final errorColor = Theme.of(context).colorScheme.error;
     return PopupMenuButton<_WishlistAction>(
+      icon: const Icon(Icons.more_vert, size: 20),
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
       onSelected: (action) => _handleAction(context, action),
       itemBuilder: (_) => [
         PopupMenuItem(
@@ -255,42 +272,87 @@ class _WishlistActions extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
             ),
           ),
+        PopupMenuItem(
+          value: _WishlistAction.delete,
+          child: ListTile(
+            leading: Icon(Icons.delete_outline, color: errorColor),
+            title: Text(l10n.delete, style: TextStyle(color: errorColor)),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
       ],
     );
   }
 
-  Future<void> _handleAction(BuildContext context, _WishlistAction action) async {
+  Future<void> _handleAction(
+    BuildContext context,
+    _WishlistAction action,
+  ) async {
     final l10n = AppLocalizations.of(context)!;
     switch (action) {
       case _WishlistAction.moveToShelf:
         await bookRepository.setStatus(book.id, BookStatus.owned);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${book.title.isEmpty ? l10n.noTitle : book.title}" ${l10n.movedToShelf}')),
+          SnackBar(
+            content: Text(
+              '"${book.title.isEmpty ? l10n.noTitle : book.title}" ${l10n.movedToShelf}',
+            ),
+          ),
         );
 
       case _WishlistAction.logAsRead:
         await bookRepository.logBookAsReadFromEntry(book);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${book.title.isEmpty ? l10n.noTitle : book.title}" ${l10n.loggedAsRead}')),
+          SnackBar(
+            content: Text(
+              '"${book.title.isEmpty ? l10n.noTitle : book.title}" ${l10n.loggedAsRead}',
+            ),
+          ),
         );
 
       case _WishlistAction.markAsPreordered:
         await bookRepository.setStatus(book.id, BookStatus.preordered);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('"${book.title.isEmpty ? l10n.noTitle : book.title}" ${l10n.markedAsPreordered}')),
+          SnackBar(
+            content: Text(
+              '"${book.title.isEmpty ? l10n.noTitle : book.title}" ${l10n.markedAsPreordered}',
+            ),
+          ),
         );
 
       case _WishlistAction.removePreorder:
         await bookRepository.setStatus(book.id, BookStatus.wishlist);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n.removedPreorder} "${book.title.isEmpty ? l10n.noTitle : book.title}"')),
+          SnackBar(
+            content: Text(
+              '${l10n.removedPreorder} "${book.title.isEmpty ? l10n.noTitle : book.title}"',
+            ),
+          ),
         );
+
+      case _WishlistAction.delete:
+        final title = book.title.isEmpty ? l10n.noTitle : book.title;
+        final confirmed = await confirmDialog(
+          context,
+          title: l10n.askDeleteBook,
+          message: '"$title" ${l10n.confirmDeleteWishlist}',
+          confirmLabel: l10n.delete,
+          isDestructive: true,
+        );
+        if (!confirmed) return;
+        await bookRepository.delete(book.id);
     }
   }
 }
 
-enum _WishlistAction { moveToShelf, logAsRead, markAsPreordered, removePreorder}
+enum _WishlistAction {
+  moveToShelf,
+  logAsRead,
+  markAsPreordered,
+  removePreorder,
+  delete,
+}

@@ -13,41 +13,6 @@ enum _SaveAs { alreadyRead, inShelf, wishlist }
 
 Future<void> showAddBookOptions(BuildContext context) async {
   final l10n = AppLocalizations.of(context)!;
-  final book = await _findBook(context);
-  if (book == null || !context.mounted) return;
-
-  final saveAs = await _showSaveAsDialog(context);
-  if (saveAs == null || !context.mounted) return;
-
-  switch (saveAs) {
-    case _SaveAs.alreadyRead:
-      await bookRepository.logBookAsRead(book);
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('"${book.title ?? l10n.noTitle}" ${l10n.loggedAsRead}')),
-      );
-      break;
-
-    case _SaveAs.inShelf:
-      await bookRepository.addToShelf(book);
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('"${book.title ?? l10n.noTitle}" ${l10n.addedToShelf}')),
-      );
-      break;
-
-    case _SaveAs.wishlist:
-      final result = await bookRepository.addToWishlist(book);
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_wishlistMessage(l10n, book.title ?? l10n.noTitle, result))),
-      );
-      break;
-  }
-}
-
-Future<Book?> _findBook(BuildContext context) async {
-  final l10n = AppLocalizations.of(context)!;
   final method = await showDialog<_FindMethod>(
     context: context,
     builder: (dialogContext) => AlertDialog(
@@ -76,37 +41,79 @@ Future<Book?> _findBook(BuildContext context) async {
     ),
   );
 
-  if (method == null || !context.mounted) return null;
+  if (method == null || !context.mounted) return;
 
   if (method == _FindMethod.search) {
-    return Navigator.push<Book>(
+    // The search screen shows the "save as" dialog itself, on top of the
+    // results, so a mis-tapped book can be cancelled without losing the list.
+    await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const SearchScreen()),
+      MaterialPageRoute(
+        builder: (_) => SearchScreen(onAddBook: _saveBookWithDialog),
+      ),
     );
+    return;
   }
 
   final isbn = await Navigator.push<String>(
     context,
     MaterialPageRoute(builder: (_) => const ScannerScreen()),
   );
-  if (isbn == null || !context.mounted) return null;
+  if (isbn == null || !context.mounted) return;
 
+  Book? book;
   try {
-    final book = await BookApiService().searchByIsbn(isbn);
+    book = await BookApiService().searchByIsbn(isbn);
     if (book == null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.noResultsForIsbn(isbn))),
       );
     }
-    return book;
   } catch (e) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.errorPrefix(e.toString()))),
       );
     }
-    return null;
   }
+  if (book == null || !context.mounted) return;
+
+  await _saveBookWithDialog(context, book);
+}
+
+/// Shows the "save as" dialog for [book] and performs the save.
+/// Returns true if the book was saved, false if the dialog was cancelled.
+Future<bool> _saveBookWithDialog(BuildContext context, Book book) async {
+  final l10n = AppLocalizations.of(context)!;
+  final saveAs = await _showSaveAsDialog(context);
+  if (saveAs == null || !context.mounted) return false;
+
+  switch (saveAs) {
+    case _SaveAs.alreadyRead:
+      await bookRepository.logBookAsRead(book);
+      if (!context.mounted) return true;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('"${book.title ?? l10n.noTitle}" ${l10n.loggedAsRead}')),
+      );
+      break;
+
+    case _SaveAs.inShelf:
+      await bookRepository.addToShelf(book);
+      if (!context.mounted) return true;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('"${book.title ?? l10n.noTitle}" ${l10n.addedToShelf}')),
+      );
+      break;
+
+    case _SaveAs.wishlist:
+      final result = await bookRepository.addToWishlist(book);
+      if (!context.mounted) return true;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_wishlistMessage(l10n, book.title ?? l10n.noTitle, result))),
+      );
+      break;
+  }
+  return true;
 }
 
 Future<_SaveAs?> _showSaveAsDialog(BuildContext context) {
@@ -162,16 +169,21 @@ String _wishlistMessage(AppLocalizations l10n, String title, WishlistAddResult r
 }
 
 Future<void> addToWishlistViaSearch(BuildContext context) async {
-  final l10n = AppLocalizations.of(context)!;
-  final book = await Navigator.push<Book>(
+  await Navigator.push(
     context,
-    MaterialPageRoute(builder: (_) => const SearchScreen()),
-  );
-  if (book == null || !context.mounted) return;
-
-  final result = await bookRepository.addToWishlist(book);
-  if (!context.mounted) return;
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(_wishlistMessage(l10n, book.title ?? l10n.noTitle, result))),
+    MaterialPageRoute(
+      builder: (_) => SearchScreen(
+        onAddBook: (ctx, book) async {
+          final l10n = AppLocalizations.of(ctx)!;
+          final result = await bookRepository.addToWishlist(book);
+          if (ctx.mounted) {
+            ScaffoldMessenger.of(ctx).showSnackBar(
+              SnackBar(content: Text(_wishlistMessage(l10n, book.title ?? l10n.noTitle, result))),
+            );
+          }
+          return true;
+        },
+      ),
+    ),
   );
 }
