@@ -44,6 +44,7 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.3.3
   flex_color_scheme: ^8.4.0
+  google_fonts: ^8.2.1
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
