@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ThemeController extends ValueNotifier<FlexScheme> {
   static const _prefsKey = 'selected_theme';
 
-  ThemeController() : super(FlexScheme.ebonyClay);
+  ThemeController() : super(FlexScheme.shadGray);
 
   Future<void> loadSavedTheme() async {
     final prefs = await SharedPreferences.getInstance();
@@ -13,7 +13,7 @@ class ThemeController extends ValueNotifier<FlexScheme> {
     if (savedName != null) {
       value = FlexScheme.values.firstWhere(
         (s) => s.name == savedName,
-        orElse: () => FlexScheme.ebonyClay,
+        orElse: () => FlexScheme.shadGray,
       );
     }
   }

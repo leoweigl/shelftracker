@@ -10,13 +10,12 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final schemeOptions = <(FlexScheme, String)>[
-      (FlexScheme.ebonyClay, l10n.themeEbonyClay),
-      (FlexScheme.sepia, l10n.themeSepia),
-      (FlexScheme.shadStone, l10n.themeStone),
-      (FlexScheme.indigoM3, l10n.themeIndigoNight),
-      (FlexScheme.shadViolet, l10n.themeViolet),
-      (FlexScheme.shadRed, l10n.themeCrimson),
+      (FlexScheme.shadGray, l10n.themeGray),
       (FlexScheme.shadGreen, l10n.themeGreen),
+      (FlexScheme.shadRed, l10n.themeCrimson),
+      (FlexScheme.shadViolet, l10n.themeViolet),
+      (FlexScheme.shadYellow, l10n.themeYellow),
+      (FlexScheme.shadBlue, l10n.themeSapphire),
     ];
 
     return Scaffold(
@@ -156,35 +155,22 @@ class _ThemeListRow extends StatelessWidget {
 
     return ListTile(
       onTap: onTap,
-      leading: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _dot(swatch.primary, isDark),
-          const SizedBox(width: 4),
-          _dot(swatch.secondary, isDark),
-          const SizedBox(width: 4),
-          _dot(swatch.tertiary, isDark),
-        ],
+      leading: Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: swatch.primary,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isDark ? Colors.white24 : Colors.black26,
+            width: 1,
+          ),
+        ),
       ),
       title: Text(label),
       trailing: selected
           ? Icon(Icons.check_circle, color: colorScheme.primary)
           : const Icon(Icons.circle_outlined),
-    );
-  }
-
-  Widget _dot(Color color, bool isDark) {
-    return Container(
-      width: 16,
-      height: 16,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: isDark ? Colors.white24 : Colors.black26,
-          width: 1,
-        ),
-      ),
     );
   }
 }

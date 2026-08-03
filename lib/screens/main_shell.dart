@@ -37,6 +37,7 @@ class _MainShellState extends State<MainShell> {
               onPressed: () => showAddBookOptions(context),
               tooltip: l10n.dashboardAddBook,
               backgroundColor: Colors.transparent,
+              foregroundColor: Theme.of(context).colorScheme.primary,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),

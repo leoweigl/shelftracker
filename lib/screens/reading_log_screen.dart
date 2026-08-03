@@ -130,10 +130,14 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
                         horizontal: 16,
                         vertical: 6,
                       ),
-                      elevation: 1,
+                      elevation: 0,
                       color: Theme.of(context).colorScheme.surfaceContainer,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                          width: 1.5,
+                        ),
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: ListTile(
@@ -237,9 +241,7 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).colorScheme.secondaryContainer.withValues(alpha: 0.5),
+        color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -248,7 +250,7 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
           Icon(
             Icons.favorite,
             size: 12,
-            color: Theme.of(context).colorScheme.onSecondaryContainer,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
           ),
           const SizedBox(width: 4),
           Text(
@@ -256,7 +258,7 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
           ),
         ],
@@ -268,12 +270,14 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         AppLocalizations.of(context)!.notInShelf,
-        style: Theme.of(context).textTheme.bodySmall,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       ),
     );
   }

@@ -21,16 +21,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get theme => 'Design';
 
   @override
-  String get themeEbonyClay => 'Mitternacht';
-
-  @override
-  String get themeSepia => 'Pergament';
-
-  @override
-  String get themeStone => 'Schiefer';
-
-  @override
-  String get themeIndigoNight => 'Dämmerung';
+  String get themeGray => 'Schiefer';
 
   @override
   String get themeViolet => 'Amethyst';
@@ -40,6 +31,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get themeGreen => 'Smaragd';
+
+  @override
+  String get themeYellow => 'Citrin';
+
+  @override
+  String get themeSapphire => 'Saphir';
 
   @override
   String get appTitle => 'ShelfTracker';

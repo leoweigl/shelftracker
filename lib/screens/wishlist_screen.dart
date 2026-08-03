@@ -69,10 +69,14 @@ class _WishlistScreenState extends State<WishlistScreen>
                         horizontal: 16,
                         vertical: 6,
                       ),
-                      elevation: 1,
+                      elevation: 0,
                       color: Theme.of(context).colorScheme.surfaceContainer,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                          width: 1.5,
+                        ),
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: _WishlistTile(
@@ -108,6 +112,11 @@ class _FilterPills extends StatelessWidget {
         padding: const EdgeInsets.only(right: 8),
         child: FilterChip(
           label: Text(label),
+          labelStyle: TextStyle(
+            color: isSelected
+                ? colorScheme.onPrimaryContainer
+                : colorScheme.onSurfaceVariant,
+          ),
           selected: isSelected,
           onSelected: (_) => onChanged(isSelected ? null : value),
           selectedColor: colorScheme.primaryContainer,
@@ -181,7 +190,7 @@ class _WishlistTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondaryContainer,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -190,7 +199,7 @@ class _WishlistTile extends StatelessWidget {
                   Icon(
                     Icons.schedule,
                     size: 12,
-                    color: Theme.of(context).colorScheme.onSecondaryContainer,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -198,7 +207,7 @@ class _WishlistTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
                     ),
                   ),
                 ],

@@ -200,6 +200,35 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
     (`surfaceContainer`-Hintergrund, `elevation: 1`, `borderRadius: 16`, kein Rand) —
     `ListView.separated` mit Trennlinien durch `ListView.builder` ersetzt
 
+- [x] **Design-Experiment — Theme-Auswahl & Kontrast (branch: design-experiment)**
+  - [x] Themeauswahl auf 6 kuratierte Shadcn-Paletten reduziert: Grey, Green, Red,
+    Violet, Yellow, Blue (`FlexScheme.shadGray/shadGreen/shadRed/shadViolet/
+    shadYellow/shadBlue`) statt der bisherigen 7 gemischten Schemes; Edelstein-Namen
+    Slate, Emerald, Ruby, Amethyst, Citrine, Sapphire in `app_en.arb`/`app_de.arb`
+    (neue Keys `themeGray`/`themeYellow`/`themeSapphire`, alte Keys `themeEbonyClay`/
+    `themeSepia`/`themeStone`/`themeIndigoNight` entfernt); `ThemeController`-Default
+    auf `FlexScheme.shadGray`
+  - [x] `_ThemeListRow` vereinfacht: ein einzelner Farbpunkt (Primärfarbe des Schemes)
+    statt Mehrfarben-Swatch, kein Untertitel
+  - [x] Pill-Kontrast-Fix: bei allen 6 Shadcn-Themes sind `secondary`/`tertiary`/
+    `accent` identisch neutral-grau — nur `primary` trägt die charakteristische
+    Farbe. Favorit- und Vorbestellt-Pills deshalb auf `primaryContainer`/
+    `onPrimaryContainer` umgestellt statt `secondaryContainer`/`tertiaryContainer`;
+    „Verkaufen"- und „nicht im Regal"-Pills auf neutrale Outline-Variante
+    (`outline`-Rand + `onSurfaceVariant`-Text/Icon) umgestellt
+  - [x] Wishlist-Filter-Chips (`_FilterPills`): `labelStyle` explizit je nach
+    Selektionsstatus gesetzt (`onPrimaryContainer` selektiert, sonst
+    `onSurfaceVariant`) — vorher folgte der Label-Text nicht der manuell gesetzten
+    `selectedColor`, dadurch beim Grey-Theme dunkler Text auf dunklem Grund
+    unlesbar
+  - [x] FAB „Add Book" (`main_shell.dart`): explizites `foregroundColor`
+    (`colorScheme.primary`) ergänzt, da das „+"-Icon bei transparentem Hintergrund
+    sonst nicht zuverlässig sichtbar war
+  - [x] Listenkacheln (Bücherregal/Wishlist/Leseprotokoll): Card-Stil von Schatten
+    auf Rand umgestellt (`elevation: 0`, `outlineVariant`-Rand 1,5px,
+    `borderRadius` von 16 auf 12 verkleinert), Hintergrund weiterhin
+    `surfaceContainer` (bewusst anders als der App-Hintergrund `surface`)
+
 ---
 
 ---
@@ -285,7 +314,5 @@ Pro Band ist sichtbar, welchen Status er hat (wishlist / owned / gelesen / nicht
 - [ ] CLAUDE.md auf aktuellen Stand bringen
 - [ ] Unit-Tests für `book_repository.dart` (v. a. `addToWishlist()`, `getOrCreateBookId()`,
   Soft-Delete/Kategorien-Logik) — In-Memory-Testdatenbank für Drift als Einstieg
-- [ ] Pill-Farben (Favorit/Verkauf/Vorbestellt, `secondaryContainer`/`tertiaryContainer`)
-  gegen jedes der 7 Themes prüfen — sicherstellen, dass sie sich immer vom
-  `surfaceContainer`-Hintergrund der Bücherkacheln abheben und nicht zufällig
-  ähnlich/gleich ausfallen
+- [x] Pill-Farben (Favorit/Verkauf/Vorbestellt) gegen jedes der 6 Themes geprüft —
+  siehe „Design-Experiment — Theme-Auswahl & Kontrast"

@@ -4,7 +4,9 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\leonh\\\\Documents\\\\DevProjects\\\\shelftracker\\\\lib\" -Recurse -File)",
       "Bash(Select-Object FullName)",
       "Bash(Sort-Object FullName)",
-      "Bash(flutter analyze *)"
+      "Bash(flutter analyze *)",
+      "Bash(python3 -c ' *)",
+      "Bash(dart run *)"
     ]
   }
 }

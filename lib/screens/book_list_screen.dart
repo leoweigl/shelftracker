@@ -109,10 +109,14 @@ class _BookListScreenState extends State<BookListScreen>
                         horizontal: 16,
                         vertical: 6,
                       ),
-                      elevation: 1,
+                      elevation: 0,
                       color: Theme.of(context).colorScheme.surfaceContainer,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                          width: 1.5,
+                        ),
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: ListTile(
@@ -166,10 +170,9 @@ class _BookListScreenState extends State<BookListScreen>
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondaryContainer
-                                          .withValues(alpha: 0.5),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primaryContainer,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Row(
@@ -180,7 +183,7 @@ class _BookListScreenState extends State<BookListScreen>
                                           size: 12,
                                           color: Theme.of(
                                             context,
-                                          ).colorScheme.onSecondaryContainer,
+                                          ).colorScheme.onPrimaryContainer,
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
@@ -192,7 +195,7 @@ class _BookListScreenState extends State<BookListScreen>
                                             fontWeight: FontWeight.w500,
                                             color: Theme.of(
                                               context,
-                                            ).colorScheme.onSecondaryContainer,
+                                            ).colorScheme.onPrimaryContainer,
                                           ),
                                         ),
                                       ],
@@ -219,9 +222,11 @@ class _BookListScreenState extends State<BookListScreen>
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.tertiaryContainer,
+                                      border: Border.all(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.outline,
+                                      ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Row(
@@ -232,7 +237,7 @@ class _BookListScreenState extends State<BookListScreen>
                                           size: 12,
                                           color: Theme.of(
                                             context,
-                                          ).colorScheme.onTertiaryContainer,
+                                          ).colorScheme.onSurfaceVariant,
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
@@ -242,7 +247,7 @@ class _BookListScreenState extends State<BookListScreen>
                                             fontWeight: FontWeight.w500,
                                             color: Theme.of(
                                               context,
-                                            ).colorScheme.onTertiaryContainer,
+                                            ).colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                       ],

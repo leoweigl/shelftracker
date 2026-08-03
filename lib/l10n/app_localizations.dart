@@ -122,29 +122,11 @@ abstract class AppLocalizations {
   /// **'Theme'**
   String get theme;
 
-  /// No description provided for @themeEbonyClay.
-  ///
-  /// In en, this message translates to:
-  /// **'Midnight'**
-  String get themeEbonyClay;
-
-  /// No description provided for @themeSepia.
-  ///
-  /// In en, this message translates to:
-  /// **'Parchment'**
-  String get themeSepia;
-
-  /// No description provided for @themeStone.
+  /// No description provided for @themeGray.
   ///
   /// In en, this message translates to:
   /// **'Slate'**
-  String get themeStone;
-
-  /// No description provided for @themeIndigoNight.
-  ///
-  /// In en, this message translates to:
-  /// **'Twilight'**
-  String get themeIndigoNight;
+  String get themeGray;
 
   /// No description provided for @themeViolet.
   ///
@@ -163,6 +145,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Emerald'**
   String get themeGreen;
+
+  /// No description provided for @themeYellow.
+  ///
+  /// In en, this message translates to:
+  /// **'Citrine'**
+  String get themeYellow;
+
+  /// No description provided for @themeSapphire.
+  ///
+  /// In en, this message translates to:
+  /// **'Sapphire'**
+  String get themeSapphire;
 
   /// No description provided for @appTitle.
   ///
