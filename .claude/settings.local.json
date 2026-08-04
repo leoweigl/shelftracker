@@ -7,7 +7,27 @@
       "Bash(flutter analyze *)",
       "Bash(python3 -c ' *)",
       "Bash(dart run *)",
-      "PowerShell($adb = \"$env:LOCALAPPDATA\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\"; & $adb shell pm list packages | Select-String \"shelftracker|shelf_tracker|com.example\")"
+      "PowerShell($adb = \"$env:LOCALAPPDATA\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\"; & $adb shell pm list packages | Select-String \"shelftracker|shelf_tracker|com.example\")",
+      "Bash(curl -s \"https://openlibrary.org/search.json?q=harry+poter+philosophrs+stone&limit=3\")",
+      "Bash(curl -s \"https://www.googleapis.com/books/v1/volumes?q=harry+poter+philosophrs+stone&maxResults=3\")",
+      "Bash(curl -s \"https://openlibrary.org/search.json?title=harry%20poter~2%20philosophrs~2%20stone&limit=5&fields=title,author_name\")",
+      "Bash(curl -s \"https://openlibrary.org/search.json?title=harry%20potter%20philosophers%20stone&limit=5&fields=title,author_name\")",
+      "Bash(curl -s \"https://openlibrary.org/search.json?title=poter~2%20philosophrs~2&limit=5&fields=title,author_name\")",
+      "Bash(curl -s \"https://openlibrary.org/search.json?title=harry%20poter~2&limit=5&fields=title,author_name\")",
+      "Bash(curl -s \"https://services.dnb.de/sru/dnb?version=1.1&operation=searchRetrieve&query=WOE%3Dharry%20poter&recordSchema=oai_dc&maximumRecords=3\")",
+      "Bash(curl -s \"https://services.dnb.de/sru/dnb?version=1.1&operation=searchRetrieve&query=TIT%3DDer%20Vorleser%20AND%20PER%3DSchlink&recordSchema=oai_dc&maximumRecords=3\")",
+      "Bash(curl -s \"https://services.dnb.de/sru/dnb?version=1.1&operation=searchRetrieve&query=ISBN%3D9783257073690&recordSchema=oai_dc&maximumRecords=1\")",
+      "Bash(curl -s \"https://services.dnb.de/sru/dnb?version=1.1&operation=searchRetrieve&query=WOE%3DDer%20Vorleser%20Schlink&recordSchema=oai_dc&maximumRecords=2\")",
+      "Bash(curl -s https://pub.dev/api/packages/xml)",
+      "Bash(flutter pub *)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\leonh\\\\Documents\\\\DevProjects\\\\shelftracker\\\\tool\")",
+      "Bash(cp \"C:\\\\Users\\\\leonh\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-leonh-Documents-DevProjects-shelftracker\\\\56848fb8-460d-447e-80f0-dcc4a084f84b\\\\scratchpad\\\\dnb_smoke_test.dart\" \"C:\\\\Users\\\\leonh\\\\Documents\\\\DevProjects\\\\shelftracker\\\\tool\\\\dnb_smoke_test.dart\")",
+      "Bash(curl -s \"https://services.dnb.de/sru/dnb?version=1.1&operation=searchRetrieve&query=WOE%3DDer%20Vorleser%20Schlink&recordSchema=oai_dc&maximumRecords=20\")",
+      "Bash(flutter test *)",
+      "Bash(rm -f tool/dnb_smoke_test.dart tool/dnb_orchestrator_smoke_test.dart)",
+      "Bash(rmdir tool *)",
+      "Bash(git checkout *)",
+      "Bash(rm lib/services/dnb_service.dart)"
     ]
   }
 }
