@@ -6,7 +6,8 @@
       "Bash(Sort-Object FullName)",
       "Bash(flutter analyze *)",
       "Bash(python3 -c ' *)",
-      "Bash(dart run *)"
+      "Bash(dart run *)",
+      "PowerShell($adb = \"$env:LOCALAPPDATA\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\"; & $adb shell pm list packages | Select-String \"shelftracker|shelf_tracker|com.example\")"
     ]
   }
 }

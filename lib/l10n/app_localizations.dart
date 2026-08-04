@@ -116,6 +116,30 @@ abstract class AppLocalizations {
   /// **'English'**
   String get languageEnglish;
 
+  /// No description provided for @displayMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Display mode'**
+  String get displayMode;
+
+  /// No description provided for @displayModeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get displayModeSystem;
+
+  /// No description provided for @displayModeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get displayModeLight;
+
+  /// No description provided for @displayModeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get displayModeDark;
+
   /// No description provided for @theme.
   ///
   /// In en, this message translates to:

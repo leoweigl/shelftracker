@@ -133,7 +133,7 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
                       elevation: 0,
                       color: Theme.of(context).colorScheme.surfaceContainer,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(20),
                         side: BorderSide(
                           color: Theme.of(context).colorScheme.outlineVariant,
                           width: 1.5,
@@ -242,7 +242,7 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -271,7 +271,7 @@ class _ReadingLogScreenState extends State<ReadingLogScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).colorScheme.outline),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
         AppLocalizations.of(context)!.notInShelf,

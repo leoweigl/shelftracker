@@ -65,6 +65,55 @@ class SettingsScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Text(
+                  l10n.displayMode,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              ValueListenableBuilder<ThemeMode>(
+                valueListenable: displayModeController,
+                builder: (context, currentMode, _) {
+                  return _SettingsGroup(
+                    children: [
+                      RadioListTile<ThemeMode>(
+                        secondary: const Icon(Icons.brightness_auto),
+                        title: Text(l10n.displayModeSystem),
+                        value: ThemeMode.system,
+                        groupValue: currentMode,
+                        controlAffinity: ListTileControlAffinity.trailing,
+                        onChanged: (mode) {
+                          if (mode != null) displayModeController.setMode(mode);
+                        },
+                      ),
+                      RadioListTile<ThemeMode>(
+                        secondary: const Icon(Icons.light_mode),
+                        title: Text(l10n.displayModeLight),
+                        value: ThemeMode.light,
+                        groupValue: currentMode,
+                        controlAffinity: ListTileControlAffinity.trailing,
+                        onChanged: (mode) {
+                          if (mode != null) displayModeController.setMode(mode);
+                        },
+                      ),
+                      RadioListTile<ThemeMode>(
+                        secondary: const Icon(Icons.dark_mode),
+                        title: Text(l10n.displayModeDark),
+                        value: ThemeMode.dark,
+                        groupValue: currentMode,
+                        controlAffinity: ListTileControlAffinity.trailing,
+                        onChanged: (mode) {
+                          if (mode != null) displayModeController.setMode(mode);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Text(
                   l10n.theme,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
@@ -111,7 +160,7 @@ class _SettingsGroup extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: colorScheme.outlineVariant),
       ),
       clipBehavior: Clip.antiAlias,

@@ -36,11 +36,12 @@ class _MainShellState extends State<MainShell> {
           ? FloatingActionButton(
               onPressed: () => showAddBookOptions(context),
               tooltip: l10n.dashboardAddBook,
-              backgroundColor: Colors.transparent,
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.08),
               foregroundColor: Theme.of(context).colorScheme.primary,
               elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+              shape: CircleBorder(
                 side: BorderSide(
                   color: Theme.of(context).colorScheme.primary,
                   width: 2,

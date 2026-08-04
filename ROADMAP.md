@@ -229,6 +229,25 @@ Erledigte Stages werden abgehakt, neue Ideen unten ergänzt.
     `borderRadius` von 16 auf 12 verkleinert), Hintergrund weiterhin
     `surfaceContainer` (bewusst anders als der App-Hintergrund `surface`)
 
+- [x] **Design-Experiment — Schriftgewicht, FAB & Anzeigemodus (branch: design-experiment)**
+  - [x] App-weite Font-Weight-Anhebung (`_bolder`/`_boldTextTheme` in `main.dart`,
+    hatte jeden `TextTheme`-Stil um 2 `FontWeight`-Stufen angehoben) entfernt —
+    Schriftgewicht folgt jetzt unverändert `GoogleFonts.sourceSans3TextTheme()`
+  - [x] FAB „Add Book" (`main_shell.dart`): `backgroundColor` von `Colors.transparent`
+    auf `colorScheme.primary.withValues(alpha: 0.15)` — leicht transparente
+    Farbfläche statt rein umrandetem Button
+  - [x] Neue Einstellung „Anzeigemodus" (System/Hell/Dunkel) in `SettingsScreen`,
+    oberhalb der Design-Auswahl, gleiches `_SettingsGroup`/`RadioListTile`-Muster
+    wie die Sprachauswahl (Icons `brightness_auto`/`light_mode`/`dark_mode` statt
+    Flaggen)
+  - [x] `DisplayModeController` (`ValueNotifier<ThemeMode>`, SharedPreferences-
+    Persistenz, Pattern analog `ThemeController`/`LocaleController`) in
+    `lib/services/display_mode_controller.dart`; `MaterialApp.themeMode` in
+    `main.dart` liest jetzt aus dem Controller statt hartcodiertem
+    `ThemeMode.system`
+  - [x] Neue l10n-Keys `displayMode`/`displayModeSystem`/`displayModeLight`/
+    `displayModeDark` in `app_en.arb`/`app_de.arb`
+
 ---
 
 ---

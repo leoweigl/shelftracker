@@ -18,6 +18,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageEnglish => 'English';
 
   @override
+  String get displayMode => 'Display mode';
+
+  @override
+  String get displayModeSystem => 'System';
+
+  @override
+  String get displayModeLight => 'Light';
+
+  @override
+  String get displayModeDark => 'Dark';
+
+  @override
   String get theme => 'Theme';
 
   @override

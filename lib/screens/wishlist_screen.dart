@@ -72,7 +72,7 @@ class _WishlistScreenState extends State<WishlistScreen>
                       elevation: 0,
                       color: Theme.of(context).colorScheme.surfaceContainer,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(20),
                         side: BorderSide(
                           color: Theme.of(context).colorScheme.outlineVariant,
                           width: 1.5,
@@ -191,7 +191,7 @@ class _WishlistTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,

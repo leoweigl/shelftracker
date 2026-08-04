@@ -112,7 +112,7 @@ class _BookListScreenState extends State<BookListScreen>
                       elevation: 0,
                       color: Theme.of(context).colorScheme.surfaceContainer,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(20),
                         side: BorderSide(
                           color: Theme.of(context).colorScheme.outlineVariant,
                           width: 1.5,
@@ -173,7 +173,9 @@ class _BookListScreenState extends State<BookListScreen>
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.primaryContainer,
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(
+                                        16,
+                                      ),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -227,7 +229,9 @@ class _BookListScreenState extends State<BookListScreen>
                                           context,
                                         ).colorScheme.outline,
                                       ),
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(
+                                        16,
+                                      ),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
