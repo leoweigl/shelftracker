@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:shelftracker/models/wishlist_add_result.dart';
 import '../models/book.dart';
 import '../models/book_status.dart';
+import '../models/series_info.dart';
 import 'app_database.dart';
 import '../models/book_sort.dart';
 
@@ -366,5 +368,34 @@ class BookRepository {
 
   Future<void> deleteLogEntry(int id) async {
     await (_db.delete(_db.readingLog)..where((e) => e.id.equals(id))).go();
+  }
+
+  Future<SeriesInfo?> getCachedSeries(int bookId) async {
+    final row = await (_db.select(
+      _db.seriesCache,
+    )..where((s) => s.bookId.equals(bookId))).getSingleOrNull();
+    if (row == null) return null;
+
+    try {
+      return SeriesInfo.fromJson(
+        jsonDecode(row.payload) as Map<String, dynamic>,
+      );
+    } catch (_) {
+      // Cached payload doesn't match the current SeriesInfo shape (e.g. an
+      // older app version wrote it) - treat as a cache miss so the caller
+      // re-fetches live and overwrites this row with the current shape.
+      return null;
+    }
+  }
+
+  Future<void> cacheSeries(int bookId, SeriesInfo info) async {
+    await _db
+        .into(_db.seriesCache)
+        .insertOnConflictUpdate(
+          SeriesCacheCompanion.insert(
+            bookId: Value(bookId),
+            payload: jsonEncode(info.toJson()),
+          ),
+        );
   }
 }

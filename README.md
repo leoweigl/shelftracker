@@ -27,17 +27,22 @@ and decide whether to keep or sell each book.
 
 ```bash
 flutter pub get
-flutter run --dart-define=GOOGLE_BOOKS_API_KEY=your_api_key
+flutter run --dart-define=GOOGLE_BOOKS_API_KEY=your_api_key --dart-define=HARDCOVER_API_TOKEN=your_token
 ```
 
-The `--dart-define` is required for Google Books to work as the primary data source.
-Without a key, the app automatically falls back to Open Library (still works, but e.g.
-won't have book descriptions). The key itself is not included in this repo.
+The `--dart-define` for Google Books is required for it to work as the primary data
+source. Without a key, the app automatically falls back to Open Library (still works,
+but e.g. won't have book descriptions).
+
+`HARDCOVER_API_TOKEN` is optional and enables the "Series" section on the book detail
+screen (suggests other volumes in a book's series via the Hardcover API). Get a
+personal token from your Hardcover account's API settings page. Without it, the
+series section is simply hidden. Neither key is included in this repo.
 
 The same applies to release builds:
 
 ```bash
-flutter build apk --release --dart-define=GOOGLE_BOOKS_API_KEY=your_api_key
+flutter build apk --release --dart-define=GOOGLE_BOOKS_API_KEY=your_api_key --dart-define=HARDCOVER_API_TOKEN=your_token
 ```
 
 ## Project structure

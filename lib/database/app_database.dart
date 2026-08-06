@@ -51,12 +51,23 @@ class ReadingLog extends Table {
   DateTimeColumn get readDate => dateTime()();
 }
 
-@DriftDatabase(tables: [Books, Categories, BookCategories, ReadingLog])
+@DataClassName('SeriesCacheEntry')
+class SeriesCache extends Table {
+  IntColumn get bookId =>
+      integer().references(Books, #id, onDelete: KeyAction.cascade)();
+  TextColumn get payload => text()();
+  DateTimeColumn get fetchedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {bookId};
+}
+
+@DriftDatabase(tables: [Books, Categories, BookCategories, ReadingLog, SeriesCache])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -82,6 +93,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 7) {
         await m.addColumn(books, books.description);
+      }
+      if (from < 8) {
+        await m.createTable(seriesCache);
       }
     },
   );

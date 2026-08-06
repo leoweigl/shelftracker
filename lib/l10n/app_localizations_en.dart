@@ -336,4 +336,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alreadyOnWishlist => 'is already on your wishlist';
+
+  @override
+  String get series => 'Series';
+
+  @override
+  String get seriesNotOwned => 'Not in your collection';
 }

@@ -1574,6 +1574,261 @@ class ReadingLogCompanion extends UpdateCompanion<ReadingLogEntry> {
   }
 }
 
+class $SeriesCacheTable extends SeriesCache
+    with TableInfo<$SeriesCacheTable, SeriesCacheEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SeriesCacheTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _bookIdMeta = const VerificationMeta('bookId');
+  @override
+  late final GeneratedColumn<int> bookId = GeneratedColumn<int>(
+    'book_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES books (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fetchedAtMeta = const VerificationMeta(
+    'fetchedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> fetchedAt = GeneratedColumn<DateTime>(
+    'fetched_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [bookId, payload, fetchedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'series_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SeriesCacheEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('book_id')) {
+      context.handle(
+        _bookIdMeta,
+        bookId.isAcceptableOrUnknown(data['book_id']!, _bookIdMeta),
+      );
+    }
+    if (data.containsKey('payload')) {
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadMeta);
+    }
+    if (data.containsKey('fetched_at')) {
+      context.handle(
+        _fetchedAtMeta,
+        fetchedAt.isAcceptableOrUnknown(data['fetched_at']!, _fetchedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {bookId};
+  @override
+  SeriesCacheEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SeriesCacheEntry(
+      bookId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}book_id'],
+      )!,
+      payload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload'],
+      )!,
+      fetchedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}fetched_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SeriesCacheTable createAlias(String alias) {
+    return $SeriesCacheTable(attachedDatabase, alias);
+  }
+}
+
+class SeriesCacheEntry extends DataClass
+    implements Insertable<SeriesCacheEntry> {
+  final int bookId;
+  final String payload;
+  final DateTime fetchedAt;
+  const SeriesCacheEntry({
+    required this.bookId,
+    required this.payload,
+    required this.fetchedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['book_id'] = Variable<int>(bookId);
+    map['payload'] = Variable<String>(payload);
+    map['fetched_at'] = Variable<DateTime>(fetchedAt);
+    return map;
+  }
+
+  SeriesCacheCompanion toCompanion(bool nullToAbsent) {
+    return SeriesCacheCompanion(
+      bookId: Value(bookId),
+      payload: Value(payload),
+      fetchedAt: Value(fetchedAt),
+    );
+  }
+
+  factory SeriesCacheEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SeriesCacheEntry(
+      bookId: serializer.fromJson<int>(json['bookId']),
+      payload: serializer.fromJson<String>(json['payload']),
+      fetchedAt: serializer.fromJson<DateTime>(json['fetchedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'bookId': serializer.toJson<int>(bookId),
+      'payload': serializer.toJson<String>(payload),
+      'fetchedAt': serializer.toJson<DateTime>(fetchedAt),
+    };
+  }
+
+  SeriesCacheEntry copyWith({
+    int? bookId,
+    String? payload,
+    DateTime? fetchedAt,
+  }) => SeriesCacheEntry(
+    bookId: bookId ?? this.bookId,
+    payload: payload ?? this.payload,
+    fetchedAt: fetchedAt ?? this.fetchedAt,
+  );
+  SeriesCacheEntry copyWithCompanion(SeriesCacheCompanion data) {
+    return SeriesCacheEntry(
+      bookId: data.bookId.present ? data.bookId.value : this.bookId,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      fetchedAt: data.fetchedAt.present ? data.fetchedAt.value : this.fetchedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SeriesCacheEntry(')
+          ..write('bookId: $bookId, ')
+          ..write('payload: $payload, ')
+          ..write('fetchedAt: $fetchedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(bookId, payload, fetchedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SeriesCacheEntry &&
+          other.bookId == this.bookId &&
+          other.payload == this.payload &&
+          other.fetchedAt == this.fetchedAt);
+}
+
+class SeriesCacheCompanion extends UpdateCompanion<SeriesCacheEntry> {
+  final Value<int> bookId;
+  final Value<String> payload;
+  final Value<DateTime> fetchedAt;
+  const SeriesCacheCompanion({
+    this.bookId = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.fetchedAt = const Value.absent(),
+  });
+  SeriesCacheCompanion.insert({
+    this.bookId = const Value.absent(),
+    required String payload,
+    this.fetchedAt = const Value.absent(),
+  }) : payload = Value(payload);
+  static Insertable<SeriesCacheEntry> custom({
+    Expression<int>? bookId,
+    Expression<String>? payload,
+    Expression<DateTime>? fetchedAt,
+  }) {
+    return RawValuesInsertable({
+      if (bookId != null) 'book_id': bookId,
+      if (payload != null) 'payload': payload,
+      if (fetchedAt != null) 'fetched_at': fetchedAt,
+    });
+  }
+
+  SeriesCacheCompanion copyWith({
+    Value<int>? bookId,
+    Value<String>? payload,
+    Value<DateTime>? fetchedAt,
+  }) {
+    return SeriesCacheCompanion(
+      bookId: bookId ?? this.bookId,
+      payload: payload ?? this.payload,
+      fetchedAt: fetchedAt ?? this.fetchedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (bookId.present) {
+      map['book_id'] = Variable<int>(bookId.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (fetchedAt.present) {
+      map['fetched_at'] = Variable<DateTime>(fetchedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SeriesCacheCompanion(')
+          ..write('bookId: $bookId, ')
+          ..write('payload: $payload, ')
+          ..write('fetchedAt: $fetchedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1581,6 +1836,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CategoriesTable categories = $CategoriesTable(this);
   late final $BookCategoriesTable bookCategories = $BookCategoriesTable(this);
   late final $ReadingLogTable readingLog = $ReadingLogTable(this);
+  late final $SeriesCacheTable seriesCache = $SeriesCacheTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1590,6 +1846,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     categories,
     bookCategories,
     readingLog,
+    seriesCache,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -1613,6 +1870,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('reading_log', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'books',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('series_cache', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -1685,6 +1949,24 @@ final class $$BooksTableReferences
     ).filter((f) => f.bookId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_readingLogRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$SeriesCacheTable, List<SeriesCacheEntry>>
+  _seriesCacheRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.seriesCache,
+    aliasName: $_aliasNameGenerator(db.books.id, db.seriesCache.bookId),
+  );
+
+  $$SeriesCacheTableProcessedTableManager get seriesCacheRefs {
+    final manager = $$SeriesCacheTableTableManager(
+      $_db,
+      $_db.seriesCache,
+    ).filter((f) => f.bookId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_seriesCacheRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -1805,6 +2087,31 @@ class $$BooksTableFilterComposer extends Composer<_$AppDatabase, $BooksTable> {
           }) => $$ReadingLogTableFilterComposer(
             $db: $db,
             $table: $db.readingLog,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> seriesCacheRefs(
+    Expression<bool> Function($$SeriesCacheTableFilterComposer f) f,
+  ) {
+    final $$SeriesCacheTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.seriesCache,
+      getReferencedColumn: (t) => t.bookId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SeriesCacheTableFilterComposer(
+            $db: $db,
+            $table: $db.seriesCache,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -1997,6 +2304,31 @@ class $$BooksTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> seriesCacheRefs<T extends Object>(
+    Expression<T> Function($$SeriesCacheTableAnnotationComposer a) f,
+  ) {
+    final $$SeriesCacheTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.seriesCache,
+      getReferencedColumn: (t) => t.bookId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SeriesCacheTableAnnotationComposer(
+            $db: $db,
+            $table: $db.seriesCache,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$BooksTableTableManager
@@ -2012,7 +2344,11 @@ class $$BooksTableTableManager
           $$BooksTableUpdateCompanionBuilder,
           (BookEntry, $$BooksTableReferences),
           BookEntry,
-          PrefetchHooks Function({bool bookCategoriesRefs, bool readingLogRefs})
+          PrefetchHooks Function({
+            bool bookCategoriesRefs,
+            bool readingLogRefs,
+            bool seriesCacheRefs,
+          })
         > {
   $$BooksTableTableManager(_$AppDatabase db, $BooksTable table)
     : super(
@@ -2092,12 +2428,17 @@ class $$BooksTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({bookCategoriesRefs = false, readingLogRefs = false}) {
+              ({
+                bookCategoriesRefs = false,
+                readingLogRefs = false,
+                seriesCacheRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (bookCategoriesRefs) db.bookCategories,
                     if (readingLogRefs) db.readingLog,
+                    if (seriesCacheRefs) db.seriesCache,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -2144,6 +2485,27 @@ class $$BooksTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (seriesCacheRefs)
+                        await $_getPrefetchedData<
+                          BookEntry,
+                          $BooksTable,
+                          SeriesCacheEntry
+                        >(
+                          currentTable: table,
+                          referencedTable: $$BooksTableReferences
+                              ._seriesCacheRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BooksTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).seriesCacheRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.bookId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -2164,7 +2526,11 @@ typedef $$BooksTableProcessedTableManager =
       $$BooksTableUpdateCompanionBuilder,
       (BookEntry, $$BooksTableReferences),
       BookEntry,
-      PrefetchHooks Function({bool bookCategoriesRefs, bool readingLogRefs})
+      PrefetchHooks Function({
+        bool bookCategoriesRefs,
+        bool readingLogRefs,
+        bool seriesCacheRefs,
+      })
     >;
 typedef $$CategoriesTableCreateCompanionBuilder =
     CategoriesCompanion Function({Value<int> id, required String name});
@@ -3084,6 +3450,280 @@ typedef $$ReadingLogTableProcessedTableManager =
       ReadingLogEntry,
       PrefetchHooks Function({bool bookId})
     >;
+typedef $$SeriesCacheTableCreateCompanionBuilder =
+    SeriesCacheCompanion Function({
+      Value<int> bookId,
+      required String payload,
+      Value<DateTime> fetchedAt,
+    });
+typedef $$SeriesCacheTableUpdateCompanionBuilder =
+    SeriesCacheCompanion Function({
+      Value<int> bookId,
+      Value<String> payload,
+      Value<DateTime> fetchedAt,
+    });
+
+final class $$SeriesCacheTableReferences
+    extends BaseReferences<_$AppDatabase, $SeriesCacheTable, SeriesCacheEntry> {
+  $$SeriesCacheTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $BooksTable _bookIdTable(_$AppDatabase db) => db.books.createAlias(
+    $_aliasNameGenerator(db.seriesCache.bookId, db.books.id),
+  );
+
+  $$BooksTableProcessedTableManager get bookId {
+    final $_column = $_itemColumn<int>('book_id')!;
+
+    final manager = $$BooksTableTableManager(
+      $_db,
+      $_db.books,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_bookIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$SeriesCacheTableFilterComposer
+    extends Composer<_$AppDatabase, $SeriesCacheTable> {
+  $$SeriesCacheTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get fetchedAt => $composableBuilder(
+    column: $table.fetchedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$BooksTableFilterComposer get bookId {
+    final $$BooksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bookId,
+      referencedTable: $db.books,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BooksTableFilterComposer(
+            $db: $db,
+            $table: $db.books,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SeriesCacheTableOrderingComposer
+    extends Composer<_$AppDatabase, $SeriesCacheTable> {
+  $$SeriesCacheTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get fetchedAt => $composableBuilder(
+    column: $table.fetchedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$BooksTableOrderingComposer get bookId {
+    final $$BooksTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bookId,
+      referencedTable: $db.books,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BooksTableOrderingComposer(
+            $db: $db,
+            $table: $db.books,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SeriesCacheTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SeriesCacheTable> {
+  $$SeriesCacheTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get fetchedAt =>
+      $composableBuilder(column: $table.fetchedAt, builder: (column) => column);
+
+  $$BooksTableAnnotationComposer get bookId {
+    final $$BooksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.bookId,
+      referencedTable: $db.books,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BooksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.books,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SeriesCacheTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SeriesCacheTable,
+          SeriesCacheEntry,
+          $$SeriesCacheTableFilterComposer,
+          $$SeriesCacheTableOrderingComposer,
+          $$SeriesCacheTableAnnotationComposer,
+          $$SeriesCacheTableCreateCompanionBuilder,
+          $$SeriesCacheTableUpdateCompanionBuilder,
+          (SeriesCacheEntry, $$SeriesCacheTableReferences),
+          SeriesCacheEntry,
+          PrefetchHooks Function({bool bookId})
+        > {
+  $$SeriesCacheTableTableManager(_$AppDatabase db, $SeriesCacheTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SeriesCacheTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SeriesCacheTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SeriesCacheTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> bookId = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<DateTime> fetchedAt = const Value.absent(),
+              }) => SeriesCacheCompanion(
+                bookId: bookId,
+                payload: payload,
+                fetchedAt: fetchedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> bookId = const Value.absent(),
+                required String payload,
+                Value<DateTime> fetchedAt = const Value.absent(),
+              }) => SeriesCacheCompanion.insert(
+                bookId: bookId,
+                payload: payload,
+                fetchedAt: fetchedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SeriesCacheTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({bookId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (bookId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.bookId,
+                                referencedTable: $$SeriesCacheTableReferences
+                                    ._bookIdTable(db),
+                                referencedColumn: $$SeriesCacheTableReferences
+                                    ._bookIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$SeriesCacheTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SeriesCacheTable,
+      SeriesCacheEntry,
+      $$SeriesCacheTableFilterComposer,
+      $$SeriesCacheTableOrderingComposer,
+      $$SeriesCacheTableAnnotationComposer,
+      $$SeriesCacheTableCreateCompanionBuilder,
+      $$SeriesCacheTableUpdateCompanionBuilder,
+      (SeriesCacheEntry, $$SeriesCacheTableReferences),
+      SeriesCacheEntry,
+      PrefetchHooks Function({bool bookId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3096,4 +3736,6 @@ class $AppDatabaseManager {
       $$BookCategoriesTableTableManager(_db, _db.bookCategories);
   $$ReadingLogTableTableManager get readingLog =>
       $$ReadingLogTableTableManager(_db, _db.readingLog);
+  $$SeriesCacheTableTableManager get seriesCache =>
+      $$SeriesCacheTableTableManager(_db, _db.seriesCache);
 }

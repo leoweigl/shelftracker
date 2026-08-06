@@ -168,6 +168,20 @@ String _wishlistMessage(AppLocalizations l10n, String title, WishlistAddResult r
   }
 }
 
+/// Opens the search screen prefilled with [query] (a series volume's title),
+/// using the same "save as" flow as the normal add-book entry point.
+Future<void> openSeriesVolumeInSearch(BuildContext context, String query) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => SearchScreen(
+        initialQuery: query,
+        onAddBook: _saveBookWithDialog,
+      ),
+    ),
+  );
+}
+
 Future<void> addToWishlistViaSearch(BuildContext context) async {
   await Navigator.push(
     context,

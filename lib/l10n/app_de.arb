@@ -104,5 +104,7 @@
   "addedToWishlist": "zur Wunschliste hinzugefügt",
   "alreadyInShelf": "ist bereits in deinem Regal",
   "alreadyPreorderedMsg": "ist bereits vorbestellt",
-  "alreadyOnWishlist": "ist bereits auf deiner Wunschliste"
+  "alreadyOnWishlist": "ist bereits auf deiner Wunschliste",
+  "series": "Reihe",
+  "seriesNotOwned": "Nicht in deiner Sammlung"
 }

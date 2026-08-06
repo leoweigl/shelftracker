@@ -13,7 +13,11 @@ class SearchScreen extends StatefulWidget {
   /// visible so another book can be picked.
   final Future<bool> Function(BuildContext context, Book book) onAddBook;
 
-  const SearchScreen({super.key, required this.onAddBook});
+  /// Prefills the search field and triggers a search immediately, e.g. when
+  /// coming from a series suggestion for a specific title.
+  final String? initialQuery;
+
+  const SearchScreen({super.key, required this.onAddBook, this.initialQuery});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -28,6 +32,16 @@ class _SearchScreenState extends State<SearchScreen> {
   String? _errorMessage;
 
   Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    final initialQuery = widget.initialQuery?.trim();
+    if (initialQuery != null && initialQuery.isNotEmpty) {
+      _controller.text = initialQuery;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _search());
+    }
+  }
 
   @override
   void dispose() {

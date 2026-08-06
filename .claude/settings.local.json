@@ -27,7 +27,13 @@
       "Bash(rm -f tool/dnb_smoke_test.dart tool/dnb_orchestrator_smoke_test.dart)",
       "Bash(rmdir tool *)",
       "Bash(git checkout *)",
-      "Bash(rm lib/services/dnb_service.dart)"
+      "Bash(rm lib/services/dnb_service.dart)",
+      "Bash(curl -s \"https://api.github.com/repos/hardcoverapp/hardcover-docs/git/trees/main?recursive=true\")",
+      "Bash(curl *)",
+      "Bash(node -e \"console.log\\(JSON.parse\\(require\\('fs'\\).readFileSync\\('secrets.json','utf8'\\)\\).HARDCOVER_API_TOKEN\\)\")",
+      "Bash(curl -s -X POST https://api.hardcover.app/v1/graphql -H 'Content-Type: application/json' -H 'Authorization: Bearer __CMDSUB_OUTPUT__' -d '{\"query\":\"query { search\\(query: \\\\\"Harry Potter and the Philosopher'\\\\''s Stone J.K. Rowling\\\\\", query_type: \\\\\"Book\\\\\", per_page: 1\\) { ids results } }\"}')",
+      "Bash(node -e ' *)",
+      "Bash(node *)"
     ]
   }
 }

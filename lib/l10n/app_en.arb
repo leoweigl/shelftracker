@@ -125,5 +125,7 @@
   "addedToWishlist": "added to wishlist",
   "alreadyInShelf": "is already in your shelf",
   "alreadyPreorderedMsg": "is already pre-ordered",
-  "alreadyOnWishlist": "is already on your wishlist"
+  "alreadyOnWishlist": "is already on your wishlist",
+  "series": "Series",
+  "seriesNotOwned": "Not in your collection"
 }

@@ -727,6 +727,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'is already on your wishlist'**
   String get alreadyOnWishlist;
+
+  /// No description provided for @series.
+  ///
+  /// In en, this message translates to:
+  /// **'Series'**
+  String get series;
+
+  /// No description provided for @seriesNotOwned.
+  ///
+  /// In en, this message translates to:
+  /// **'Not in your collection'**
+  String get seriesNotOwned;
 }
 
 class _AppLocalizationsDelegate

@@ -6,7 +6,10 @@ import '../widgets/star_rating.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../utils/dialogs.dart';
+import '../utils/book_actions.dart';
 import '../models/book_status.dart';
+import '../models/series_info.dart';
+import '../services/hardcover_service.dart';
 
 class BookDetailScreen extends StatelessWidget {
   final int bookId;
@@ -222,6 +225,8 @@ class BookDetailScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                 ],
 
+                _SeriesSection(book: book),
+
                 Text(
                   '${AppLocalizations.of(context)!.addedOn}'
                   ' ${DateFormat(AppLocalizations.of(context)!.dateFormat).format(book.addedAt)}',
@@ -366,6 +371,213 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
           child: Text(AppLocalizations.of(context)!.done),
         ),
       ],
+    );
+  }
+}
+
+class _SeriesSection extends StatefulWidget {
+  final BookEntry book;
+
+  const _SeriesSection({required this.book});
+
+  @override
+  State<_SeriesSection> createState() => _SeriesSectionState();
+}
+
+class _SeriesSectionState extends State<_SeriesSection> {
+  SeriesInfo? _info;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final cached = await bookRepository.getCachedSeries(widget.book.id);
+    if (cached != null) {
+      if (mounted) {
+        setState(() {
+          _info = cached;
+          _loading = false;
+        });
+      }
+      return;
+    }
+
+    final fetched = await HardcoverService().findSeriesForBook(
+      widget.book.title,
+      widget.book.author,
+    );
+    if (fetched != null) {
+      await bookRepository.cacheSeries(widget.book.id, fetched);
+    }
+    if (mounted) {
+      setState(() {
+        _info = fetched;
+        _loading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final info = _info;
+    if (_loading || info == null || info.volumes.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.series,
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        Text(
+          info.seriesName,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 8),
+        StreamBuilder<List<BookEntry>>(
+          stream: bookRepository.watchAll(),
+          builder: (context, snapshot) {
+            final localBooks = snapshot.data ?? [];
+            final byTitle = {
+              for (final b in localBooks) normalizeTitle(b.title): b,
+            };
+
+            return Column(
+              children: info.volumes.map((volume) {
+                // Check every known edition/translation of this volume - the
+                // current book is flagged by Hardcover id (works regardless
+                // of local title language); other volumes are matched by
+                // whichever candidate title happens to match the shelf.
+                var isCurrent = false;
+                BookEntry? match;
+                var displayCandidate = volume.primary;
+
+                for (final candidate in volume.candidates) {
+                  if (candidate.hardcoverBookId == info.currentVolumeId) {
+                    isCurrent = true;
+                    match = widget.book;
+                    displayCandidate = candidate;
+                    break;
+                  }
+                }
+                if (!isCurrent) {
+                  for (final candidate in volume.candidates) {
+                    final found = byTitle[normalizeTitle(candidate.title)];
+                    if (found != null) {
+                      match = found;
+                      displayCandidate = candidate;
+                      break;
+                    }
+                  }
+                }
+
+                return _SeriesVolumeTile(
+                  volume: volume,
+                  displayTitle: displayCandidate.title,
+                  searchTitle: volume.primary.title,
+                  matchedBook: match,
+                  isCurrent: isCurrent,
+                );
+              }).toList(),
+            );
+          },
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+}
+
+class _SeriesVolumeTile extends StatelessWidget {
+  final SeriesVolume volume;
+  final String displayTitle;
+  final String searchTitle;
+  final BookEntry? matchedBook;
+  final bool isCurrent;
+
+  const _SeriesVolumeTile({
+    required this.volume,
+    required this.displayTitle,
+    required this.searchTitle,
+    required this.matchedBook,
+    required this.isCurrent,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final position = volume.position;
+    final positionLabel = volume.details ??
+        (position == null
+            ? null
+            : (position == position.roundToDouble()
+                ? position.toInt().toString()
+                : position.toString()));
+
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      dense: true,
+      leading: CircleAvatar(
+        radius: 14,
+        child: Text(positionLabel ?? '?', style: const TextStyle(fontSize: 12)),
+      ),
+      title: Text(
+        displayTitle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: isCurrent ? const TextStyle(fontWeight: FontWeight.bold) : null,
+      ),
+      trailing: matchedBook != null
+          ? _statusPill(
+              context,
+              BookStatus.fromDb(matchedBook!.status).label(context),
+              primary: true,
+            )
+          : _statusPill(context, l10n.seriesNotOwned, primary: false),
+      onTap: isCurrent
+          ? null
+          : () {
+              if (matchedBook != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BookDetailScreen(bookId: matchedBook!.id),
+                  ),
+                );
+              } else {
+                openSeriesVolumeInSearch(context, searchTitle);
+              }
+            },
+    );
+  }
+
+  Widget _statusPill(BuildContext context, String label, {required bool primary}) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: primary ? scheme.primaryContainer : null,
+        border: primary ? null : Border.all(color: scheme.outline),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: primary ? scheme.onPrimaryContainer : scheme.onSurfaceVariant,
+        ),
+      ),
     );
   }
 }
